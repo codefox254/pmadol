@@ -1,136 +1,84 @@
-from rest_framework import status, generics, permissions
-from rest_framework.decorators import api_view, permission_classes
+
+# ============================================
+# accounts/views.py
+# ============================================
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate
-from .models import CoachProfile
-from .serializers import (
-    UserSerializer, UserRegistrationSerializer, UserUpdateSerializer,
-    ChangePasswordSerializer, CoachProfileSerializer
-)
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.contrib.auth import get_user_model
+from .models import StudentProfile, InstructorProfile
+from .serializers import *
 
-class UserRegistrationView(generics.CreateAPIView):
-    """User registration endpoint"""
-    permission_classes = [permissions.AllowAny]
-    serializer_class = UserRegistrationSerializer
-    
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        
-        # Generate tokens
-        refresh = RefreshToken.for_user(user)
-        
-        return Response({
-            'user': UserSerializer(user).data,
-            'tokens': {
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-            }
-        }, status=status.HTTP_201_CREATED)
+User = get_user_model()
 
-class UserLoginView(APIView):
-    """User login endpoint"""
-    permission_classes = [permissions.AllowAny]
-    
-    def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
-        
-        if not email or not password:
-            return Response(
-                {'error': 'Please provide both email and password'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        user = authenticate(email=email, password=password)
-        
-        if not user:
-            return Response(
-                {'error': 'Invalid credentials'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        
-        if not user.is_active:
-            return Response(
-                {'error': 'Account is disabled'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
-        # Generate tokens
-        refresh = RefreshToken.for_user(user)
-        
-        return Response({
-            'user': UserSerializer(user).data,
-            'tokens': {
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-            }
-        })
 
-class UserLogoutView(APIView):
-    """User logout endpoint"""
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def post(self, request):
-        try:
-            refresh_token = request.data.get('refresh')
-            if refresh_token:
-                token = RefreshToken(refresh_token)
-                token.blacklist()
-            return Response({'message': 'Successfully logged out'}, status=status.HTTP_200_OK)
-        except Exception:
-            return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
-
-class UserDetailView(generics.RetrieveUpdateAPIView):
-    """Get or update current user details"""
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_object(self):
-        return self.request.user
-    
-    def get_serializer_class(self):
-        if self.request.method == 'PUT' or self.request.method == 'PATCH':
-            return UserUpdateSerializer
-        return UserSerializer
-
-class ChangePasswordView(APIView):
-    """Change user password"""
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def post(self, request):
-        serializer = ChangePasswordSerializer(data=request.data)
-        
-        if serializer.is_valid():
-            user = request.user
-            
-            # Check old password
-            if not user.check_password(serializer.data.get('old_password')):
-                return Response(
-                    {'old_password': 'Wrong password'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            
-            # Set new password
-            user.set_password(serializer.data.get('new_password'))
-            user.save()
-            
-            return Response({'message': 'Password updated successfully'})
-        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class CoachProfileView(generics.RetrieveUpdateAPIView):
-    """Get or update coach profile (public read, admin write)"""
-    queryset = CoachProfile.objects.all()
-    serializer_class = CoachProfileSerializer
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
     
     def get_permissions(self):
-        if self.request.method in ['PUT', 'PATCH']:
-            return [permissions.IsAdminUser()]
-        return [permissions.AllowAny()]
+        if self.action == 'create':
+            return [AllowAny()]
+        return [IsAuthenticated()]
     
-    def get_object(self):
-        # Return the first (and should be only) coach profile
-        return CoachProfile.objects.first()
+    @action(detail=False, methods=['post'])
+    def register(self, request):
+        serializer = UserRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response({
+                'message': 'User created successfully',
+                'user': UserSerializer(user).data
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['put'])
+    def update_profile(self, request):
+        serializer = self.get_serializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False, methods=['post'])
+    def change_password(self, request):
+        serializer = PasswordChangeSerializer(data=request.data)
+        if serializer.is_valid():
+            user = request.user
+            if not user.check_password(serializer.data['old_password']):
+                return Response({'error': 'Invalid old password'}, 
+                              status=status.HTTP_400_BAD_REQUEST)
+            user.set_password(serializer.data['new_password'])
+            user.save()
+            return Response({'message': 'Password changed successfully'})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StudentProfileViewSet(viewsets.ModelViewSet):
+    queryset = StudentProfile.objects.all()
+    serializer_class = StudentProfileSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        if self.request.user.user_type == 'student':
+            return self.queryset.filter(user=self.request.user)
+        return self.queryset
+
+
+class InstructorProfileViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = InstructorProfile.objects.filter(user__is_active=True)
+    serializer_class = InstructorProfileSerializer
+    permission_classes = [IsAuthenticated]
+    
+    @action(detail=False, methods=['get'])
+    def available(self, request):
+        instructors = self.queryset.filter(is_available=True)
+        serializer = self.get_serializer(instructors, many=True)
+        return Response(serializer.data)
+

@@ -1,13 +1,16 @@
-# apps/services/urls.py
+
+# ============================================
+# services/urls.py
+# ============================================
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ServiceViewSet
-
-app_name = 'services'
+from .views import *
 
 router = DefaultRouter()
-router.register(r'', ServiceViewSet, basename='service')
+router.register(r'services', ServiceViewSet, basename='services')
+router.register(r'pricing-plans', PricingPlanViewSet, basename='pricing-plans')
+router.register(r'bookings', ServiceBookingViewSet, basename='bookings')
+router.register(r'inquiries', ServiceInquiryViewSet, basename='inquiries')
 
-urlpatterns = [
-    path('', include(router.urls)),
-]
+urlpatterns = router.urls
+

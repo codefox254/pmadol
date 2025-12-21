@@ -1,22 +1,37 @@
-# apps/contact/serializers.py
+# ============================================
+# contact/serializers.py
+# ============================================
 from rest_framework import serializers
-from apps.contact.models import ContactSubmission
+from .models import ContactMessage, ConsultationRequest, NewsletterSubscriber, ContactInfo
 
-class ContactSubmissionSerializer(serializers.ModelSerializer):
-    """Serializer for contact form submissions"""
+
+class ContactMessageSerializer(serializers.ModelSerializer):
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
     
     class Meta:
-        model = ContactSubmission
-        fields = [
-            'id', 'name', 'email', 'phone', 'subject',
-            'message', 'is_read', 'created_at'
-        ]
-        read_only_fields = ['id', 'is_read', 'created_at']
+        model = ContactMessage
+        fields = '__all__'
+        read_only_fields = ['status', 'created_at']
 
-class ContactSubmissionCreateSerializer(serializers.ModelSerializer):
-    """Serializer for creating contact submissions"""
+
+class ConsultationRequestSerializer(serializers.ModelSerializer):
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
     
     class Meta:
-        model = ContactSubmission
-        fields = ['name', 'email', 'phone', 'subject', 'message']
+        model = ConsultationRequest
+        fields = '__all__'
+        read_only_fields = ['status', 'created_at']
+
+
+class NewsletterSubscriberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsletterSubscriber
+        fields = '__all__'
+        read_only_fields = ['is_active', 'subscribed_at']
+
+
+class ContactInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactInfo
+        fields = '__all__'
 

@@ -1,13 +1,14 @@
-# apps/gallery/urls.py
+
+# ============================================
+# gallery/urls.py
+# ============================================
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import GalleryItemViewSet
-
-app_name = 'gallery'
+from .views import *
 
 router = DefaultRouter()
-router.register(r'', GalleryItemViewSet, basename='galleryitem')
+router.register(r'categories', GalleryCategoryViewSet, basename='categories')
+router.register(r'photos', GalleryPhotoViewSet, basename='photos')
+router.register(r'videos', GalleryVideoViewSet, basename='videos')
 
-urlpatterns = [
-    path('', include(router.urls)),
-]
+urlpatterns = router.urls

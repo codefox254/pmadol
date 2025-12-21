@@ -1,85 +1,95 @@
+# ============================================
+# contact/models.py
+# ============================================
 from django.db import models
-from django.conf import settings
-from django.utils.text import slugify
-from django.utils import timezone
 
-class BlogPost(models.Model):
-    """Blog posts for content marketing"""
+
+class ContactMessage(models.Model):
+    """General contact messages"""
+    STATUS_CHOICES = [
+        ('new', 'New'),
+        ('read', 'Read'),
+        ('responded', 'Responded'),
+        ('archived', 'Archived'),
+    ]
     
-    STATUS_CHOICES = (
-        ('draft', 'Draft'),
-        ('published', 'Published'),
-    )
-    
-    CATEGORY_CHOICES = (
-        ('tips', 'Tips & Tricks'),
-        ('strategy', 'Strategy'),
-        ('tournaments', 'Tournaments'),
-        ('news', 'News'),
-        ('training', 'Training'),
-        ('beginner', 'Beginner Guide'),
-    )
-    
-    author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='blog_posts'
-    )
-    
-    title = models.CharField(max_length=300)
-    slug = models.SlugField(max_length=350, unique=True, blank=True)
-    excerpt = models.TextField(max_length=500, help_text="Brief summary for listings")
-    content = models.TextField(help_text="Full article content (supports HTML)")
-    
-    featured_image = models.ImageField(upload_to='blog/', null=True, blank=True)
-    
-    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='tips')
-    tags = models.JSONField(default=list, blank=True, help_text="List of tags")
-    
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
-    is_featured = models.BooleanField(default=False, help_text="Display prominently on blog page")
-    
-    view_count = models.IntegerField(default=0)
-    
-    # SEO fields
-    meta_title = models.CharField(max_length=60, blank=True, help_text="SEO title (60 chars max)")
-    meta_description = models.CharField(max_length=160, blank=True, help_text="SEO description (160 chars max)")
-    
-    published_at = models.DateTimeField(null=True, blank=True)
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20, blank=True)
+    subject = models.CharField(max_length=200)
+    message = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.name} - {self.subject}"
+
+
+class ConsultationRequest(models.Model):
+    """Consultation booking requests"""
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
+    
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20)
+    service_interest = models.CharField(max_length=200)
+    preferred_date = models.DateField(blank=True, null=True)
+    message = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.name} - {self.service_interest}"
+
+
+class NewsletterSubscriber(models.Model):
+    """Newsletter subscriptions"""
+    email = models.EmailField(unique=True)
+    is_active = models.BooleanField(default=True)
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-subscribed_at']
+    
+    def __str__(self):
+        return self.email
+
+
+class ContactInfo(models.Model):
+    """Contact information"""
+    phone = models.CharField(max_length=20)
+    email = models.EmailField()
+    address = models.TextField()
+    working_hours = models.TextField()
+    map_latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    map_longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        db_table = 'blog_posts'
-        verbose_name = 'Blog Post'
-        verbose_name_plural = 'Blog Posts'
-        ordering = ['-published_at', '-created_at']
-        indexes = [
-            models.Index(fields=['-published_at']),
-            models.Index(fields=['status']),
-            models.Index(fields=['category']),
-        ]
+        verbose_name = "Contact Information"
+        verbose_name_plural = "Contact Information"
     
     def __str__(self):
-        return self.title
+        return "Contact Information"
     
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
-        
-        # Auto-set published_at when status changes to published
-        if self.status == 'published' and not self.published_at:
-            self.published_at = timezone.now()
-        
-        # Auto-generate SEO fields if not provided
-        if not self.meta_title:
-            self.meta_title = self.title[:60]
-        if not self.meta_description:
-            self.meta_description = self.excerpt[:160]
-        
+        self.pk = 1
         super().save(*args, **kwargs)
     
-    def increment_views(self):
-        """Increment view count"""
-        self.view_count += 1
-        self.save(update_fields=['view_count'])
+    @classmethod
+    def get_info(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+
+

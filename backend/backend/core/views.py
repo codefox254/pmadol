@@ -1,36 +1,103 @@
-# apps/core/views.py
-from rest_framework import viewsets, permissions
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from apps.core.models import SiteSettings, Testimonial
-from apps.core.serializers import SiteSettingsSerializer, TestimonialSerializer
 
-class SiteSettingsViewSet(viewsets.ModelViewSet):
-    """ViewSet for site settings"""
+# ============================================
+# core/views.py
+# ============================================
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
+from .models import *
+from .serializers import *
+
+
+class SiteSettingsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SiteSettings.objects.all()
     serializer_class = SiteSettingsSerializer
-    lookup_field = 'key'
     
-    def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [permissions.IsAdminUser()]
-        return [permissions.AllowAny()]
+    @action(detail=False, methods=['get'])
+    def current(self, request):
+        settings = SiteSettings.get_settings()
+        serializer = self.get_serializer(settings)
+        return Response(serializer.data)
 
-@api_view(['GET'])
-@permission_classes([permissions.AllowAny])
-def get_all_settings(request):
-    """Get all site settings as a single object"""
-    settings = SiteSettings.objects.all()
-    data = {setting.key: setting.value for setting in settings}
-    return Response(data)
 
-class TestimonialViewSet(viewsets.ModelViewSet):
-    """ViewSet for testimonials"""
-    queryset = Testimonial.objects.all()
+class StatisticsViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Statistics.objects.all()
+    serializer_class = StatisticsSerializer
+    
+    @action(detail=False, methods=['get'])
+    def current(self, request):
+        stats = Statistics.get_stats()
+        serializer = self.get_serializer(stats)
+        return Response(serializer.data)
+
+
+class TestimonialViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Testimonial.objects.filter(is_active=True)
     serializer_class = TestimonialSerializer
-    ordering = ['display_order', '-created_at']
     
-    def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [permissions.IsAdminUser()]
-        return [permissions.AllowAny()]
+    @action(detail=False, methods=['get'])
+    def featured(self, request):
+        testimonials = self.queryset.filter(is_featured=True)[:3]
+        serializer = self.get_serializer(testimonials, many=True)
+        return Response(serializer.data)
+
+
+class PartnerViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Partner.objects.filter(is_active=True)
+    serializer_class = PartnerSerializer
+
+
+class TeamMemberViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = TeamMember.objects.filter(is_active=True)
+    serializer_class = TeamMemberSerializer
+    
+    @action(detail=False, methods=['get'])
+    def coaches(self, request):
+        coaches = self.queryset.filter(role__in=['head_coach', 'coach', 'assistant_coach'])
+        serializer = self.get_serializer(coaches, many=True)
+        return Response(serializer.data)
+
+
+class FAQViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = FAQ.objects.filter(is_active=True)
+    serializer_class = FAQSerializer
+    
+    @action(detail=False, methods=['get'])
+    def by_category(self, request):
+        category = request.query_params.get('category', 'general')
+        faqs = self.queryset.filter(category=category)
+        serializer = self.get_serializer(faqs, many=True)
+        return Response(serializer.data)
+
+
+class AboutContentViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = AboutContent.objects.all()
+    serializer_class = AboutContentSerializer
+    
+    @action(detail=False, methods=['get'])
+    def current(self, request):
+        content = AboutContent.get_content()
+        serializer = self.get_serializer(content)
+        return Response(serializer.data)
+
+
+class CoreValueViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = CoreValue.objects.filter(is_active=True)
+    serializer_class = CoreValueSerializer
+
+
+class HomePageViewSet(viewsets.ViewSet):
+    """Combined endpoint for homepage"""
+    def list(self, request):
+        data = {
+            'site_settings': SiteSettings.get_settings(),
+            'statistics': Statistics.get_stats(),
+            'testimonials': Testimonial.objects.filter(is_active=True, is_featured=True)[:3],
+            'partners': Partner.objects.filter(is_active=True),
+        }
+        serializer = HomePageDataSerializer(data)
+        return Response(serializer.data)
+
+
+

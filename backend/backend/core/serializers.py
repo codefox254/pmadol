@@ -1,24 +1,71 @@
 
-# apps/core/serializers.py
+
+# ============================================
+# core/serializers.py
+# ============================================
 from rest_framework import serializers
-from apps.core.models import SiteSettings, Testimonial
+from .models import *
+
 
 class SiteSettingsSerializer(serializers.ModelSerializer):
-    """Serializer for site settings"""
-    
     class Meta:
         model = SiteSettings
-        fields = ['id', 'key', 'value', 'description', 'updated_at']
-        read_only_fields = ['id', 'updated_at']
+        fields = '__all__'
+
+
+class StatisticsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Statistics
+        fields = '__all__'
+
 
 class TestimonialSerializer(serializers.ModelSerializer):
-    """Serializer for testimonials"""
+    role_display = serializers.CharField(source='get_role_display', read_only=True)
     
     class Meta:
         model = Testimonial
-        fields = [
-            'id', 'student_name', 'student_age', 'parent_name',
-            'rating', 'testimonial_text', 'student_image',
-            'is_featured', 'display_order', 'created_at'
-        ]
-        read_only_fields = ['id', 'created_at']
+        fields = '__all__'
+
+
+class PartnerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Partner
+        fields = '__all__'
+
+
+class TeamMemberSerializer(serializers.ModelSerializer):
+    role_display = serializers.CharField(source='get_role_display', read_only=True)
+    
+    class Meta:
+        model = TeamMember
+        fields = '__all__'
+
+
+class FAQSerializer(serializers.ModelSerializer):
+    category_display = serializers.CharField(source='get_category_display', read_only=True)
+    
+    class Meta:
+        model = FAQ
+        fields = '__all__'
+
+
+class CoreValueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CoreValue
+        fields = '__all__'
+
+
+class AboutContentSerializer(serializers.ModelSerializer):
+    core_values = CoreValueSerializer(many=True, read_only=True, source='corevalue_set')
+    
+    class Meta:
+        model = AboutContent
+        fields = '__all__'
+
+
+class HomePageDataSerializer(serializers.Serializer):
+    site_settings = SiteSettingsSerializer()
+    statistics = StatisticsSerializer()
+    testimonials = TestimonialSerializer(many=True)
+    partners = PartnerSerializer(many=True)
+
