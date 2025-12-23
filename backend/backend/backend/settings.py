@@ -111,11 +111,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS Settings
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    "http://localhost:32825",
+    "http://localhost:36005",
     "http://localhost:8080",
+    "http://localhost:8081",  # Flutter web-server default port
     "http://127.0.0.1:3000",
+    "http://127.0.0.1:8080",
+    "http://127.0.0.1:8081",  # Flutter web-server default port
+    "http://localhost",
+    "http://127.0.0.1",
 ]
 CORS_ALLOW_CREDENTIALS = True
+# Set to True for development to allow any port (Flutter web-server uses random ports)
+CORS_ALLOW_ALL_ORIGINS = True
 
 # REST Framework
 REST_FRAMEWORK = {

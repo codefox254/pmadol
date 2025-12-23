@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/shop_provider.dart';
+import 'providers/home_provider.dart';
+import 'widgets/footer_widget.dart';
+import 'config/api_config.dart';
 
 class ShopScreen extends StatefulWidget {
   const ShopScreen({Key? key}) : super(key: key);
@@ -9,19 +14,125 @@ class ShopScreen extends StatefulWidget {
 
 class _ShopScreenState extends State<ShopScreen> {
   String selectedCategory = 'All';
-  final List<String> categories = ['All', 'Chess Sets', 'Chess Clocks', 'Books', 'Accessories', 'Apparel'];
+  String searchQuery = '';
+  String sortOption = 'Popular';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Widget _buildSearchAndSort(int total) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 80),
+      color: Color(0xFFFFFFFF),
+      child: Row(
+        children: [
+          // Search
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Color(0xFFE8EFF7)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.search, color: Color(0xFF707781)),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search chess goods (sets, boards, clocks, books...)',
+                        border: InputBorder.none,
+                      ),
+                      onChanged: (val) => setState(() => searchQuery = val),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 20),
+          // Sort dropdown
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Color(0xFFE8EFF7)),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: sortOption,
+                items: [
+                  'Popular',
+                  'Price: Low to High',
+                  'Price: High to Low',
+                ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                onChanged: (val) => setState(() => sortOption = val ?? 'Popular'),
+              ),
+            ),
+          ),
+          SizedBox(width: 20),
+          Text('$total items', style: TextStyle(color: Color(0xFF707781))),
+        ],
+      ),
+    );
+  }
+  void _loadData() {
+    Future.microtask(() {
+      context.read<ShopProvider>().loadProducts();
+      context.read<HomeProvider>().loadHomeData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildPageHeader(),
-          _buildCategoryFilter(),
-          _buildProductsGrid(),
-          _buildFooter(),
-        ],
-      ),
+    return Consumer2<ShopProvider, HomeProvider>(
+      builder: (context, shopProvider, homeProvider, child) {
+        if (shopProvider.isLoading || homeProvider.isLoading) {
+          return Center(
+            child: CircularProgressIndicator(color: Color(0xFF5886BF)),
+          );
+        }
+
+        final products = shopProvider.products;
+        final homeData = homeProvider.homeData;
+        
+        if (homeData == null) {
+          return Center(child: Text('No data available'));
+        }
+
+        // Filter products by category, search, and sort
+        var filteredProducts = selectedCategory == 'All'
+            ? products
+            : products.where((p) => p.categoryName == selectedCategory).toList();
+        if (searchQuery.isNotEmpty) {
+          filteredProducts = filteredProducts
+              .where((p) => (p.name ?? '').toLowerCase().contains(searchQuery.toLowerCase()))
+              .toList();
+        }
+        if (sortOption == 'Price: Low to High') {
+          filteredProducts.sort((a, b) => a.price.compareTo(b.price));
+        } else if (sortOption == 'Price: High to Low') {
+          filteredProducts.sort((a, b) => b.price.compareTo(a.price));
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildPageHeader(),
+              _buildSearchAndSort(products.length),
+              _buildCategoryFilter(products),
+              _buildProductsGrid(filteredProducts),
+              FooterWidget(settings: homeData.siteSettings),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -29,14 +140,18 @@ class _ShopScreenState extends State<ShopScreen> {
     return Container(
       height: 300,
       decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/shop_header.jpg'),
-          fit: BoxFit.cover,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF5886BF),
+            Color(0xFF283D57),
+          ],
         ),
       ),
       child: Stack(
         children: [
-          Container(color: Colors.black.withOpacity(0.6)),
+          Container(color: Colors.black.withOpacity(0.3)),
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -50,7 +165,7 @@ class _ShopScreenState extends State<ShopScreen> {
                   ),
                 ),
                 SizedBox(height: 15),
-                Text('Our Shop',
+                Text('Shop',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 56,
@@ -58,7 +173,7 @@ class _ShopScreenState extends State<ShopScreen> {
                   ),
                 ),
                 SizedBox(height: 20),
-                Text('Quality chess equipment for players of all levels',
+                Text('Quality chess sets, books, and accessories',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -72,41 +187,63 @@ class _ShopScreenState extends State<ShopScreen> {
     );
   }
 
-  Widget _buildCategoryFilter() {
+  Widget _buildCategoryFilter(List products) {
+    // Extract unique categories
+    final categories = ['All', ...products.map((p) => p.categoryName ?? 'Other').toSet()];
+    
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 40),
+      padding: EdgeInsets.symmetric(vertical: 40, horizontal: 80),
+      decoration: BoxDecoration(
+        color: Color(0xFFF8FAFC),
+      ),
       child: Wrap(
-        alignment: WrapAlignment.center,
         spacing: 15,
+        runSpacing: 15,
+        alignment: WrapAlignment.center,
         children: categories.map((category) {
           final isSelected = selectedCategory == category;
-          return FilterChip(
-            label: Text(category,
-              style: TextStyle(
-                color: isSelected ? Colors.white : Color(0xFF404957),
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-              ),
-            ),
-            selected: isSelected,
-            onSelected: (selected) {
+          return GestureDetector(
+            onTap: () {
               setState(() {
                 selectedCategory = category;
               });
             },
-            backgroundColor: Colors.white,
-            selectedColor: Color(0xFF5886BF),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-              side: BorderSide(color: Color(0xFF5886BF)),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              decoration: BoxDecoration(
+                color: isSelected ? Color(0xFF5886BF) : Colors.white,
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(
+                  color: isSelected ? Color(0xFF5886BF) : Color(0xFFE8EFF7),
+                ),
+              ),
+              child: Text(
+                category,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Color(0xFF404957),
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                ),
+              ),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           );
         }).toList(),
       ),
     );
   }
 
-  Widget _buildProductsGrid() {
+  Widget _buildProductsGrid(List products) {
+    if (products.isEmpty) {
+      return Container(
+        padding: EdgeInsets.all(80),
+        child: Center(
+          child: Text(
+            'No products available in this category',
+            style: TextStyle(fontSize: 18, color: Color(0xFF707781)),
+          ),
+        ),
+      );
+    }
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 80, vertical: 40),
       child: GridView.builder(
@@ -114,111 +251,107 @@ class _ShopScreenState extends State<ShopScreen> {
         physics: NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
-          crossAxisSpacing: 30,
-          mainAxisSpacing: 30,
+          crossAxisSpacing: 25,
+          mainAxisSpacing: 25,
           childAspectRatio: 0.7,
         ),
-        itemCount: 16,
+        itemCount: products.length,
         itemBuilder: (context, index) {
-          return _buildProductCard(index);
+          return _buildProductCard(products[index]);
         },
       ),
     );
   }
 
-  Widget _buildProductCard(int index) {
-    final List<String> productNames = [
-      'Tournament Chess Set',
-      'Wooden Chess Board',
-      'Digital Chess Clock',
-      'Chess Strategy Book',
-      'Leather Chess Board',
-      'Chess Pieces Set',
-      'Analog Chess Clock',
-      'Chess Opening Manual',
-      'Travel Chess Set',
-      'Premium Chess Board',
-      'Competition Clock',
-      'Endgame Techniques',
-      'Magnetic Chess Set',
-      'Chess Score Sheets',
-      'Silicone Chess Mat',
-      'Chess Tactics Book',
-    ];
-
-    final List<String> prices = [
-      '3,500 KES',
-      '5,000 KES',
-      '2,800 KES',
-      '1,200 KES',
-      '8,000 KES',
-      '4,500 KES',
-      '2,000 KES',
-      '1,500 KES',
-      '2,500 KES',
-      '12,000 KES',
-      '3,200 KES',
-      '1,800 KES',
-      '1,500 KES',
-      '500 KES',
-      '1,800 KES',
-      '1,400 KES',
-    ];
-
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+  Widget _buildProductCard(dynamic product) {
+    final isAvailable = product.isAvailable && product.stockQuantity > 0;
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            flex: 3,
-            child: Stack(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      topRight: Radius.circular(8),
+          Stack(
+            children: [
+              AnimatedContainer(
+                duration: Duration(milliseconds: 200),
+                height: 220,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                  color: Color(0xFFF8FAFC),
+                  image: product.image != null
+                      ? DecorationImage(
+                          image: NetworkImage('${ApiConfig.baseUrl}${product.image}'),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
+                ),
+                child: product.image == null
+                    ? Center(
+                        child: Icon(Icons.shopping_bag, size: 60, color: Color(0xFF5886BF).withOpacity(0.3)),
+                      )
+                    : null,
+              ),
+              if (product.isFeatured)
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF5886BF),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/product_${index + 1}.jpg'),
-                      fit: BoxFit.cover,
+                    child: Text(
+                      'Featured',
+                      style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
-                if (index % 5 == 0)
-                  Positioned(
-                    top: 10,
-                    right: 10,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text('SALE',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+              if (!isAvailable)
+                Container(
+                  height: 220,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                    color: Colors.black.withOpacity(0.5),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Out of Stock',
+                      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
           Expanded(
-            flex: 2,
             child: Padding(
               padding: EdgeInsets.all(15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(productNames[index],
+                  if (product.categoryName != null)
+                    Text(
+                      product.categoryName,
+                      style: TextStyle(
+                        color: Color(0xFF5886BF),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  SizedBox(height: 5),
+                  Text(
+                    product.name,
                     style: TextStyle(
                       color: Color(0xFF0B131E),
                       fontSize: 16,
@@ -228,35 +361,37 @@ class _ShopScreenState extends State<ShopScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 8),
-                  Row(
-                    children: List.generate(5, (starIndex) {
-                      return Icon(
-                        starIndex < 4 ? Icons.star : Icons.star_border,
-                        color: Color(0xFFFFA500),
-                        size: 16,
-                      );
-                    }),
+                  Expanded(
+                    child: Text(
+                      product.description,
+                      style: TextStyle(
+                        color: Color(0xFF707781),
+                        fontSize: 13,
+                        height: 1.4,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  Spacer(),
+                  SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(prices[index],
+                      Text(
+                        'KES ${product.price.toStringAsFixed(0)}',
                         style: TextStyle(
-                          color: Color(0xFF5886BF),
+                          color: Color(0xFF0B131E),
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      IconButton(
-                        onPressed: () {
-                          _showProductDetails(context, index);
-                        },
-                        icon: Icon(Icons.shopping_cart_outlined),
-                        color: Color(0xFF5886BF),
-                        style: IconButton.styleFrom(
-                          backgroundColor: Color(0xFFF5F9FF),
-                        ),
+                      Row(
+                        children: [
+                          if (isAvailable)
+                            Icon(Icons.shopping_cart_outlined, size: 20, color: Color(0xFF5886BF)),
+                          SizedBox(width: 12),
+                          Icon(Icons.favorite_border, size: 20, color: Color(0xFF707781)),
+                        ],
                       ),
                     ],
                   ),
@@ -266,215 +401,6 @@ class _ShopScreenState extends State<ShopScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  void _showProductDetails(BuildContext context, int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.6,
-            padding: EdgeInsets.all(40),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 300,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/product_${index + 1}.jpg'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 40),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Tournament Chess Set',
-                            style: TextStyle(
-                              color: Color(0xFF0B131E),
-                              fontSize: 28,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                          Row(
-                            children: List.generate(5, (starIndex) {
-                              return Icon(
-                                starIndex < 4 ? Icons.star : Icons.star_border,
-                                color: Color(0xFFFFA500),
-                                size: 20,
-                              );
-                            }),
-                          ),
-                          SizedBox(height: 20),
-                          Text('3,500 KES',
-                            style: TextStyle(
-                              color: Color(0xFF5886BF),
-                              fontSize: 32,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          Text(
-                            'Professional tournament-standard chess set with weighted pieces and roll-up vinyl board. Perfect for competitive play and practice sessions.',
-                            style: TextStyle(
-                              color: Color(0xFF404957),
-                              fontSize: 16,
-                              height: 1.6,
-                            ),
-                          ),
-                          SizedBox(height: 30),
-                          Row(
-                            children: [
-                              Text('Quantity:',
-                                style: TextStyle(
-                                  color: Color(0xFF0B131E),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(width: 15),
-                              Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Color(0xFF5886BF)),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(Icons.remove),
-                                      onPressed: () {},
-                                      color: Color(0xFF5886BF),
-                                    ),
-                                    Text('1',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.add),
-                                      onPressed: () {},
-                                      color: Color(0xFF5886BF),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 30),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  onPressed: () {},
-                                  icon: Icon(Icons.shopping_cart),
-                                  label: Text('Add to Cart'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color(0xFF5886BF),
-                                    foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(vertical: 15),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 15),
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.favorite_border),
-                                color: Color(0xFF5886BF),
-                                style: IconButton.styleFrom(
-                                  backgroundColor: Color(0xFFF5F9FF),
-                                  padding: EdgeInsets.all(15),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 30),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text('Close',
-                      style: TextStyle(
-                        color: Color(0xFF5886BF),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildFooter() {
-    return Container(
-      color: Color(0xFF0B131E),
-      padding: EdgeInsets.all(80),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildFooterFeature(Icons.local_shipping, 'Fast Delivery', 'Across Nairobi'),
-              _buildFooterFeature(Icons.verified_user, 'Quality Guaranteed', '100% Authentic'),
-              _buildFooterFeature(Icons.support_agent, '24/7 Support', 'We\'re here to help'),
-              _buildFooterFeature(Icons.credit_card, 'Secure Payment', 'Safe & protected'),
-            ],
-          ),
-          SizedBox(height: 50),
-          Divider(color: Colors.white24),
-          SizedBox(height: 20),
-          Text('© 2025 PMadol Chess Club. All rights reserved.',
-            style: TextStyle(color: Color(0xFFF4F6F7), fontSize: 14)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFooterFeature(IconData icon, String title, String subtitle) {
-    return Column(
-      children: [
-        Icon(icon, color: Color(0xFF5886BF), size: 50),
-        SizedBox(height: 15),
-        Text(title,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        SizedBox(height: 5),
-        Text(subtitle,
-          style: TextStyle(
-            color: Color(0xFFF4F6F7),
-            fontSize: 14,
-          ),
-        ),
-      ],
     );
   }
 }

@@ -1,19 +1,75 @@
+// ============================================
+// lib/contact_screen.dart - Modern Dynamic
+// ============================================
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:provider/provider.dart';
+import 'providers/home_provider.dart';
+import 'widgets/footer_widget.dart';
 
-class ContactScreen extends StatelessWidget {
-  const ContactScreen({Key? key}) : super(key: key);
+class ContactScreen extends StatefulWidget {
+  const ContactScreen({super.key});
+
+  @override
+  State<ContactScreen> createState() => _ContactScreenState();
+}
+
+class _ContactScreenState extends State<ContactScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _messageController = TextEditingController();
+  bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  void _loadData() {
+    Future.microtask(() {
+      context.read<HomeProvider>().loadHomeData();
+    });
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildPageHeader(),
-          _buildContactContent(),
-          _buildMapSection(),
-          _buildFooter(),
-        ],
-      ),
+    return Consumer<HomeProvider>(
+      builder: (context, homeProvider, child) {
+        if (homeProvider.isLoading) {
+          return Center(
+            child: CircularProgressIndicator(color: Color(0xFF5886BF)),
+          );
+        }
+
+        final homeData = homeProvider.homeData;
+        if (homeData == null) {
+          return Center(child: Text('No data available'));
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildPageHeader(),
+              _buildContactForm(),
+              _buildContactInfo(homeData.siteSettings),
+              _buildMapSection(),
+              FooterWidget(settings: homeData.siteSettings),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -21,468 +77,368 @@ class ContactScreen extends StatelessWidget {
     return Container(
       height: 300,
       decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/contact_header.jpg'),
-          fit: BoxFit.cover,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF5886BF),
+            Color(0xFF3D5A8F),
+          ],
         ),
       ),
-      child: Stack(
-        children: [
-          Container(color: Colors.black.withOpacity(0.6)),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('GET IN TOUCH',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    letterSpacing: 3.5,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                SizedBox(height: 15),
-                Text('Contact Us',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 56,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                SizedBox(height: 20),
-                Text('We\'d love to hear from you',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
-                ),
-              ],
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'GET IN TOUCH',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                letterSpacing: 3.5,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContactContent() {
-    return Container(
-      padding: EdgeInsets.all(80),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Send Us a Message',
-                  style: TextStyle(
-                    color: Color(0xFF0B131E),
-                    fontSize: 36,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'Have questions about our services, want to schedule a session, or just want to say hello? Fill out the form below and we\'ll get back to you as soon as possible.',
-                  style: TextStyle(
-                    color: Color(0xFF404957),
-                    fontSize: 16,
-                    height: 1.6,
-                  ),
-                ),
-                SizedBox(height: 40),
-                _buildContactForm(),
-              ],
+            SizedBox(height: 15),
+            Text(
+              'Contact Us Today',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 56,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-          SizedBox(width: 80),
-          Expanded(
-            flex: 1,
-            child: Column(
-              children: [
-                _buildContactInfoCard(),
-                SizedBox(height: 30),
-                _buildSocialMediaCard(),
-              ],
+            SizedBox(height: 15),
+            Text(
+              'We\'re here to help and answer any question you might have',
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.9),
+                fontSize: 18,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildContactForm() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'First Name *',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                ),
-              ),
-            ),
-            SizedBox(width: 20),
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Last Name *',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                ),
-              ),
-            ),
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFFFFFFF),
+            Color(0xFFF8FAFC),
           ],
         ),
-        SizedBox(height: 20),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Email Address *',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Send us a message',
+                  style: TextStyle(
+                    color: Color(0xFF0B131E),
+                    fontSize: 36,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-            ),
-            SizedBox(width: 20),
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Phone Number',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                SizedBox(height: 15),
+                Text(
+                  'Let us know how we can help you achieve your chess goals',
+                  style: TextStyle(
+                    color: Color(0xFF707781),
+                    fontSize: 16,
+                    height: 1.6,
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-        SizedBox(height: 20),
-        DropdownButtonFormField<String>(
-          decoration: InputDecoration(
-            labelText: 'Service of Interest',
-            border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           ),
-          items: [
-            'Select Service',
-            'Private Lessons',
-            'Chess in Schools',
-            'Group Sessions',
-            'Online Resources & Classes',
-            'Tournaments and Competitions',
-            'Mentorship Programs',
-            'Chess Library',
-            'Chess Equipment',
-            'Chess Workshops and Seminars',
-            'Chess Community and Networking',
-          ].map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          onChanged: (value) {},
-        ),
-        SizedBox(height: 20),
-        TextField(
-          decoration: InputDecoration(
-            labelText: 'Your Message *',
-            border: OutlineInputBorder(),
-            alignLabelWithHint: true,
-            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          ),
-          maxLines: 6,
-        ),
-        SizedBox(height: 30),
-        Row(
-          children: [
-            Checkbox(
-              value: false,
-              onChanged: (value) {},
-            ),
-            Expanded(
-              child: Text(
-                'I agree to the Terms & Conditions and Privacy Policy',
-                style: TextStyle(
-                  color: Color(0xFF404957),
-                  fontSize: 14,
-                ),
+          SizedBox(width: 80),
+          Expanded(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  _buildFormField('Full Name', _nameController, false),
+                  SizedBox(height: 20),
+                  _buildFormField('Email Address', _emailController, false),
+                  SizedBox(height: 20),
+                  _buildFormField('Phone Number', _phoneController, false),
+                  SizedBox(height: 20),
+                  _buildFormField('Message', _messageController, true),
+                  SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _isSubmitting ? null : _submitForm,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF5886BF),
+                        disabledBackgroundColor: Colors.grey,
+                      ),
+                      child: _isSubmitting
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              ),
+                            )
+                          : Text(
+                              'Send Message',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                    ),
+                  ),
+                ],
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormField(String label, TextEditingController controller, bool isMultiline) {
+    return TextFormField(
+      controller: controller,
+      maxLines: isMultiline ? 5 : 1,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Color(0xFF5886BF), width: 2),
+        ),
+        labelStyle: TextStyle(color: Color(0xFF707781)),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'This field is required';
+        }
+        if (label == 'Email Address' && !value.contains('@')) {
+          return 'Please enter a valid email';
+        }
+        return null;
+      },
+    );
+  }
+
+  Future<void> _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isSubmitting = true);
+
+      // Simulate API call
+      await Future.delayed(Duration(seconds: 1));
+
+      setState(() => _isSubmitting = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Message sent successfully!'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 3),
+        ),
+      );
+
+      _nameController.clear();
+      _emailController.clear();
+      _phoneController.clear();
+      _messageController.clear();
+    }
+  }
+
+  Widget _buildContactInfo(dynamic settings) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFF0F4F9),
+            Color(0xFFE8EFF7),
           ],
         ),
-        SizedBox(height: 30),
-        ElevatedButton.icon(
-          onPressed: () {},
-          icon: Icon(Icons.send),
-          label: Text('Send Message',
+      ),
+      child: Column(
+        children: [
+          Text(
+            'OUR CONTACT INFORMATION',
             style: TextStyle(
-              fontSize: 18,
+              color: Color(0xFF5886BF),
+              fontSize: 14,
+              letterSpacing: 3.5,
               fontWeight: FontWeight.w600,
             ),
           ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFF5886BF),
-            foregroundColor: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-            minimumSize: Size(double.infinity, 60),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildContactInfoCard() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(30),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Contact Information',
-              style: TextStyle(
-                color: Color(0xFF0B131E),
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(height: 30),
-            _buildContactInfoItem(Icons.location_on, 'Address', 'Nairobi, Kenya'),
-            SizedBox(height: 20),
-            _buildContactInfoItem(Icons.phone, 'Phone', '+254 714 272 082'),
-            SizedBox(height: 20),
-            _buildContactInfoItem(Icons.email, 'Email', 'info@pmadol.com'),
-            SizedBox(height: 20),
-            _buildContactInfoItem(Icons.access_time, 'Working Hours', 
-              'Mon-Sat: 8AM - 10PM\nSunday: 10AM - 8PM'),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContactInfoItem(IconData icon, String title, String info) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Color(0xFFF5F9FF),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, color: Color(0xFF5886BF), size: 24),
-        ),
-        SizedBox(width: 15),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          SizedBox(height: 60),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Text(title,
-                style: TextStyle(
-                  color: Color(0xFF404957),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+              _buildContactCard(
+                Icons.phone,
+                'Phone',
+                settings.phone,
+                () => _launchUrl('tel:${settings.phone}'),
               ),
-              SizedBox(height: 5),
-              Text(info,
-                style: TextStyle(
-                  color: Color(0xFF0B131E),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+              _buildContactCard(
+                Icons.email,
+                'Email',
+                settings.email,
+                () => _launchUrl('mailto:${settings.email}'),
+              ),
+              _buildContactCard(
+                Icons.location_on,
+                'Address',
+                settings.address,
+                () {},
+              ),
+              _buildContactCard(
+                Icons.schedule,
+                'Working Hours',
+                'Mon-Sat: 8AM-10PM\nSun: 10AM-8PM',
+                () {},
               ),
             ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildSocialMediaCard() {
-    return Card(
-      elevation: 4,
-      color: Color(0xFF5886BF),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Padding(
+  Widget _buildContactCard(
+    IconData icon,
+    String title,
+    String value,
+    VoidCallback onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 220,
         padding: EdgeInsets.all(30),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
         child: Column(
           children: [
-            Text('Follow Us',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: Color(0xFF5886BF).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(30),
               ),
+              child: Icon(icon, color: Color(0xFF5886BF), size: 30),
             ),
             SizedBox(height: 20),
             Text(
-              'Stay connected with us on social media for the latest updates, news, and chess tips.',
+              title,
+              style: TextStyle(
+                color: Color(0xFF0B131E),
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(height: 15),
+            Text(
+              value,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white,
+                color: Color(0xFF707781),
                 fontSize: 14,
                 height: 1.6,
               ),
             ),
-            SizedBox(height: 30),
-            Wrap(
-              spacing: 15,
-              runSpacing: 15,
-              alignment: WrapAlignment.center,
-              children: [
-                _buildSocialButton(Icons.facebook, 'Facebook'),
-                _buildSocialButton(Icons.camera_alt, 'Instagram'),
-                _buildSocialButton(Icons.chat, 'Twitter'),
-                _buildSocialButton(Icons.play_circle_fill, 'YouTube'),
-                _buildSocialButton(Icons.link, 'LinkedIn'),
-              ],
-            ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildSocialButton(IconData icon, String label) {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: Color(0xFF5886BF), size: 28),
-        ),
-        SizedBox(height: 8),
-        Text(label,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-          ),
-        ),
-      ],
     );
   }
 
   Widget _buildMapSection() {
     return Container(
       height: 400,
-      color: Color(0xFFF5F9FF),
-      child: Stack(
-        children: [
-          // Placeholder for map - replace with actual map integration
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/map_placeholder.jpg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Center(
-            child: Container(
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [
+            Color(0xFF5886BF),
+            Color(0xFF3D5A8F),
+          ],
+        ),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.map, size: 80, color: Colors.white),
+            SizedBox(height: 20),
+            Text(
+              'Map View Coming Soon',
+              style: TextStyle(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 10,
-                    offset: Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.location_on, color: Color(0xFF5886BF), size: 40),
-                  SizedBox(height: 10),
-                  Text('Visit Our Location',
-                    style: TextStyle(
-                      color: Color(0xFF0B131E),
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Text('Nairobi, Kenya',
-                    style: TextStyle(
-                      color: Color(0xFF404957),
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
               ),
             ),
-          ),
-        ],
+            SizedBox(height: 10),
+            Text(
+              'Visit us at our location in Nairobi',
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.8),
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildFooter() {
-    return Container(
-      color: Color(0xFF0B131E),
-      padding: EdgeInsets.all(80),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildFooterStat(Icons.schedule, 'Quick Response', 'Within 24 hours'),
-              _buildFooterStat(Icons.support_agent, 'Expert Support', 'Dedicated team'),
-              _buildFooterStat(Icons.verified, 'Trusted Service', '9+ years experience'),
-            ],
-          ),
-          SizedBox(height: 50),
-          Divider(color: Colors.white24),
-          SizedBox(height: 20),
-          Text('© 2025 PMadol Chess Club. All rights reserved.',
-            style: TextStyle(color: Color(0xFFF4F6F7), fontSize: 14)),
-        ],
-      ),
-    );
+  Future<void> _launchUrl(String urlString) async {
+    try {
+      final Uri url = Uri.parse(urlString);
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url);
+      }
+    } catch (e) {
+      print('Error launching URL: $e');
+    }
   }
 
-  Widget _buildFooterStat(IconData icon, String title, String subtitle) {
-    return Column(
-      children: [
-        Icon(icon, color: Color(0xFF5886BF), size: 50),
-        SizedBox(height: 15),
-        Text(title,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        SizedBox(height: 5),
-        Text(subtitle,
-          style: TextStyle(
-            color: Color(0xFFF4F6F7),
-            fontSize: 14,
-          ),
-        ),
-      ],
-    );
-  }
 }

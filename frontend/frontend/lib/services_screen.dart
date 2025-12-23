@@ -1,21 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/service_provider.dart';
+import 'providers/home_provider.dart';
+import 'widgets/footer_widget.dart';
+import 'config/api_config.dart';
 
-class ServicesScreen extends StatelessWidget {
+class ServicesScreen extends StatefulWidget {
   const ServicesScreen({Key? key}) : super(key: key);
 
   @override
+  State<ServicesScreen> createState() => _ServicesScreenState();
+}
+
+class _ServicesScreenState extends State<ServicesScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  void _loadData() {
+    Future.microtask(() {
+      context.read<ServiceProvider>().loadServices();
+      context.read<HomeProvider>().loadHomeData();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildPageHeader(),
-          _buildServicesIntro(),
-          _buildServicesGrid(),
-          _buildPricingSection(),
-          _buildCTASection(),
-          _buildFooter(),
-        ],
-      ),
+    return Consumer2<ServiceProvider, HomeProvider>(
+      builder: (context, serviceProvider, homeProvider, child) {
+        if (serviceProvider.isLoading || homeProvider.isLoading) {
+          return Center(
+            child: CircularProgressIndicator(color: Color(0xFF5886BF)),
+          );
+        }
+
+        final services = serviceProvider.services;
+        final homeData = homeProvider.homeData;
+        
+        if (homeData == null) {
+          return Center(child: Text('No data available'));
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildPageHeader(),
+              _buildServicesIntro(),
+              _buildServicesGrid(services),
+              _buildPricingSection(),
+              _buildCTASection(),
+              FooterWidget(settings: homeData.siteSettings),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -62,6 +102,16 @@ class ServicesScreen extends StatelessWidget {
   Widget _buildServicesIntro() {
     return Container(
       padding: EdgeInsets.all(80),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFFF0F4F9),
+            Color(0xFFFFFFFF),
+          ],
+        ),
+      ),
       child: Column(
         children: [
           Text(
@@ -78,79 +128,133 @@ class ServicesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildServicesGrid() {
+  Widget _buildServicesGrid(List services) {
+    if (services.isEmpty) {
+      return Container(
+        padding: EdgeInsets.all(80),
+        child: Center(
+          child: Text(
+            'No services available at the moment',
+            style: TextStyle(fontSize: 18, color: Color(0xFF707781)),
+          ),
+        ),
+      );
+    }
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 80, vertical: 40),
-      child: GridView.count(
+      child: GridView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        crossAxisCount: 3,
-        crossAxisSpacing: 30,
-        mainAxisSpacing: 30,
-        childAspectRatio: 0.75,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 30,
+          mainAxisSpacing: 30,
+          childAspectRatio: 0.85,
+        ),
+        itemCount: services.length,
+        itemBuilder: (context, index) {
+          final service = services[index];
+          return _buildServiceCard(service);
+        },
+      ),
+    );
+  }
+
+  Widget _buildServiceCard(dynamic service) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 15,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildDetailedServiceCard(
-            Icons.person,
-            'Private Lessons',
-            'One-on-one personalized chess coaching',
-            'Get individualized attention from our expert coaches. We tailor lessons to your skill level and learning pace, focusing on areas that need improvement. Perfect for rapid skill development.',
-            ['Customized learning plan', 'Flexible scheduling', 'Progress tracking', 'Game analysis'],
-          ),
-          _buildDetailedServiceCard(
-            Icons.school,
-            'Chess in Schools',
-            'Comprehensive school chess programs',
-            'We bring chess education to schools with structured curricula combining chess with mathematics and reading skills. Our programs enhance critical thinking and academic performance.',
-            ['Curriculum development', 'Trained instructors', 'Student assessments', 'School tournaments'],
-          ),
-          _buildDetailedServiceCard(
-            Icons.groups,
-            'Group Sessions',
-            'Interactive group training',
-            'Join our weekend and holiday group sessions where players learn together, share strategies, and build friendships. Group dynamics create a motivating learning environment.',
-            ['Weekend classes', 'Holiday camps', 'Peer learning', 'Team building'],
-          ),
-          _buildDetailedServiceCard(
-            Icons.laptop,
-            'Online Classes',
-            'Virtual chess training',
-            'Access world-class chess education from anywhere. Our online platform provides interactive lessons, practice puzzles, and live coaching sessions with screen sharing and analysis tools.',
-            ['Live interactive sessions', 'Recorded lessons', 'Online tournaments', 'Digital resources'],
-          ),
-          _buildDetailedServiceCard(
-            Icons.emoji_events,
-            'Tournaments',
-            'Competitive chess events',
-            'Participate in regular tournaments ranging from rapid chess to classical formats. Gain valuable competitive experience and earn ratings under official chess federations.',
-            ['Regular competitions', 'Rating opportunities', 'Prize categories', 'All skill levels'],
-          ),
-          _buildDetailedServiceCard(
-            Icons.supervised_user_circle,
-            'Mentorship Programs',
-            'Long-term player development',
-            'Our mentorship programs provide ongoing guidance beyond regular lessons. Mentors help develop strategic thinking, competitive mindset, and lifelong chess appreciation.',
-            ['Experienced mentors', 'Career guidance', 'College prep support', 'Life skills development'],
-          ),
-          _buildDetailedServiceCard(
-            Icons.library_books,
-            'Chess Library',
-            'Extensive learning resources',
-            'Access our comprehensive collection of chess books, magazines, and digital resources. From opening theory to endgame studies, find materials for every aspect of the game.',
-            ['Classic chess books', 'Modern publications', 'Magazine archives', 'Video library'],
-          ),
-          _buildDetailedServiceCard(
-            Icons.shopping_bag,
-            'Chess Equipment',
-            'Quality chess gear',
-            'Purchase or rent high-quality chess sets, clocks, and accessories. We stock tournament-standard equipment and unique collector\'s items for enthusiasts.',
-            ['Tournament sets', 'Digital clocks', 'Chess boards', 'Books & accessories'],
-          ),
-          _buildDetailedServiceCard(
-            Icons.event,
-            'Workshops & Seminars',
-            'Specialized learning sessions',
-            'Attend intensive workshops on specific topics like opening theory, endgame techniques, or tactical patterns. Guest speakers and grandmasters share insights and strategies.',
-            ['Expert speakers', 'Focused topics', 'Interactive sessions', 'Certificate programs'],
+          if (service.image != null)
+            Container(
+              height: 180,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                image: DecorationImage(
+                  image: NetworkImage('${ApiConfig.baseUrl}${service.image}'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            )
+          else
+            Container(
+              height: 180,
+              decoration: BoxDecoration(
+                color: Color(0xFF5886BF).withOpacity(0.1),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              child: Center(
+                child: Icon(Icons.school, size: 60, color: Color(0xFF5886BF)),
+              ),
+            ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    service.name,
+                    style: TextStyle(
+                      color: Color(0xFF0B131E),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 12),
+                  Expanded(
+                    child: Text(
+                      service.description,
+                      style: TextStyle(
+                        color: Color(0xFF707781),
+                        fontSize: 14,
+                        height: 1.6,
+                      ),
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (service.duration != null && service.duration.isNotEmpty)
+                        Text(
+                          service.duration,
+                          style: TextStyle(
+                            color: Color(0xFF5886BF),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      if (service.price != null)
+                        Text(
+                          'KES ${service.price.toStringAsFixed(0)}',
+                          style: TextStyle(
+                            color: Color(0xFF0B131E),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -408,17 +512,6 @@ class ServicesScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildFooter() {
-    return Container(
-      color: Color(0xFF0B131E),
-      padding: EdgeInsets.all(80),
-      child: Center(
-        child: Text('© 2025 PMadol Chess Club. All rights reserved.',
-          style: TextStyle(color: Color(0xFFF4F6F7), fontSize: 14)),
       ),
     );
   }

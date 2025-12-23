@@ -13,6 +13,12 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class HeroSlideSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HeroSlide
+        fields = '__all__'
+
+
 class StatisticsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Statistics
@@ -64,8 +70,20 @@ class AboutContentSerializer(serializers.ModelSerializer):
 
 
 class HomePageDataSerializer(serializers.Serializer):
-    site_settings = SiteSettingsSerializer()
-    statistics = StatisticsSerializer()
-    testimonials = TestimonialSerializer(many=True)
-    partners = PartnerSerializer(many=True)
+    """Combined serializer for homepage data from multiple models"""
+    site_settings = SiteSettingsSerializer(read_only=True)
+    statistics = StatisticsSerializer(read_only=True)
+    testimonials = TestimonialSerializer(many=True, read_only=True)
+    partners = PartnerSerializer(many=True, read_only=True)
+    hero_slides = HeroSlideSerializer(many=True, read_only=True)
+    
+    def to_representation(self, instance):
+        """Override to_representation to properly handle mixed data types"""
+        return {
+            'site_settings': SiteSettingsSerializer(instance['site_settings']).data,
+            'statistics': StatisticsSerializer(instance['statistics']).data,
+            'testimonials': TestimonialSerializer(instance['testimonials'], many=True).data,
+            'partners': PartnerSerializer(instance['partners'], many=True).data,
+            'hero_slides': HeroSlideSerializer(instance['hero_slides'], many=True).data,
+        }
 

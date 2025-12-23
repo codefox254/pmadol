@@ -88,16 +88,26 @@ class CoreValueViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class HomePageViewSet(viewsets.ViewSet):
-    """Combined endpoint for homepage"""
+    """Combined endpoint for homepage - aggregates data from multiple models"""
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    
     def list(self, request):
-        data = {
-            'site_settings': SiteSettings.get_settings(),
-            'statistics': Statistics.get_stats(),
-            'testimonials': Testimonial.objects.filter(is_active=True, is_featured=True)[:3],
-            'partners': Partner.objects.filter(is_active=True),
-        }
-        serializer = HomePageDataSerializer(data)
-        return Response(serializer.data)
+        """Get all homepage data in one request"""
+        try:
+            data = {
+                'site_settings': SiteSettings.get_settings(),
+                'statistics': Statistics.get_stats(),
+                'testimonials': Testimonial.objects.filter(is_active=True, is_featured=True)[:3],
+                'partners': Partner.objects.filter(is_active=True),
+                'hero_slides': HeroSlide.objects.filter(is_active=True),
+            }
+            serializer = HomePageDataSerializer(data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to load homepage data: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 

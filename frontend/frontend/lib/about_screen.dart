@@ -1,27 +1,89 @@
+// ============================================
+// lib/about_screen.dart - Modern Dynamic API-Driven
+// ============================================
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/home_provider.dart';
+import 'widgets/footer_widget.dart';
 
-class AboutScreen extends StatelessWidget {
+class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
 
   @override
+  State<AboutScreen> createState() => _AboutScreenState();
+}
+
+class _AboutScreenState extends State<AboutScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  void _loadData() {
+    Future.microtask(() {
+      context.read<HomeProvider>().loadHomeData();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildPageHeader(),
-          _buildAboutContent(),
-          _buildMissionVision(),
-          _buildCoreValues(),
-          _buildTeamSection(),
-          _buildFooter(),
-        ],
+    return Consumer<HomeProvider>(
+      builder: (context, homeProvider, child) {
+        if (homeProvider.isLoading) {
+          return Center(
+            child: CircularProgressIndicator(color: Color(0xFF5886BF)),
+          );
+        }
+
+        if (homeProvider.error != null) {
+          return _buildErrorWidget();
+        }
+
+        final homeData = homeProvider.homeData;
+        if (homeData == null) {
+          return Center(child: Text('No data available'));
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildPageHeader(homeData.siteSettings),
+              _buildAboutContent(),
+              _buildMissionVision(),
+              _buildCoreValues(),
+              _buildTeamSection(),
+              FooterWidget(settings: homeData.siteSettings),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildErrorWidget() {
+    return Center(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 80, color: Colors.red),
+            SizedBox(height: 20),
+            Text('Failed to load content', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _loadData,
+              child: Text('Retry'),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildPageHeader() {
+  Widget _buildPageHeader(dynamic settings) {
     return Container(
-      height: 300,
+      height: 350,
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/about_header.jpg'),
@@ -35,20 +97,31 @@ class AboutScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('ABOUT US',
+                Text(
+                  'OUR STORY',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
                     letterSpacing: 3.5,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 SizedBox(height: 15),
-                Text('PMadol Chess Club',
+                Text(
+                  settings.siteName,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 56,
-                    fontWeight: FontWeight.w400,
+                    fontSize: 52,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  settings.tagline,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 18,
                   ),
                 ),
               ],
@@ -61,63 +134,90 @@ class AboutScreen extends StatelessWidget {
 
   Widget _buildAboutContent() {
     return Container(
-      padding: EdgeInsets.all(80),
-      child: Row(
+      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFF0F4F9),
+            Color(0xFFE8EFF7),
+          ],
+        ),
+      ),
+      child: Column(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('OUR STORY',
-                  style: TextStyle(
-                    color: Color(0xFF283D57),
-                    fontSize: 14,
-                    letterSpacing: 3.5,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                SizedBox(height: 15),
-                Text('Building Champions Since 2016',
-                  style: TextStyle(
-                    color: Color(0xFF0B131E),
-                    fontSize: 48,
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: -1,
-                  ),
-                ),
-                SizedBox(height: 30),
-                Text(
-                  'PMadol Chess Club was founded with a vision to create a nurturing environment where chess enthusiasts of all ages could develop their skills, strategic thinking, and passion for the game. Over the years, we have grown into one of Kenya\'s most progressive chess clubs.',
-                  style: TextStyle(
-                    color: Color(0xFF404957),
-                    fontSize: 18,
-                    height: 1.8,
-                  ),
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'Our journey began in the heart of Nairobi, with a small group of dedicated chess players who shared a common dream – to make chess accessible to everyone. Today, we are proud to have trained hundreds of students, won numerous accolades, and built a vibrant community of strategic thinkers.',
-                  style: TextStyle(
-                    color: Color(0xFF404957),
-                    fontSize: 18,
-                    height: 1.8,
-                  ),
-                ),
-              ],
+          Text(
+            'WHO WE ARE',
+            style: TextStyle(
+              color: Color(0xFF5886BF),
+              fontSize: 14,
+              letterSpacing: 3.5,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(width: 60),
-          Expanded(
-            child: Container(
-              height: 500,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                image: DecorationImage(
-                  image: AssetImage('assets/images/about_story.jpg'),
-                  fit: BoxFit.cover,
+          SizedBox(height: 20),
+          Text(
+            'Dedicated to Chess Excellence',
+            style: TextStyle(
+              color: Color(0xFF0B131E),
+              fontSize: 48,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          SizedBox(height: 40),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Our Journey',
+                      style: TextStyle(
+                        color: Color(0xFF283D57),
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'Since our founding, PMadol Chess Club has been dedicated to developing '
+                      'world-class chess players and promoting the game at all levels. Our comprehensive '
+                      'programs and experienced coaches have helped hundreds of students achieve their chess goals.',
+                      style: TextStyle(
+                        color: Color(0xFF707781),
+                        fontSize: 16,
+                        height: 1.8,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'We believe chess develops critical thinking, strategic planning, and discipline. '
+                      'Our mission is to make quality chess education accessible to everyone.',
+                      style: TextStyle(
+                        color: Color(0xFF707781),
+                        fontSize: 16,
+                        height: 1.8,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
+              SizedBox(width: 60),
+              Expanded(
+                child: Container(
+                  height: 400,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/hero_bg.jpg'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -126,71 +226,70 @@ class AboutScreen extends StatelessWidget {
 
   Widget _buildMissionVision() {
     return Container(
-      padding: EdgeInsets.all(80),
-      color: Color(0xFFF5F9FF),
+      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [
+            Color(0xFF5886BF),
+            Color(0xFF3D5A8F),
+          ],
+        ),
+      ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Expanded(
-            child: Card(
-              elevation: 4,
-              child: Padding(
-                padding: EdgeInsets.all(40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.flag, color: Color(0xFF5886BF), size: 50),
-                    SizedBox(height: 20),
-                    Text('Our Mission',
-                      style: TextStyle(
-                        color: Color(0xFF0B131E),
-                        fontSize: 32,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      'To foster a vibrant and inclusive chess community that nurtures the intellectual and personal growth of players at all levels. We are committed to providing high-quality coaching, organizing competitive tournaments, and creating opportunities for lifelong learning through the game of chess.',
-                      style: TextStyle(
-                        color: Color(0xFF404957),
-                        fontSize: 16,
-                        height: 1.8,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            child: _buildMissionVisionCard(
+              'MISSION',
+              'To provide world-class chess education that develops strategic thinking, discipline, '
+              'and competitive excellence in our students.',
+              Icons.flag,
             ),
           ),
-          SizedBox(width: 30),
+          SizedBox(width: 40),
           Expanded(
-            child: Card(
-              elevation: 4,
-              child: Padding(
-                padding: EdgeInsets.all(40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.visibility, color: Color(0xFF5886BF), size: 50),
-                    SizedBox(height: 20),
-                    Text('Our Vision',
-                      style: TextStyle(
-                        color: Color(0xFF0B131E),
-                        fontSize: 32,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      'To become a leading chess club in East Africa that inspires excellence, nurtures talents, and builds a strong inclusive community of strategic thinkers. We envision a future where chess is accessible to all, empowering individuals with critical thinking skills and fostering a culture of continuous improvement.',
-                      style: TextStyle(
-                        color: Color(0xFF404957),
-                        fontSize: 16,
-                        height: 1.8,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            child: _buildMissionVisionCard(
+              'VISION',
+              'To be the leading chess academy in East Africa, recognized for producing champions '
+              'and fostering a vibrant chess community.',
+              Icons.visibility,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMissionVisionCard(String title, String content, IconData icon) {
+    return Container(
+      padding: EdgeInsets.all(40),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: Colors.white, size: 40),
+          SizedBox(height: 20),
+          Text(
+            title,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          SizedBox(height: 15),
+          Text(
+            content,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.9),
+              fontSize: 15,
+              height: 1.7,
             ),
           ),
         ],
@@ -200,40 +299,62 @@ class AboutScreen extends StatelessWidget {
 
   Widget _buildCoreValues() {
     return Container(
-      padding: EdgeInsets.all(80),
+      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFFFFFFF),
+            Color(0xFFF8FAFC),
+          ],
+        ),
+      ),
       child: Column(
         children: [
-          Text('OUR PRINCIPLES',
+          Text(
+            'OUR VALUES',
             style: TextStyle(
-              color: Color(0xFF283D57),
+              color: Color(0xFF5886BF),
               fontSize: 14,
               letterSpacing: 3.5,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 15),
-          Text('Core Values',
+          SizedBox(height: 20),
+          Text(
+            'What Guides Us',
             style: TextStyle(
               color: Color(0xFF0B131E),
               fontSize: 48,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w700,
             ),
           ),
           SizedBox(height: 60),
-          GridView.count(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            crossAxisCount: 3,
-            crossAxisSpacing: 30,
-            mainAxisSpacing: 30,
-            childAspectRatio: 1.2,
+          Wrap(
+            spacing: 30,
+            runSpacing: 30,
             children: [
-              _buildValueCard(Icons.school, 'Excellence', 'We strive for the highest standards in coaching, competition, and personal development.'),
-              _buildValueCard(Icons.diversity_3, 'Inclusivity', 'We welcome players of all ages, backgrounds, and skill levels in our community.'),
-              _buildValueCard(Icons.handshake, 'Integrity', 'We promote fair play, honesty, and respect in every game and interaction.'),
-              _buildValueCard(Icons.psychology, 'Innovation', 'We embrace new teaching methods and technologies to enhance learning.'),
-              _buildValueCard(Icons.groups, 'Community', 'We foster strong relationships and mutual support among all members.'),
-              _buildValueCard(Icons.trending_up, 'Growth', 'We encourage continuous learning and improvement at every level.'),
+              _buildValueCard(
+                'Excellence',
+                'Pursuing the highest standards in everything we do',
+                Icons.star,
+              ),
+              _buildValueCard(
+                'Integrity',
+                'Operating with honesty and strong moral principles',
+                Icons.handshake,
+              ),
+              _buildValueCard(
+                'Community',
+                'Building a supportive network of chess enthusiasts',
+                Icons.people,
+              ),
+              _buildValueCard(
+                'Innovation',
+                'Embracing new methods and technologies in teaching',
+                Icons.lightbulb,
+              ),
             ],
           ),
         ],
@@ -241,100 +362,141 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildValueCard(IconData icon, String title, String description) {
-    return Card(
-      elevation: 3,
-      child: Padding(
-        padding: EdgeInsets.all(30),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: Color(0xFF5886BF), size: 50),
-            SizedBox(height: 20),
-            Text(title,
-              style: TextStyle(
-                color: Color(0xFF0B131E),
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(height: 15),
-            Text(description,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Color(0xFF404957),
-                fontSize: 15,
-                height: 1.6,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTeamSection() {
+  Widget _buildValueCard(String title, String description, IconData icon) {
     return Container(
-      padding: EdgeInsets.all(80),
-      color: Color(0xFFF5F9FF),
+      width: 220,
+      padding: EdgeInsets.all(30),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         children: [
-          Text('MEET THE TEAM',
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Color(0xFF5886BF).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Icon(icon, color: Color(0xFF5886BF), size: 30),
+          ),
+          SizedBox(height: 20),
+          Text(
+            title,
+            textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFF283D57),
-              fontSize: 14,
-              letterSpacing: 3.5,
-              fontWeight: FontWeight.w400,
+              color: Color(0xFF0B131E),
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
             ),
           ),
           SizedBox(height: 15),
-          Text('Our Expert Coaches',
+          Text(
+            description,
+            textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFF0B131E),
-              fontSize: 48,
-              fontWeight: FontWeight.w400,
+              color: Color(0xFF707781),
+              fontSize: 14,
+              height: 1.6,
             ),
-          ),
-          SizedBox(height: 60),
-          GridView.count(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            crossAxisCount: 4,
-            crossAxisSpacing: 30,
-            mainAxisSpacing: 30,
-            children: List.generate(8, (index) {
-              return _buildTeamMember('Coach ${index + 1}', 'Chess Master');
-            }),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTeamMember(String name, String role) {
-    return Card(
-      elevation: 3,
+  Widget _buildTeamSection() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFF0F4F9),
+            Color(0xFFE8EFF7),
+          ],
+        ),
+      ),
       child: Column(
         children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(4),
-                  topRight: Radius.circular(4),
-                ),
-                image: DecorationImage(
-                  image: AssetImage('assets/images/coach_placeholder.jpg'),
-                  fit: BoxFit.cover,
-                ),
-              ),
+          Text(
+            'OUR TEAM',
+            style: TextStyle(
+              color: Color(0xFF5886BF),
+              fontSize: 14,
+              letterSpacing: 3.5,
+              fontWeight: FontWeight.w600,
             ),
           ),
+          SizedBox(height: 20),
+          Text(
+            'Expert Coaches & Instructors',
+            style: TextStyle(
+              color: Color(0xFF0B131E),
+              fontSize: 48,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          SizedBox(height: 60),
+          Wrap(
+            spacing: 30,
+            runSpacing: 30,
+            alignment: WrapAlignment.center,
+            children: [
+              _buildTeamMemberCard('John Kipchoge', 'Head Coach', 'Grandmaster'),
+              _buildTeamMemberCard('Jane Mwangi', 'Coach', 'International Master'),
+              _buildTeamMemberCard('David Ochieng', 'Coach', 'FIDE Master'),
+              _buildTeamMemberCard('Sarah Kiplagat', 'Assistant Coach', 'Expert'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTeamMemberCard(String name, String role, String title) {
+    return Container(
+      width: 240,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            height: 200,
+            decoration: BoxDecoration(
+              color: Color(0xFF5886BF).withOpacity(0.1),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
+            child: Icon(Icons.person, size: 80, color: Color(0xFF5886BF)),
+          ),
           Padding(
-            padding: EdgeInsets.all(15),
+            padding: EdgeInsets.all(20),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(name,
+                Text(
+                  name,
                   style: TextStyle(
                     color: Color(0xFF0B131E),
                     fontSize: 18,
@@ -342,10 +504,21 @@ class AboutScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 5),
-                Text(role,
+                Text(
+                  role,
                   style: TextStyle(
-                    color: Color(0xFF404957),
+                    color: Color(0xFF5886BF),
                     fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: Color(0xFF707781),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ],
@@ -353,105 +526,6 @@ class AboutScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildFooter() {
-    return Container(
-      color: Color(0xFF0B131E),
-      padding: EdgeInsets.all(80),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 60,
-                      width: 200,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/Panchol-Madol-Chess-Club-Logo.png'),
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 30),
-                    Text(
-                      'PMadol Chess Club coaching aim to broaden the horizons of young minds through chess.',
-                      style: TextStyle(
-                        color: Color(0xFFF4F6F7),
-                        fontSize: 16,
-                        height: 1.6,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(width: 60),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Quick Links',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    _buildFooterLink('Home'),
-                    _buildFooterLink('About Us'),
-                    _buildFooterLink('Services'),
-                    _buildFooterLink('Gallery'),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Contact Info',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text('+254 714 272 082',
-                      style: TextStyle(color: Color(0xFFF4F6F7), fontSize: 16)),
-                    SizedBox(height: 10),
-                    Text('info@pmadol.com',
-                      style: TextStyle(color: Color(0xFFF4F6F7), fontSize: 16)),
-                    SizedBox(height: 10),
-                    Text('Nairobi - Kenya',
-                      style: TextStyle(color: Color(0xFFF4F6F7), fontSize: 16)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 50),
-          Divider(color: Colors.white24),
-          SizedBox(height: 20),
-          Text('© 2025 PMadol Chess Club. All rights reserved.',
-            style: TextStyle(color: Color(0xFFF4F6F7), fontSize: 14)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFooterLink(String text) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 10),
-      child: Text(text,
-        style: TextStyle(color: Color(0xFFF4F6F7), fontSize: 16)),
     );
   }
 }

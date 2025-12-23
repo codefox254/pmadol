@@ -79,3 +79,11 @@ class CoreValueAdmin(admin.ModelAdmin):
     list_editable = ['is_active', 'display_order']
 
 
+@admin.register(HeroSlide)
+class HeroSlideAdmin(admin.ModelAdmin):
+    list_display = ['title', 'is_active', 'display_order', 'created_at']
+    list_filter = ['is_active']
+    search_fields = ['title', 'subtitle']
+    list_editable = ['is_active', 'display_order']
+
+

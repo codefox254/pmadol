@@ -22,6 +22,7 @@ class SiteSettings(models.Model):
     twitter_url = models.URLField(blank=True, null=True)
     youtube_url = models.URLField(blank=True, null=True)
     linkedin_url = models.URLField(blank=True, null=True)
+    map_url = models.URLField(blank=True, null=True, help_text="Google Maps location URL for the academy")
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
@@ -39,6 +40,23 @@ class SiteSettings(models.Model):
     def get_settings(cls):
         obj, created = cls.objects.get_or_create(pk=1)
         return obj
+
+
+class HeroSlide(models.Model):
+    """Images used for the homepage hero carousel"""
+    title = models.CharField(max_length=150, blank=True, default="")
+    subtitle = models.CharField(max_length=250, blank=True, default="")
+    image = models.ImageField(upload_to='hero/')
+    is_active = models.BooleanField(default=True)
+    display_order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['display_order', '-created_at']
+
+    def __str__(self):
+        return self.title or f"Hero Slide {self.pk}"
 
 
 class Statistics(models.Model):

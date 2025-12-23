@@ -1,4 +1,14 @@
+// ============================================
+// lib/main.dart - Updated with Provider
+// ============================================
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/home_provider.dart';
+import 'providers/auth_provider.dart';
+import 'providers/service_provider.dart';
+import 'providers/shop_provider.dart';
+import 'providers/blog_provider.dart';
+import 'providers/gallery_provider.dart';
 import 'home_screen.dart';
 import 'about_screen.dart' as about;
 import 'services_screen.dart' as services;
@@ -9,11 +19,23 @@ import 'shop_screen.dart' as shop;
 import 'contact_screen.dart' as contact;
 
 void main() {
-  runApp(const PMadolChessApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => HomeProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => ServiceProvider()),
+        ChangeNotifierProvider(create: (_) => ShopProvider()),
+        ChangeNotifierProvider(create: (_) => BlogProvider()),
+        ChangeNotifierProvider(create: (_) => GalleryProvider()),
+      ],
+      child: const PMadolChessApp(),
+    ),
+  );
 }
 
 class PMadolChessApp extends StatelessWidget {
-  const PMadolChessApp({Key? key}) : super(key: key);
+  const PMadolChessApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +51,6 @@ class PMadolChessApp extends StatelessWidget {
           primary: Color(0xFF5886BF),
         ),
       ),
-      initialRoute: '/',
       onGenerateRoute: (settings) {
         Widget page;
         switch (settings.name) {
@@ -188,3 +209,4 @@ class MainLayout extends StatelessWidget {
     );
   }
 }
+
