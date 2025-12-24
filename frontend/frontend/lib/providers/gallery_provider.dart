@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import '../models/gallery_models.dart';
-import '../services/api_service.dart';
+import '../config/api_config.dart';
 
 class GalleryProvider extends ChangeNotifier {
   List<GalleryItem> _items = [];
@@ -21,10 +23,25 @@ class GalleryProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _items = await ApiService().getGalleryItems();
-      _items.sort((a, b) => a.order.compareTo(b.order));
+      final url = Uri.parse('${ApiConfig.apiUrl}/gallery/items/');
+      final response = await http.get(url);
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final itemsList = data is List ? data : (data['results'] ?? []);
+        _items = (itemsList as List)
+            .map<GalleryItem>((json) => GalleryItem.fromJson(json))
+            .toList();
+        _items.sort((a, b) => a.order.compareTo(b.order));
+        _error = null;
+      } else {
+        _error = 'Failed to load gallery: ${response.statusCode}';
+        _items = [];
+      }
     } catch (e) {
       _error = e.toString();
+      _items = [];
+      print('Error loading gallery items: $e');
     } finally {
       _isLoading = false;
       notifyListeners();

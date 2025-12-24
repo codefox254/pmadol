@@ -9,6 +9,11 @@ import 'providers/service_provider.dart';
 import 'providers/shop_provider.dart';
 import 'providers/blog_provider.dart';
 import 'providers/gallery_provider.dart';
+import 'providers/team_provider.dart';
+import 'providers/cart_provider.dart';
+import 'providers/about_provider.dart';
+import 'providers/enrollment_provider.dart';
+import 'providers/tournament_provider.dart';
 import 'home_screen.dart';
 import 'about_screen.dart' as about;
 import 'services_screen.dart' as services;
@@ -17,6 +22,7 @@ import 'blog_screen.dart' as blog;
 import 'blog_detail_screen.dart' as blog_detail;
 import 'shop_screen.dart' as shop;
 import 'contact_screen.dart' as contact;
+import 'screens/tournaments_screen.dart' as tournaments;
 
 void main() {
   runApp(
@@ -28,6 +34,11 @@ void main() {
         ChangeNotifierProvider(create: (_) => ShopProvider()),
         ChangeNotifierProvider(create: (_) => BlogProvider()),
         ChangeNotifierProvider(create: (_) => GalleryProvider()),
+        ChangeNotifierProvider(create: (_) => TeamProvider()),
+        ChangeNotifierProvider(create: (_) => AboutProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => EnrollmentProvider()),
+        ChangeNotifierProvider(create: (_) => TournamentProvider()),
       ],
       child: const PMadolChessApp(),
     ),
@@ -62,6 +73,9 @@ class PMadolChessApp extends StatelessWidget {
             break;
           case '/services':
             page = services.ServicesScreen();
+            break;
+          case '/tournaments':
+            page = tournaments.TournamentsScreen();
             break;
           case '/gallery':
             page = gallery.GalleryScreen();
@@ -179,6 +193,7 @@ class MainLayout extends StatelessWidget {
               _buildNavItem(context, 'HOME', '/'),
               _buildNavItem(context, 'ABOUT', '/about'),
               _buildNavItem(context, 'SERVICES', '/services'),
+              _buildNavItem(context, 'TOURNAMENTS', '/tournaments'),
               _buildNavItem(context, 'GALLERY', '/gallery'),
               _buildNavItem(context, 'BLOG', '/blog'),
               _buildNavItem(context, 'SHOP', '/shop'),

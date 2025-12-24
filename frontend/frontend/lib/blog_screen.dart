@@ -4,6 +4,7 @@ import 'providers/blog_provider.dart';
 import 'providers/home_provider.dart';
 import 'widgets/footer_widget.dart';
 import 'config/api_config.dart';
+import 'models/blog_models.dart';
 
 class BlogScreen extends StatefulWidget {
   const BlogScreen({Key? key}) : super(key: key);
@@ -14,11 +15,24 @@ class BlogScreen extends StatefulWidget {
 
 class _BlogScreenState extends State<BlogScreen> {
   String selectedCategory = 'All';
+  final TextEditingController _searchController = TextEditingController();
+
+  String? _resolveImageUrl(String? path) {
+    if (path == null || path.isEmpty) return null;
+    if (path.startsWith('http')) return path;
+    return '${ApiConfig.baseUrl}$path';
+  }
 
   @override
   void initState() {
     super.initState();
     _loadData();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   void _loadData() {
@@ -30,31 +44,22 @@ class _BlogScreenState extends State<BlogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+
     return Consumer2<BlogProvider, HomeProvider>(
       builder: (context, blogProvider, homeProvider, child) {
-        if (blogProvider.isLoading || homeProvider.isLoading) {
-          return Center(child: CircularProgressIndicator(color: Color(0xFF5886BF)));
-        }
-
-        final posts = blogProvider.posts;
         final homeData = homeProvider.homeData;
-        
-        if (homeData == null) {
-          return Center(child: Text('No data available'));
-        }
-
-        final filteredPosts = selectedCategory == 'All'
-            ? posts
-            : posts.where((p) => p.categoryName == selectedCategory).toList();
 
         return SingleChildScrollView(
           child: Column(
             children: [
               _buildPageHeader(),
-              if (blogProvider.featuredPosts.isNotEmpty) _buildFeaturedPost(blogProvider.featuredPosts.first),
-              _buildCategoryFilter(posts),
-              _buildBlogGrid(filteredPosts),
-              FooterWidget(settings: homeData.siteSettings),
+              _buildSearchBar(isMobile, blogProvider),
+              _buildCategoryFilter(isMobile, blogProvider),
+              if (blogProvider.posts.isNotEmpty && !blogProvider.isLoading)
+                _buildFeaturedPost(isMobile, blogProvider.posts.first),
+              _buildBlogGrid(isMobile, blogProvider),
+              if (homeData != null) FooterWidget(settings: homeData.siteSettings),
             ],
           ),
         );
@@ -65,6 +70,7 @@ class _BlogScreenState extends State<BlogScreen> {
   Widget _buildPageHeader() {
     return Container(
       height: 300,
+      width: double.infinity,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -72,170 +78,471 @@ class _BlogScreenState extends State<BlogScreen> {
           colors: [Color(0xFF5886BF), Color(0xFF283D57)],
         ),
       ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('LATEST INSIGHTS', style: TextStyle(color: Colors.white, fontSize: 14, letterSpacing: 3.5)),
-            SizedBox(height: 15),
-            Text('Blog', style: TextStyle(color: Colors.white, fontSize: 56)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFeaturedPost(dynamic post) {
-    return Container(
-      margin: EdgeInsets.all(80),
-      height: 400,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        image: DecorationImage(
-          image: NetworkImage('${ApiConfig.baseUrl}${post.featuredImage}'),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
-          ),
-        ),
-        padding: EdgeInsets.all(40),
-        alignment: Alignment.bottomLeft,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(color: Color(0xFF5886BF), borderRadius: BorderRadius.circular(4)),
-              child: Text('FEATURED', style: TextStyle(color: Colors.white, fontSize: 12)),
-            ),
-            SizedBox(height: 15),
-            Text(post.title, style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w700)),
-            SizedBox(height: 10),
-            Text(post.excerpt, style: TextStyle(color: Colors.white70, fontSize: 16), maxLines: 2),
-            SizedBox(height: 15),
-            Row(
-              children: [
-                Icon(Icons.person, color: Colors.white70, size: 16),
-                SizedBox(width: 5),
-                Text(post.authorName, style: TextStyle(color: Colors.white70)),
-                SizedBox(width: 20),
-                Icon(Icons.calendar_today, color: Colors.white70, size: 16),
-                SizedBox(width: 5),
-                Text(post.publishedAt, style: TextStyle(color: Colors.white70)),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCategoryFilter(List posts) {
-    final categories = ['All', ...posts.map((p) => p.categoryName ?? 'Other').toSet()];
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 30, horizontal: 80),
-      color: Color(0xFFF8FAFC),
-      child: Wrap(
-        spacing: 15,
-        alignment: WrapAlignment.center,
-        children: categories.map((cat) {
-          final isSelected = selectedCategory == cat;
-          return GestureDetector(
-            onTap: () => setState(() => selectedCategory = cat),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: isSelected ? Color(0xFF5886BF) : Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(cat, style: TextStyle(color: isSelected ? Colors.white : Color(0xFF404957))),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildBlogGrid(List posts) {
-    if (posts.isEmpty) {
-      return Container(padding: EdgeInsets.all(80), child: Center(child: Text('No posts available')));
-    }
-
-    return Container(
-      padding: EdgeInsets.all(80),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 30,
-          mainAxisSpacing: 30,
-          childAspectRatio: 0.7,
-        ),
-        itemCount: posts.length,
-        itemBuilder: (context, index) => _buildBlogCard(posts[index]),
-      ),
-    );
-  }
-
-  Widget _buildBlogCard(dynamic post) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 10, offset: Offset(0, 4))],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              image: DecorationImage(
-                image: NetworkImage('${ApiConfig.baseUrl}${post.featuredImage}'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (post.categoryName != null)
-                    Text(post.categoryName, style: TextStyle(color: Color(0xFF5886BF), fontSize: 12)),
-                  SizedBox(height: 8),
-                  Text(post.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600), maxLines: 2),
-                  SizedBox(height: 8),
-                  Expanded(child: Text(post.excerpt, style: TextStyle(color: Color(0xFF707781)), maxLines: 3)),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Icon(Icons.visibility, size: 16, color: Color(0xFF707781)),
-                      SizedBox(width: 5),
-                      Text('${post.views}', style: TextStyle(color: Color(0xFF707781))),
-                      SizedBox(width: 15),
-                      Icon(Icons.comment, size: 16, color: Color(0xFF707781)),
-                      SizedBox(width: 5),
-                      Text('${post.commentsCount}', style: TextStyle(color: Color(0xFF707781))),
-                    ],
+          Container(color: Colors.black.withOpacity(0.2)),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'LATEST INSIGHTS',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    letterSpacing: 3.5,
+                    fontWeight: FontWeight.w400,
                   ),
-                ],
-              ),
+                ),
+                SizedBox(height: 15),
+                Text(
+                  'Blog',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 56,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Chess tips, tutorials, and community stories',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 18,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildSearchBar(bool isMobile, BlogProvider blogProvider) {
+    final horizontalPadding = isMobile ? 16.0 : 80.0;
+
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: horizontalPadding),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Color(0xFFF8FAFC),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Color(0xFFE8EFF7)),
+        ),
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: Icon(Icons.search, color: Color(0xFF707781), size: 20),
+            ),
+            Expanded(
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search blog posts...',
+                  hintStyle: TextStyle(color: Color(0xFFB0B8C1)),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(vertical: 12),
+                ),
+                onChanged: (query) {
+                  setState(() {});
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryFilter(bool isMobile, BlogProvider blogProvider) {
+    final posts = blogProvider.posts;
+    final categories = ['All', ...posts.map((p) => p.categoryName ?? 'Other').toSet()];
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: isMobile ? 20 : 30,
+        horizontal: isMobile ? 16 : 80,
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Wrap(
+          spacing: isMobile ? 10 : 15,
+          children: categories.map((category) {
+            final isSelected = selectedCategory == category;
+            return GestureDetector(
+              onTap: () {
+                setState(() => selectedCategory = category);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 16 : 24,
+                  vertical: isMobile ? 10 : 12,
+                ),
+                decoration: BoxDecoration(
+                  color: isSelected ? Color(0xFF5886BF) : Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(
+                    color: isSelected ? Color(0xFF5886BF) : Color(0xFFE8EFF7),
+                  ),
+                ),
+                child: Text(
+                  category,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Color(0xFF404957),
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                    fontSize: isMobile ? 12 : 14,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFeaturedPost(bool isMobile, BlogPost post) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 80,
+        vertical: 20,
+      ),
+      height: isMobile ? 250 : 400,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 15,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              image: post.featuredImage.isNotEmpty
+                  ? DecorationImage(
+                      image: NetworkImage(_resolveImageUrl(post.featuredImage)!),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
+              color: Color(0xFFF8FAFC),
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withOpacity(0.7),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            top: isMobile ? 12 : 20,
+            right: isMobile ? 12 : 20,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Color(0xFF5886BF),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                'Featured',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: isMobile ? 12 : 20,
+            left: isMobile ? 12 : 20,
+            right: isMobile ? 12 : 20,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  post.categoryName ?? 'News',
+                  style: TextStyle(
+                    color: Color(0xFFFFD700),
+                    fontSize: isMobile ? 11 : 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  post.title.isNotEmpty ? post.title : 'Untitled',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isMobile ? 16 : 24,
+                    fontWeight: FontWeight.w700,
+                    height: 1.2,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 8),
+                Text(
+                  post.excerpt.isNotEmpty ? post.excerpt : 'Read more... ',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: isMobile ? 12 : 14,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBlogGrid(bool isMobile, BlogProvider blogProvider) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 80,
+        vertical: 40,
+      ),
+      child: Consumer<BlogProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading) {
+            return Center(
+              child: CircularProgressIndicator(color: Color(0xFF5886BF)),
+            );
+          }
+
+          if (provider.error != null && provider.error!.isNotEmpty) {
+            return Center(
+              child: Padding(
+                padding: EdgeInsets.all(40),
+                child: Text(
+                  'Error loading posts: ${provider.error}',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            );
+          }
+
+          List<BlogPost> filteredPosts = selectedCategory == 'All'
+              ? provider.posts
+              : provider.posts
+                  .where((p) => p.categoryName == selectedCategory)
+                  .toList();
+
+          if (_searchController.text.isNotEmpty) {
+            final q = _searchController.text.toLowerCase();
+            filteredPosts = filteredPosts
+                .where((p) =>
+                    p.title.toLowerCase().contains(q) ||
+                    p.excerpt.toLowerCase().contains(q))
+                .toList();
+          }
+
+          if (filteredPosts.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: EdgeInsets.all(40),
+                child: Text(
+                  'No blog posts found',
+                  style: TextStyle(fontSize: 18, color: Color(0xFF707781)),
+                ),
+              ),
+            );
+          }
+
+          final gridColumns =
+              isMobile ? 1 : (MediaQuery.of(context).size.width > 1200 ? 3 : 2);
+
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: gridColumns,
+              crossAxisSpacing: isMobile ? 12 : 25,
+              mainAxisSpacing: isMobile ? 12 : 25,
+              childAspectRatio: isMobile ? 0.85 : 0.9,
+            ),
+            itemCount: filteredPosts.length,
+            itemBuilder: (context, index) {
+              return _buildBlogCard(filteredPosts[index], isMobile);
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildBlogCard(BlogPost post, bool isMobile) {
+    return GestureDetector(
+      onTap: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Read: ${post.title}')),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: isMobile ? 180 : 220,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                color: Color(0xFFF8FAFC),
+                image: post.featuredImage.isNotEmpty
+                    ? DecorationImage(
+                        image: NetworkImage(_resolveImageUrl(post.featuredImage)!),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
+              child: post.featuredImage.isEmpty
+                  ? Center(
+                      child: Icon(
+                        Icons.article_outlined,
+                        size: 50,
+                        color: Color(0xFF707781).withOpacity(0.3),
+                      ),
+                    )
+                  : null,
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        if (post.categoryName != null)
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Color(0xFF5886BF).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              post.categoryName!,
+                              style: TextStyle(
+                                color: Color(0xFF5886BF),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        SizedBox(width: 10),
+                        Text(
+                          _formatDate(post.publishedAt),
+                          style: TextStyle(
+                            color: Color(0xFF707781),
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Expanded(
+                      child: Text(
+                        post.title.isNotEmpty ? post.title : 'Untitled',
+                        style: TextStyle(
+                          color: Color(0xFF0B131E),
+                          fontSize: isMobile ? 15 : 17,
+                          fontWeight: FontWeight.w700,
+                          height: 1.3,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      post.excerpt,
+                      style: TextStyle(
+                        color: Color(0xFF707781),
+                        fontSize: 13,
+                        height: 1.4,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'By ${post.authorName.isNotEmpty ? post.authorName : 'Author'}',
+                          style: TextStyle(
+                            color: Color(0xFF94A3B8),
+                            fontSize: 12,
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Color(0xFF5886BF).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'Read More →',
+                            style: TextStyle(
+                              color: Color(0xFF5886BF),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return '';
+    try {
+      final date = DateTime.parse(dateStr);
+      final now = DateTime.now();
+      final diff = now.difference(date);
+
+      if (diff.inDays == 0) return 'Today';
+      if (diff.inDays == 1) return 'Yesterday';
+      if (diff.inDays < 7) return '${diff.inDays} days ago';
+      if (diff.inDays < 30) return '${(diff.inDays / 7).floor()} weeks ago';
+
+      return '${date.day}/${date.month}/${date.year}';
+    } catch (e) {
+      return '';
+    }
   }
 }

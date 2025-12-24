@@ -29,7 +29,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(ProductReview)
 class ProductReviewAdmin(admin.ModelAdmin):
-    list_display = ['user', 'product', 'rating', 'is_verified', 'created_at']
-    list_filter = ['rating', 'is_verified', 'created_at']
+    list_display = ['user', 'product', 'rating', 'is_verified_purchase', 'created_at']
+    list_filter = ['rating', 'is_verified_purchase', 'created_at']
 
 

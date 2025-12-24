@@ -10,6 +10,9 @@ import '../models/blog_models.dart';
 import '../models/service_models.dart';
 import '../models/shop_models.dart';
 import '../models/gallery_models.dart';
+import '../models/team_models.dart';
+import '../models/about_models.dart';
+import '../models/enrollment_models.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
@@ -17,6 +20,8 @@ class ApiService {
   ApiService._internal();
 
   String? _accessToken;
+
+  String get apiUrl => ApiConfig.apiUrl;
   
   // Get stored token
   Future<String?> getToken() async {
@@ -41,7 +46,7 @@ class ApiService {
   }
 
   // Generic GET request
-  Future<dynamic> get(String url, {bool requiresAuth = false}) async {
+  Future<dynamic> get(String url, {bool requiresAuth = false, Map<String, String>? queryParams}) async {
     try {
       final headers = {'Content-Type': 'application/json'};
       
@@ -52,7 +57,11 @@ class ApiService {
         }
       }
 
-      final response = await http.get(Uri.parse(url), headers: headers);
+      final uri = queryParams != null 
+        ? Uri.parse(url).replace(queryParameters: queryParams)
+        : Uri.parse(url);
+
+      final response = await http.get(uri, headers: headers);
       
       if (response.statusCode == 200) {
         return json.decode(response.body);
@@ -66,7 +75,7 @@ class ApiService {
   }
 
   // Generic POST request
-  Future<dynamic> post(String url, Map<String, dynamic> data, {bool requiresAuth = false}) async {
+  Future<dynamic> post(String url, {Map<String, dynamic>? data, bool requiresAuth = false}) async {
     try {
       final headers = {'Content-Type': 'application/json'};
       
@@ -80,13 +89,65 @@ class ApiService {
       final response = await http.post(
         Uri.parse(url),
         headers: headers,
-        body: json.encode(data),
+        body: json.encode(data ?? {}),
       );
       
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return json.decode(response.body);
       } else {
         throw Exception('Failed to post data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('API Error: $e');
+      rethrow;
+    }
+  }
+
+  // Generic PUT request
+  Future<dynamic> put(String url, {Map<String, dynamic>? data, bool requiresAuth = false}) async {
+    try {
+      final headers = {'Content-Type': 'application/json'};
+      
+      if (requiresAuth) {
+        final token = await getToken();
+        if (token != null) {
+          headers['Authorization'] = 'Bearer $token';
+        }
+      }
+
+      final response = await http.put(
+        Uri.parse(url),
+        headers: headers,
+        body: json.encode(data ?? {}),
+      );
+      
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to update data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('API Error: $e');
+      rethrow;
+    }
+  }
+
+  // Generic DELETE request
+  Future<void> delete(String url, {bool requiresAuth = false}) async {
+    try {
+      final headers = {'Content-Type': 'application/json'};
+      
+      if (requiresAuth) {
+        final token = await getToken();
+        if (token != null) {
+          headers['Authorization'] = 'Bearer $token';
+        }
+      }
+
+      final response = await http.delete(Uri.parse(url), headers: headers);
+      
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        throw Exception('Failed to delete: ${response.statusCode}');
       }
     } catch (e) {
       print('API Error: $e');
@@ -137,7 +198,7 @@ class ApiService {
   // ===== AUTH ENDPOINTS =====
   
   Future<Map<String, dynamic>> login(String username, String password) async {
-    final data = await post(ApiConfig.authLogin, {
+    final data = await post(ApiConfig.authLogin, data: {
       'username': username,
       'password': password,
     });
@@ -150,7 +211,7 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> register(Map<String, dynamic> userData) async {
-    return await post(ApiConfig.authRegister, userData);
+    return await post(ApiConfig.authRegister, data: userData);
   }
 
   Future<void> logout() async {
@@ -160,27 +221,50 @@ class ApiService {
   // ===== CONTACT ENDPOINT =====
   
   Future<void> sendContactMessage(Map<String, dynamic> data) async {
-    await post(ApiConfig.contactMessage, data);
+    await post(ApiConfig.contactMessage, data: data);
   }
 
   // ===== SERVICES ENDPOINT =====
   
   Future<List<Service>> getServices() async {
     final data = await get(ApiConfig.services);
-    return (data as List).map((json) => Service.fromJson(json)).toList();
+    final list = (data is Map && data.containsKey('results')) ? data['results'] : data;
+    return (list as List).map((json) => Service.fromJson(json)).toList();
   }
 
   // ===== SHOP ENDPOINTS =====
   
   Future<List<Product>> getProducts() async {
     final data = await get(ApiConfig.products);
-    return (data as List).map((json) => Product.fromJson(json)).toList();
+    final list = (data is Map && data.containsKey('results')) ? data['results'] : data;
+    return (list as List).map((json) => Product.fromJson(json)).toList();
   }
 
   // ===== GALLERY ENDPOINTS =====
   
   Future<List<GalleryItem>> getGalleryItems() async {
     final data = await get(ApiConfig.galleryItems);
-    return (data as List).map((json) => GalleryItem.fromJson(json)).toList();
+    final list = (data is Map && data.containsKey('results')) ? data['results'] : data;
+    return (list as List).map((json) => GalleryItem.fromJson(json)).toList();
+  }
+
+  // ===== TEAM ENDPOINTS =====
+  
+  Future<List<TeamMember>> getTeamMembers() async {
+    final data = await get(ApiConfig.teamMembers);
+    final list = (data is Map && data.containsKey('results')) ? data['results'] : data;
+    return (list as List).map((json) => TeamMember.fromJson(json)).toList();
+  }
+
+  // ===== ABOUT ENDPOINTS =====
+  Future<AboutContent> getAboutContent() async {
+    final data = await get(ApiConfig.about);
+    return AboutContent.fromJson(data);
+  }
+
+  Future<List<CoreValue>> getCoreValues() async {
+    final data = await get(ApiConfig.coreValues);
+    final list = (data is Map && data.containsKey('results')) ? data['results'] : data;
+    return (list as List).map((json) => CoreValue.fromJson(json)).toList();
   }
 }

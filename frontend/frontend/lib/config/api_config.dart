@@ -21,6 +21,7 @@ class ApiConfig {
   static const String partners = '$apiUrl/core/partners/';
   static const String teamMembers = '$apiUrl/core/team-members/';
   static const String about = '$apiUrl/core/about/current/';
+  static const String coreValues = '$apiUrl/core/core-values/';
   static const String faqs = '$apiUrl/core/faqs/';
   
   // Blog endpoints
@@ -33,6 +34,8 @@ class ApiConfig {
   static const String services = '$apiUrl/services/services/';
   static const String pricingPlans = '$apiUrl/services/pricing-plans/';
   static const String bookings = '$apiUrl/services/bookings/';
+  static const String paymentInfo = '$apiUrl/services/payment-info/';
+  static const String enrollments = '$apiUrl/services/enrollments/';
   
   // Shop endpoints
   static const String products = '$apiUrl/shop/products/';

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/service_provider.dart';
 import 'providers/home_provider.dart';
+import 'providers/enrollment_provider.dart';
 import 'widgets/footer_widget.dart';
 import 'config/api_config.dart';
+import 'screens/enrollment_screen.dart';
 
 class ServicesScreen extends StatefulWidget {
   const ServicesScreen({Key? key}) : super(key: key);
@@ -64,7 +66,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
       height: 300,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/images/services_header.jpg'),
+          image: AssetImage('assets/images/hero_bg.jpg'),
           fit: BoxFit.cover,
         ),
       ),
@@ -251,6 +253,37 @@ class _ServicesScreenState extends State<ServicesScreen> {
                           ),
                         ),
                     ],
+                  ),
+                  SizedBox(height: 14),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChangeNotifierProvider(
+                              create: (_) => EnrollmentProvider(),
+                              child: EnrollmentScreen(service: service),
+                            ),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF5886BF),
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        'Enroll Now',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
