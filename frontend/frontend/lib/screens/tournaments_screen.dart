@@ -271,20 +271,20 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
             : '${ApiConfig.baseUrl}${tournament.image}')
         : null;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 15,
-            offset: Offset(0, 5),
-          ),
-        ],
-      ),
-      overflow: Hidden.rectangle,
-      child: Column(
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 15,
+              offset: Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (imageUrl != null)
@@ -329,7 +329,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
               ),
               child: Center(
                 child: Icon(
-                  Icons.chess,
+                  Icons.sports_rounded,
                   size: 60,
                   color: Color(0xFF5886BF),
                 ),
@@ -443,6 +443,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
             ),
           ),
         ],
+      ),
       ),
     );
   }

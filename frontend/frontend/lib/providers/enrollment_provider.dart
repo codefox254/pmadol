@@ -29,7 +29,7 @@ class EnrollmentProvider with ChangeNotifier {
     try {
       final data = await _apiService.get('${ApiConfig.apiUrl}/services/payment-info/');
       if (data is Map) {
-        _paymentInfo = PaymentInfo.fromJson(data);
+        _paymentInfo = PaymentInfo.fromJson(data as Map<String, dynamic>);
       }
     } catch (e) {
       _error = 'Failed to load payment information: $e';
@@ -53,7 +53,7 @@ class EnrollmentProvider with ChangeNotifier {
       );
 
       if (response is Map) {
-        final enrollmentResponse = EnrollmentResponse.fromJson(response);
+        final enrollmentResponse = EnrollmentResponse.fromJson(response as Map<String, dynamic>);
         if (enrollmentResponse.success) {
           _successMessage = enrollmentResponse.message;
           return true;

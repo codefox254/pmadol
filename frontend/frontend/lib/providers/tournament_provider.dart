@@ -70,7 +70,7 @@ class TournamentProvider with ChangeNotifier {
       );
 
       if (response is Map) {
-        final tournamentResponse = TournamentResponse.fromJson(response);
+        final tournamentResponse = TournamentResponse.fromJson(response as Map<String, dynamic>);
         if (tournamentResponse.success) {
           _successMessage = tournamentResponse.message;
           // Reload tournaments to update registration count

@@ -51,4 +51,8 @@ class ApiConfig {
   static const String contactInfo = '$apiUrl/contact/info/current/';
   static const String contactMessage = '$apiUrl/contact/messages/';
   static const String consultation = '$apiUrl/contact/consultations/';
+  
+  // Tournament endpoints
+  static const String tournaments = '$apiUrl/tournaments/tournaments/';
+  static const String tournamentRegistrations = '$apiUrl/tournaments/registrations/';
 }
