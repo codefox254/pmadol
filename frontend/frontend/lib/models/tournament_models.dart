@@ -15,6 +15,8 @@ class Tournament {
   final int? maxParticipants;
   final String? image;
   final String? resultsLink;
+  final String? lichessLink;
+  final bool requiresRegistration;
   final bool isActive;
   final int registrationCount;
   final DateTime createdAt;
@@ -32,6 +34,8 @@ class Tournament {
     this.maxParticipants,
     this.image,
     this.resultsLink,
+    this.lichessLink,
+    required this.requiresRegistration,
     required this.isActive,
     required this.registrationCount,
     required this.createdAt,
@@ -56,16 +60,20 @@ class Tournament {
       title: json['title'] ?? '',
       description: json['description'] ?? '',
       startDate: DateTime.tryParse(json['start_date'] ?? '') ?? DateTime.now(),
-      endDate: json['end_date'] != null ? DateTime.tryParse(json['end_date']) : null,
+      endDate: json['end_date'] != null
+          ? DateTime.tryParse(json['end_date'])
+          : null,
       location: json['location'] ?? '',
       format: json['format'] ?? 'Round Robin',
       timeControl: json['time_control'] ?? '10+0',
-      entryFee: json['entry_fee'] != null 
-          ? double.tryParse(json['entry_fee'].toString()) 
+      entryFee: json['entry_fee'] != null
+          ? double.tryParse(json['entry_fee'].toString())
           : null,
       maxParticipants: json['max_participants'],
       image: json['image'],
       resultsLink: json['results_link'],
+      lichessLink: json['lichess_link'],
+      requiresRegistration: json['requires_registration'] ?? false,
       isActive: json['is_active'] ?? true,
       registrationCount: json['registration_count'] ?? 0,
       createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
@@ -79,9 +87,9 @@ class TournamentRegistration {
   final String fullName;
   final String email;
   final String phoneNumber;
-  final String chessUsername;
+  final String lichessUsername;
   final int? rating;
-  final String? experience;
+  final String? message;
   final DateTime? createdAt;
 
   TournamentRegistration({
@@ -90,9 +98,9 @@ class TournamentRegistration {
     required this.fullName,
     required this.email,
     required this.phoneNumber,
-    required this.chessUsername,
+    required this.lichessUsername,
     this.rating,
-    this.experience,
+    this.message,
     this.createdAt,
   });
 
@@ -102,9 +110,9 @@ class TournamentRegistration {
       'full_name': fullName,
       'email': email,
       'phone_number': phoneNumber,
-      'chess_username': chessUsername,
-      'rating': rating,
-      'experience': experience,
+      'lichess_username': lichessUsername,
+      if (rating != null) 'rating': rating,
+      if (message != null && message!.isNotEmpty) 'message': message,
     };
   }
 
@@ -115,11 +123,11 @@ class TournamentRegistration {
       fullName: json['full_name'] ?? '',
       email: json['email'] ?? '',
       phoneNumber: json['phone_number'] ?? '',
-      chessUsername: json['chess_username'] ?? '',
+      lichessUsername: json['lichess_username'] ?? '',
       rating: json['rating'],
-      experience: json['experience'],
-      createdAt: json['created_at'] != null
-          ? DateTime.tryParse(json['created_at'])
+      message: json['message'],
+      createdAt: json['registered_at'] != null
+          ? DateTime.tryParse(json['registered_at'])
           : null,
     );
   }

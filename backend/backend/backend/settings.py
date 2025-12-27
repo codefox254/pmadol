@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'shop',
     'gallery',
     'contact',
+    'tournaments',
 ]
 
 # Custom User Model

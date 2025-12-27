@@ -11,7 +11,8 @@ class TournamentProvider with ChangeNotifier {
 
   List<Tournament> _tournaments = [];
   List<Tournament> _upcomingTournaments = [];
-  List<Tournament> _pastTournaments = [];
+  List<Tournament> _ongoingTournaments = [];
+  List<Tournament> _completedTournaments = [];
   bool _isLoading = false;
   bool _isRegistering = false;
   String? _error;
@@ -19,7 +20,8 @@ class TournamentProvider with ChangeNotifier {
 
   List<Tournament> get tournaments => _tournaments;
   List<Tournament> get upcomingTournaments => _upcomingTournaments;
-  List<Tournament> get pastTournaments => _pastTournaments;
+  List<Tournament> get ongoingTournaments => _ongoingTournaments;
+  List<Tournament> get completedTournaments => _completedTournaments;
   bool get isLoading => _isLoading;
   bool get isRegistering => _isRegistering;
   String? get error => _error;
@@ -31,22 +33,25 @@ class TournamentProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final data = await _apiService.get('${ApiConfig.apiUrl}/tournaments/');
-      final list = (data is Map && data.containsKey('results')) 
-          ? data['results'] 
-          : data;
-      
+      final data = await _apiService.get(
+        '${ApiConfig.apiUrl}/tournaments/tournaments/',
+      );
+      final list = (data is Map && data.containsKey('results'))
+          ? data['results']
+          : (data is List ? data : []);
+
       _tournaments = (list as List)
-          .map((json) => Tournament.fromJson(json))
+          .map((json) => Tournament.fromJson(json as Map<String, dynamic>))
           .toList();
-      
+
       // Sort by date
       _tournaments.sort((a, b) => a.startDate.compareTo(b.startDate));
-      
-      // Separate into upcoming and past
+
+      // Separate into upcoming, ongoing, and completed
       _upcomingTournaments = _tournaments.where((t) => t.isUpcoming).toList();
-      _pastTournaments = _tournaments.where((t) => t.isPast).toList();
-      
+      _ongoingTournaments = _tournaments.where((t) => t.isOngoing).toList();
+      _completedTournaments = _tournaments.where((t) => t.isPast).toList();
+
       _error = null;
     } catch (e) {
       _error = 'Failed to load tournaments: $e';
@@ -57,7 +62,9 @@ class TournamentProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> registerForTournament(TournamentRegistration registration) async {
+  Future<bool> registerForTournament(
+    TournamentRegistration registration,
+  ) async {
     _isRegistering = true;
     _error = null;
     _successMessage = null;
@@ -70,7 +77,9 @@ class TournamentProvider with ChangeNotifier {
       );
 
       if (response is Map) {
-        final tournamentResponse = TournamentResponse.fromJson(response as Map<String, dynamic>);
+        final tournamentResponse = TournamentResponse.fromJson(
+          response as Map<String, dynamic>,
+        );
         if (tournamentResponse.success) {
           _successMessage = tournamentResponse.message;
           // Reload tournaments to update registration count

@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/tournament_models.dart';
 import '../providers/tournament_provider.dart';
 import '../providers/home_provider.dart';
@@ -40,7 +41,8 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
             children: [
               _buildPageHeader(isMobile),
               _buildTournamentsContent(tournamentProvider, isMobile),
-              if (homeData != null) FooterWidget(settings: homeData.siteSettings),
+              if (homeData != null)
+                FooterWidget(settings: homeData.siteSettings),
             ],
           ),
         );
@@ -96,7 +98,9 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                   Container(color: Colors.black.withOpacity(0.18)),
                   Center(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: isMobile ? 20 : 80),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 20 : 80,
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,22 +168,58 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
       );
     }
 
+    if (provider.error != null) {
+      return Padding(
+        padding: const EdgeInsets.all(40),
+        child: Center(
+          child: Column(
+            children: [
+              const Icon(
+                Icons.error_outline,
+                size: 64,
+                color: Color(0xFFDC2626),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                provider.error!,
+                style: const TextStyle(color: Color(0xFFDC2626), fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final hasAny =
+        provider.upcomingTournaments.isNotEmpty ||
+        provider.ongoingTournaments.isNotEmpty ||
+        provider.completedTournaments.isNotEmpty;
+
     return Column(
       children: [
+        if (provider.ongoingTournaments.isNotEmpty)
+          _buildTournamentSection(
+            'Ongoing Now',
+            provider.ongoingTournaments,
+            isMobile,
+            status: 'ongoing',
+          ),
         if (provider.upcomingTournaments.isNotEmpty)
           _buildTournamentSection(
             'Upcoming Tournaments',
             provider.upcomingTournaments,
             isMobile,
+            status: 'upcoming',
           ),
-        if (provider.pastTournaments.isNotEmpty)
+        if (provider.completedTournaments.isNotEmpty)
           _buildTournamentSection(
-            'Past Tournaments',
-            provider.pastTournaments,
+            'Completed Tournaments',
+            provider.completedTournaments,
             isMobile,
-            isPast: true,
+            status: 'completed',
           ),
-        if (provider.upcomingTournaments.isEmpty && provider.pastTournaments.isEmpty)
+        if (!hasAny)
           const Padding(
             padding: EdgeInsets.all(80),
             child: Center(
@@ -198,7 +238,24 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
     List<Tournament> tournaments,
     bool isMobile, {
     bool isPast = false,
+    String status = 'upcoming',
   }) {
+    final isOngoing = status == 'ongoing';
+    final isCompleted = status == 'completed';
+
+    // Gradient colors based on status
+    final List<Color> gradientColors = isOngoing
+        ? [const Color(0xFFFEF3C7), const Color(0xFFFDE68A)]
+        : isCompleted
+        ? [const Color(0xFFE5E7EB), const Color(0xFFD1D5DB)]
+        : [const Color(0xFFF4F7FB), const Color(0xFFEAF1F9)];
+
+    final accentColor = isOngoing
+        ? const Color(0xFFD97706)
+        : isCompleted
+        ? const Color(0xFF6B7280)
+        : const Color(0xFF5886BF);
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 20 : 80,
@@ -208,31 +265,57 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isPast
-              ? [const Color(0xFFEAECEF), const Color(0xFFD4D8DF)]
-              : [const Color(0xFFF4F7FB), const Color(0xFFEAF1F9)],
+          colors: gradientColors,
         ),
-        border: const Border(
-          top: BorderSide(color: Color(0xFFE0E8F3)),
-        ),
+        border: const Border(top: BorderSide(color: Color(0xFFE0E8F3))),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: isMobile ? 24 : 36,
-              fontWeight: FontWeight.w800,
-              color: const Color(0xFF0B131E),
-            ),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: accentColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  isOngoing
+                      ? '🔴 LIVE'
+                      : isCompleted
+                      ? '✓ COMPLETED'
+                      : '📅 UPCOMING',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: isMobile ? 24 : 36,
+                    fontWeight: FontWeight.w800,
+                    color: const Color(0xFF0B131E),
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           Container(
             width: 60,
             height: 4,
             decoration: BoxDecoration(
-              color: const Color(0xFF5886BF),
+              color: accentColor,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -244,14 +327,14 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
               crossAxisCount: isMobile ? 1 : 2,
               crossAxisSpacing: 30,
               mainAxisSpacing: 30,
-              childAspectRatio: isMobile ? 1.1 : 1.15,
+              childAspectRatio: isMobile ? 1.0 : 1.05,
             ),
             itemCount: tournaments.length,
             itemBuilder: (context, index) {
               return _buildTournamentCard(
                 tournaments[index],
                 isMobile,
-                isPast: isPast,
+                status: status,
               );
             },
           ),
@@ -264,12 +347,27 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
     Tournament tournament,
     bool isMobile, {
     bool isPast = false,
+    String status = 'upcoming',
   }) {
     final imageUrl = tournament.image != null
         ? (tournament.image!.startsWith('http')
-            ? tournament.image
-            : '${ApiConfig.baseUrl}${tournament.image}')
+              ? tournament.image
+              : '${ApiConfig.baseUrl}${tournament.image}')
         : null;
+
+    final isOngoing = status == 'ongoing';
+    final isCompleted = status == 'completed';
+    final statusColor = isOngoing
+        ? const Color(0xFFDC2626)
+        : isCompleted
+        ? const Color(0xFF6B7280)
+        : const Color(0xFF059669);
+
+    final statusLabel = isOngoing
+        ? 'ONGOING'
+        : isCompleted
+        ? 'COMPLETED'
+        : 'UPCOMING';
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
@@ -278,186 +376,290 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
+              color: Colors.black.withOpacity(0.12),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
             ),
           ],
+          border: Border(top: BorderSide(color: statusColor, width: 4)),
         ),
         child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (imageUrl != null)
-            Container(
-              height: 180,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(imageUrl),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Stack(
-                children: [
-                  if (!isPast)
-                    Positioned(
-                      top: 12,
-                      left: 12,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF5886BF),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Text(
-                          'Upcoming',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                if (imageUrl != null)
+                  Container(
+                    height: 180,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(imageUrl),
+                        fit: BoxFit.cover,
+                      ),
+                      color: const Color(0xFFF3F4F6),
+                    ),
+                  )
+                else
+                  Container(
+                    height: 180,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          statusColor.withOpacity(0.15),
+                          statusColor.withOpacity(0.05),
+                        ],
                       ),
                     ),
-                ],
-              ),
-            )
-          else
-            Container(
-              height: 180,
-              decoration: BoxDecoration(
-                color: const Color(0xFF5886BF).withOpacity(0.1),
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.sports_rounded,
-                  size: 60,
-                  color: Color(0xFF5886BF),
+                    child: Center(
+                      child: Icon(
+                        isOngoing
+                            ? Icons.play_circle_filled
+                            : isCompleted
+                            ? Icons.verified
+                            : Icons.calendar_month,
+                        size: 64,
+                        color: statusColor.withOpacity(0.4),
+                      ),
+                    ),
+                  ),
+                // Status badge
+                Positioned(
+                  top: 12,
+                  right: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: statusColor,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: statusColor.withOpacity(0.4),
+                          blurRadius: 8,
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      statusLabel,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      tournament.title,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF0B131E),
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    _buildInfoRow(Icons.location_on, tournament.location),
+                    const SizedBox(height: 6),
+                    _buildInfoRow(
+                      Icons.schedule,
+                      DateFormat('MMM d, yyyy').format(tournament.startDate),
+                    ),
+                    const SizedBox(height: 6),
+                    _buildInfoRow(
+                      Icons.timer_outlined,
+                      '${tournament.format} • ${tournament.timeControl}',
+                    ),
+                    if (tournament.entryFee != null) ...[
+                      const SizedBox(height: 6),
+                      _buildInfoRow(
+                        Icons.local_offer,
+                        'KES ${tournament.entryFee!.toStringAsFixed(0)}',
+                        color: const Color(0xFF059669),
+                      ),
+                    ],
+                    const SizedBox(height: 8),
+                    const Divider(height: 12),
+                    const SizedBox(height: 8),
+                    // Registration/Participants info
+                    if (tournament.requiresRegistration)
+                      _buildParticipantInfo(tournament)
+                    else
+                      _buildLichessInfo(),
+                  ],
                 ),
               ),
             ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    tournament.title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF0B131E),
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildTournamentInfo('📍 ${tournament.location}', isMobile),
-                  const SizedBox(height: 6),
-                  _buildTournamentInfo(
-                    '📅 ${DateFormat('MMM d, yyyy').format(tournament.startDate)}',
-                    isMobile,
-                  ),
-                  const SizedBox(height: 6),
-                  _buildTournamentInfo(
-                    '⏱️ ${tournament.timeControl}',
-                    isMobile,
-                  ),
-                  const SizedBox(height: 12),
-                  if (tournament.entryFee != null)
-                    _buildTournamentInfo(
-                      'KES ${tournament.entryFee!.toStringAsFixed(0)} entry',
-                      isMobile,
-                      color: const Color(0xFF5886BF),
-                    ),
-                  const SizedBox(height: 8),
-                  const Expanded(child: SizedBox.shrink()),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          '${tournament.registrationCount} registered',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF707781),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      if (isPast && tournament.resultsLink != null)
-                        ElevatedButton.icon(
-                          onPressed: () async {
-                            // In production, would use url_launcher
-                            // For now, just show a dialog
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text('Tournament Results'),
-                                content: Text(
-                                  'Results available at:\n${tournament.resultsLink}',
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('Close'),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.leaderboard, size: 16),
-                          label: const Text('Results'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF5886BF),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                          ),
-                        )
-                      else if (!isPast)
-                        ElevatedButton(
-                          onPressed: () {
-                            _showRegistrationDialog(tournament);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF5886BF),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                          ),
-                          child: const Text(
-                            'Register',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ],
+            _buildCardActions(tournament, isMobile, isCompleted),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String text, {Color? color}) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: color ?? const Color(0xFF6B7280)),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 13,
+              color: color ?? const Color(0xFF4B5563),
+              fontWeight: FontWeight.w500,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildParticipantInfo(Tournament tournament) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: const Color(0xFF5886BF).withOpacity(0.08),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.people, size: 16, color: Color(0xFF5886BF)),
+              const SizedBox(width: 8),
+              Text(
+                '${tournament.registrationCount} registered',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF5886BF),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          if (tournament.maxParticipants != null)
+            Text(
+              'Max: ${tournament.maxParticipants}',
+              style: TextStyle(
+                fontSize: 11,
+                color: const Color(0xFF5886BF).withOpacity(0.7),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLichessInfo() {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: const Color(0xFF6B7280).withOpacity(0.08),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.link, size: 16, color: Color(0xFF6B7280)),
+          const SizedBox(width: 8),
+          const Flexible(
+            child: Text(
+              'External Lichess Tournament',
+              style: TextStyle(
+                fontSize: 12,
+                color: Color(0xFF6B7280),
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
         ],
       ),
-      ),
     );
   }
 
-  Widget _buildTournamentInfo(String text, bool isMobile, {Color? color}) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontSize: 13,
-        color: color ?? const Color(0xFF707781),
-        fontWeight: FontWeight.w500,
+  Widget _buildCardActions(
+    Tournament tournament,
+    bool isMobile,
+    bool isCompleted,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          if (isCompleted && tournament.resultsLink != null)
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () => _launchUrl(tournament.resultsLink!),
+                icon: const Icon(Icons.leaderboard, size: 16),
+                label: const Text('View Results'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6B7280),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                ),
+              ),
+            )
+          else if (!isCompleted && tournament.lichessLink != null)
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () => _launchUrl(tournament.lichessLink!),
+                icon: const Icon(Icons.open_in_new, size: 16),
+                label: const Text('Join on Lichess'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF5886BF),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                ),
+              ),
+            )
+          else if (!isCompleted && tournament.requiresRegistration)
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  _showRegistrationDialog(tournament);
+                },
+                icon: const Icon(Icons.app_registration, size: 16),
+                label: const Text('Register'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF5886BF),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                ),
+              ),
+            )
+          else
+            const Spacer(),
+        ],
       ),
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
     );
   }
 
@@ -469,6 +671,22 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
         child: _TournamentRegistrationForm(tournament: tournament),
       ),
     );
+  }
+
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not open link'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }
 
@@ -489,7 +707,7 @@ class _TournamentRegistrationFormState
   late TextEditingController _phoneController;
   late TextEditingController _usernameController;
   late TextEditingController _ratingController;
-  String _selectedExperience = 'Intermediate';
+  late TextEditingController _messageController;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -501,6 +719,7 @@ class _TournamentRegistrationFormState
     _phoneController = TextEditingController();
     _usernameController = TextEditingController();
     _ratingController = TextEditingController();
+    _messageController = TextEditingController();
   }
 
   @override
@@ -510,6 +729,7 @@ class _TournamentRegistrationFormState
     _phoneController.dispose();
     _usernameController.dispose();
     _ratingController.dispose();
+    _messageController.dispose();
     super.dispose();
   }
 
@@ -521,9 +741,11 @@ class _TournamentRegistrationFormState
       fullName: _nameController.text.trim(),
       email: _emailController.text.trim(),
       phoneNumber: _phoneController.text.trim(),
-      chessUsername: _usernameController.text.trim(),
+      lichessUsername: _usernameController.text.trim(),
       rating: int.tryParse(_ratingController.text),
-      experience: _selectedExperience,
+      message: _messageController.text.trim().isEmpty
+          ? null
+          : _messageController.text.trim(),
     );
 
     context.read<TournamentProvider>().registerForTournament(registration).then(
@@ -573,10 +795,7 @@ class _TournamentRegistrationFormState
               const SizedBox(height: 4),
               Text(
                 DateFormat('MMMM d, yyyy').format(widget.tournament.startDate),
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF707781),
-                ),
+                style: const TextStyle(fontSize: 13, color: Color(0xFF707781)),
               ),
               const SizedBox(height: 24),
               _buildFormField(
@@ -615,11 +834,12 @@ class _TournamentRegistrationFormState
               ),
               const SizedBox(height: 16),
               _buildFormField(
-                label: 'Chess Username *',
+                label: 'Lichess Username *',
                 controller: _usernameController,
-                hint: 'Your chess.com or lichess username',
+                hint: 'Your Lichess username',
                 validator: (value) {
-                  if (value?.isEmpty ?? true) return 'Username required';
+                  if (value?.isEmpty ?? true)
+                    return 'Lichess username required';
                   return null;
                 },
               ),
@@ -631,35 +851,11 @@ class _TournamentRegistrationFormState
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Experience Level',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF0B131E),
-                ),
-              ),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                initialValue: _selectedExperience,
-                items: ['Beginner', 'Intermediate', 'Advanced', 'Expert']
-                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                    .toList(),
-                onChanged: (val) {
-                  setState(() => _selectedExperience = val ?? 'Intermediate');
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: const Color(0xFFF8FAFC),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: Color(0xFFE1E8F0)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: Color(0xFFE1E8F0)),
-                  ),
-                ),
+              _buildFormField(
+                label: 'Message (Optional)',
+                controller: _messageController,
+                hint: 'Any additional information or questions',
+                maxLines: 3,
               ),
               const SizedBox(height: 24),
               SizedBox(
@@ -710,6 +906,7 @@ class _TournamentRegistrationFormState
     required String hint,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
+    int? maxLines,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -727,6 +924,7 @@ class _TournamentRegistrationFormState
           controller: controller,
           keyboardType: keyboardType,
           validator: validator,
+          maxLines: maxLines ?? 1,
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: const TextStyle(color: Color(0xFFB0B8C1)),
@@ -744,7 +942,10 @@ class _TournamentRegistrationFormState
               borderRadius: BorderRadius.circular(10),
               borderSide: const BorderSide(color: Color(0xFF5886BF), width: 2),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
           ),
         ),
       ],

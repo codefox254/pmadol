@@ -5,6 +5,7 @@ import 'providers/gallery_provider.dart';
 import 'providers/home_provider.dart';
 import 'widgets/footer_widget.dart';
 import 'config/api_config.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GalleryScreen extends StatefulWidget {
   const GalleryScreen({super.key});
@@ -14,29 +15,19 @@ class GalleryScreen extends StatefulWidget {
 }
 
 class _GalleryScreenState extends State<GalleryScreen> {
-  String selectedCategory = 'All';
-  GalleryItem? selectedItem;
-  final TextEditingController _searchController = TextEditingController();
-
-  String? _resolveImageUrl(String? path) {
-    if (path == null || path.isEmpty) return null;
-    if (path.startsWith('http')) return path;
-    return '${ApiConfig.baseUrl}$path';
-  }
-
   @override
   void initState() {
     super.initState();
     Future.microtask(() {
-      context.read<GalleryProvider>().loadGalleryItems();
-      context.read<HomeProvider>().loadHomeData();
+      if (mounted) {
+        final gallery = context.read<GalleryProvider>();
+        gallery.loadCategories();
+        // Preload both photos and videos so "All" shows content immediately
+        gallery.loadPhotos();
+        gallery.loadVideos();
+        context.read<HomeProvider>().loadHomeData();
+      }
     });
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
   }
 
   @override
@@ -50,11 +41,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
         return SingleChildScrollView(
           child: Column(
             children: [
-              _buildPageHeader(),
-              _buildSearchBar(isMobile, galleryProvider),
-              _buildCategoryFilter(isMobile, galleryProvider),
-              _buildGalleryGrid(isMobile, galleryProvider),
-              if (homeData != null) FooterWidget(settings: homeData.siteSettings),
+              _buildPageHeader(isMobile),
+              _buildCategoryTabs(galleryProvider, isMobile),
+              _buildGalleryContent(galleryProvider, isMobile),
+              if (homeData != null)
+                FooterWidget(settings: homeData.siteSettings),
             ],
           ),
         );
@@ -62,50 +53,249 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
-  Widget _buildPageHeader() {
+  Widget _buildPageHeader(bool isMobile) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 700),
+      curve: Curves.easeOut,
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value,
+          child: Transform.translate(
+            offset: Offset(0, (1 - value) * 16),
+            child: Container(
+              height: isMobile ? 280 : 340,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF1F3A5F), Color(0xFF0D1C2F)],
+                ),
+              ),
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: -80,
+                    right: -60,
+                    child: Container(
+                      width: 220,
+                      height: 220,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(0.05),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: -40,
+                    left: -30,
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(0.04),
+                      ),
+                    ),
+                  ),
+                  Container(color: Colors.black.withOpacity(0.18)),
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 20 : 80,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(999),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.3),
+                              ),
+                            ),
+                            child: Text(
+                              'GALLERY',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.9),
+                                fontSize: 12,
+                                letterSpacing: 1.2,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          Text(
+                            'Photo & Video Gallery',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: isMobile ? 32 : 52,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          Text(
+                            'Explore moments from our tournaments, events, and community',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: isMobile ? 14 : 16,
+                              height: 1.6,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCategoryTabs(GalleryProvider provider, bool isMobile) {
+    if (provider.isLoading && provider.categories.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.all(40),
+        child: CircularProgressIndicator(color: Color(0xFF5886BF)),
+      );
+    }
+
     return Container(
-      height: 300,
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF5886BF), Color(0xFF283D57)],
-        ),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 20 : 80,
+        vertical: 40,
       ),
-      child: Stack(
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(color: Colors.black.withOpacity(0.2)),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+          Text(
+            'Browse by Category',
+            style: TextStyle(
+              fontSize: isMobile ? 20 : 28,
+              fontWeight: FontWeight.w800,
+              color: const Color(0xFF0B131E),
+            ),
+          ),
+          const SizedBox(height: 24),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
               children: [
-                const Text(
-                  'OUR MOMENTS',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    letterSpacing: 3.5,
-                    fontWeight: FontWeight.w400,
+                GestureDetector(
+                  onTap: () => provider.clearSelection(),
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: provider.selectedCategory == null
+                          ? const Color(0xFF5886BF)
+                          : Colors.grey[200],
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(
+                        color: provider.selectedCategory == null
+                            ? const Color(0xFF5886BF)
+                            : Colors.grey[300]!,
+                      ),
+                    ),
+                    child: Text(
+                      'All',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: provider.selectedCategory == null
+                            ? Colors.white
+                            : const Color(0xFF6B7280),
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 15),
-                const Text(
-                  'Gallery',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 56,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Explore our chess community events and activities',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 18,
-                  ),
-                ),
+                ...provider.categories.map((category) {
+                  final isSelected =
+                      provider.selectedCategory?.id == category.id;
+                  return GestureDetector(
+                    onTap: () => provider.selectCategory(category),
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? const Color(0xFF5886BF)
+                            : Colors.grey[200],
+                        borderRadius: BorderRadius.circular(25),
+                        border: Border.all(
+                          color: isSelected
+                              ? const Color(0xFF5886BF)
+                              : Colors.grey[300]!,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            category.type == 'photo'
+                                ? Icons.image
+                                : Icons.videocam,
+                            size: 16,
+                            color: isSelected
+                                ? Colors.white
+                                : const Color(0xFF6B7280),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            category.name,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: isSelected
+                                  ? Colors.white
+                                  : const Color(0xFF6B7280),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? Colors.white.withOpacity(0.2)
+                                  : Colors.grey[300],
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              category.itemCount.toString(),
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: isSelected
+                                    ? Colors.white
+                                    : const Color(0xFF4B5563),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
               ],
             ),
           ),
@@ -114,206 +304,176 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
-  Widget _buildSearchBar(bool isMobile, GalleryProvider galleryProvider) {
-    final horizontalPadding = isMobile ? 16.0 : 80.0;
+  Widget _buildGalleryContent(GalleryProvider provider, bool isMobile) {
+    if (provider.isLoading &&
+        provider.photos.isEmpty &&
+        provider.videos.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.all(80),
+        child: CircularProgressIndicator(color: Color(0xFF5886BF)),
+      );
+    }
 
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: horizontalPadding),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFFF8FAFC),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFE8EFF7)),
-        ),
-        child: Row(
-          children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              child: Icon(Icons.search, color: Color(0xFF707781), size: 20),
-            ),
-            Expanded(
-              child: TextField(
-                controller: _searchController,
-                decoration: const InputDecoration(
-                  hintText: 'Search gallery items...',
-                  hintStyle: TextStyle(color: Color(0xFFB0B8C1)),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 12),
-                ),
-                onChanged: (query) {
-                  setState(() {});
-                },
+    if (provider.error != null) {
+      return Padding(
+        padding: const EdgeInsets.all(40),
+        child: Center(
+          child: Column(
+            children: [
+              const Icon(
+                Icons.error_outline,
+                size: 64,
+                color: Color(0xFFDC2626),
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+              Text(
+                provider.error!,
+                style: const TextStyle(color: Color(0xFFDC2626), fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // When no category is selected, show both photos and videos
+    if (provider.selectedCategory == null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildPhotosGallery(provider, isMobile),
+          const SizedBox(height: 24),
+          _buildVideosGallery(provider, isMobile),
+        ],
+      );
+    }
+
+    // Show specific content based on category type
+    if (provider.selectedCategory?.type == 'photo') {
+      return _buildPhotosGallery(provider, isMobile);
+    }
+    if (provider.selectedCategory?.type == 'video') {
+      return _buildVideosGallery(provider, isMobile);
+    }
+
+    return const Padding(
+      padding: EdgeInsets.all(80),
+      child: Center(
+        child: Text(
+          'No content available',
+          style: TextStyle(fontSize: 18, color: Color(0xFF707781)),
         ),
       ),
     );
   }
 
-  Widget _buildCategoryFilter(bool isMobile, GalleryProvider galleryProvider) {
-    final items = galleryProvider.items;
-    final categories = ['All', ...items.map((i) => i.categoryName ?? 'Other').toSet()];
+  Widget _buildPhotosGallery(GalleryProvider provider, bool isMobile) {
+    final photos = provider.photos;
+
+    if (photos.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 80),
+        child: Center(
+          child: Column(
+            children: [
+              Icon(
+                Icons.photo_library_outlined,
+                size: 64,
+                color: Colors.grey[400],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'No photos in this category',
+                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Container(
       padding: EdgeInsets.symmetric(
-        vertical: isMobile ? 20 : 30,
-        horizontal: isMobile ? 16 : 80,
+        horizontal: isMobile ? 20 : 80,
+        vertical: 60,
       ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Wrap(
-          spacing: isMobile ? 10 : 15,
-          children: categories.map((category) {
-            final isSelected = selectedCategory == category;
-            return GestureDetector(
-              onTap: () {
-                setState(() => selectedCategory = category);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: isMobile ? 16 : 24,
-                  vertical: isMobile ? 10 : 12,
+      color: const Color(0xFFF9FAFB),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Photo Gallery',
+                style: TextStyle(
+                  fontSize: isMobile ? 24 : 32,
+                  fontWeight: FontWeight.w800,
+                  color: const Color(0xFF0B131E),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFF5886BF) : Colors.white,
-                  borderRadius: BorderRadius.circular(25),
-                  border: Border.all(
-                    color: isSelected ? const Color(0xFF5886BF) : const Color(0xFFE8EFF7),
-                  ),
+                  color: const Color(0xFF5886BF),
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  category,
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : const Color(0xFF404957),
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                    fontSize: isMobile ? 12 : 14,
+                  '${photos.length} photos',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
                 ),
               ),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGalleryGrid(bool isMobile, GalleryProvider galleryProvider) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 16 : 80,
-        vertical: 40,
-      ),
-      child: Consumer<GalleryProvider>(
-        builder: (context, provider, child) {
-          if (provider.isLoading) {
-            return const SizedBox(
-              height: 300,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(color: Color(0xFF5886BF), strokeWidth: 3),
-                    SizedBox(height: 16),
-                    Text('Loading gallery...', style: TextStyle(color: Color(0xFF707781))),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          if (provider.error != null && provider.error!.isNotEmpty) {
-            return Container(
-              padding: const EdgeInsets.all(40),
-              child: Column(
-                children: [
-                  Icon(Icons.error_outline, size: 48, color: Colors.red.withOpacity(0.6)),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Error loading gallery',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF0B131E)),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    provider.error ?? 'Unknown error',
-                    style: const TextStyle(color: Color(0xFF707781), fontSize: 14),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton.icon(
-                    onPressed: () => provider.loadGalleryItems(),
-                    icon: const Icon(Icons.refresh),
-                    label: const Text('Retry'),
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF5886BF)),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          var filteredItems = selectedCategory == 'All'
-              ? provider.items
-              : provider.items.where((i) => i.categoryName == selectedCategory).toList();
-
-          if (_searchController.text.isNotEmpty) {
-            final q = _searchController.text.toLowerCase();
-            filteredItems = filteredItems
-                .where((i) =>
-                    i.title.toLowerCase().contains(q) ||
-                    (i.description?.toLowerCase().contains(q) ?? false))
-                .toList();
-          }
-
-          if (filteredItems.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(40),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.image_not_supported_outlined, size: 48, color: const Color(0xFF707781).withOpacity(0.4)),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'No gallery items found',
-                      style: TextStyle(fontSize: 18, color: Color(0xFF707781)),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          final gridColumns = isMobile ? 2 : (MediaQuery.of(context).size.width > 1200 ? 4 : 3);
-
-          return GridView.builder(
+            ],
+          ),
+          const SizedBox(height: 8),
+          Container(
+            width: 60,
+            height: 4,
+            decoration: BoxDecoration(
+              color: const Color(0xFF5886BF),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 40),
+          GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: gridColumns,
-              crossAxisSpacing: isMobile ? 12 : 20,
-              mainAxisSpacing: isMobile ? 12 : 20,
-              childAspectRatio: 1,
+              crossAxisCount: isMobile ? 1 : 3,
+              crossAxisSpacing: 24,
+              mainAxisSpacing: 24,
+              childAspectRatio: 1.0,
             ),
-            itemCount: filteredItems.length,
+            itemCount: photos.length,
             itemBuilder: (context, index) {
-              return _buildGalleryItem(filteredItems[index], isMobile, provider);
+              return _buildPhotoCard(photos[index]);
             },
-          );
-        },
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildGalleryItem(GalleryItem item, bool isMobile, GalleryProvider provider) {
+  Widget _buildPhotoCard(GalleryPhoto photo) {
+    final imageUrl = photo.image.startsWith('http')
+        ? photo.image
+        : '${ApiConfig.baseUrl}${photo.image}';
+
     return GestureDetector(
-      onTap: () {
-        _showImageDialog(item, isMobile, provider);
-      },
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
+      onTap: () => _showPhotoViewer(photo, imageUrl),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            color: Colors.white,
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),
@@ -321,38 +481,44 @@ class _GalleryScreenState extends State<GalleryScreen> {
                 offset: const Offset(0, 4),
               ),
             ],
-            color: const Color(0xFFF8FAFC),
           ),
           child: Stack(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: const Color(0xFFF8FAFC),
-                  image: item.image.isNotEmpty
-                      ? DecorationImage(
-                          image: NetworkImage(_resolveImageUrl(item.image)!),
-                          fit: BoxFit.cover,
-                        )
-                      : null,
-                ),
-                child: item.image.isEmpty
-                    ? Center(
-                        child: Icon(Icons.image_not_supported_outlined,
-                            size: 50, color: const Color(0xFF707781).withOpacity(0.3)),
-                      )
-                    : null,
+              Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    color: Colors.grey[200],
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF5886BF),
+                      ),
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey[300],
+                    child: const Center(
+                      child: Icon(
+                        Icons.broken_image_outlined,
+                        size: 48,
+                        color: Color(0xFF9CA3AF),
+                      ),
+                    ),
+                  );
+                },
               ),
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.6),
-                    ],
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.5)],
                   ),
                 ),
               ),
@@ -360,49 +526,34 @@ class _GalleryScreenState extends State<GalleryScreen> {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withOpacity(0.8),
-                      ],
-                    ),
-                  ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        item.title,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: isMobile ? 13 : 15,
+                        photo.title,
+                        style: const TextStyle(
+                          fontSize: 16,
                           fontWeight: FontWeight.w700,
+                          color: Colors.white,
                         ),
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF5886BF).withOpacity(0.8),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          item.categoryName,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
+                      if (photo.caption != null &&
+                          photo.caption!.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          photo.caption!,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white.withOpacity(0.9),
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
@@ -411,18 +562,16 @@ class _GalleryScreenState extends State<GalleryScreen> {
                 top: 12,
                 right: 12,
                 child: Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.95),
-                    borderRadius: BorderRadius.circular(50),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 8,
-                      ),
-                    ],
+                    color: Colors.white.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.zoom_in, color: Color(0xFF5886BF), size: 20),
+                  child: const Icon(
+                    Icons.zoom_in,
+                    size: 20,
+                    color: Color(0xFF5886BF),
+                  ),
                 ),
               ),
             ],
@@ -432,123 +581,299 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
-  void _showImageDialog(GalleryItem item, bool isMobile, GalleryProvider provider) {
-    showDialog(
-      context: context,
-      barrierColor: Colors.black.withOpacity(0.95),
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: EdgeInsets.all(isMobile ? 16 : 40),
-          child: Stack(
-            alignment: Alignment.center,
+  Widget _buildVideosGallery(GalleryProvider provider, bool isMobile) {
+    final videos = provider.videos;
+
+    if (videos.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 80),
+        child: Center(
+          child: Column(
             children: [
-              SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (item.image.isNotEmpty)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxHeight: MediaQuery.of(context).size.height * 0.75,
-                            maxWidth: MediaQuery.of(context).size.width * 0.9,
-                          ),
-                          child: Image.network(
-                            _resolveImageUrl(item.image)!,
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: Colors.grey[900],
-                                child: const Center(
-                                  child: Icon(Icons.error, color: Colors.red, size: 48),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 24),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.95),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.all(24),
-                      constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * 0.85,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.title,
-                            style: const TextStyle(
-                              color: Color(0xFF0B131E),
-                              fontSize: 24,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF5886BF),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              item.categoryName,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          if (item.description != null && item.description!.isNotEmpty) ...[
-                            const SizedBox(height: 16),
-                            Text(
-                              item.description!,
-                              style: const TextStyle(
-                                color: Color(0xFF404957),
-                                fontSize: 15,
-                                height: 1.6,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
+              Icon(Icons.videocam_outlined, size: 64, color: Colors.grey[400]),
+              const SizedBox(height: 16),
+              Text(
+                'No videos in this category',
+                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 20 : 80,
+        vertical: 60,
+      ),
+      color: const Color(0xFFF9FAFB),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Video Gallery',
+                style: TextStyle(
+                  fontSize: isMobile ? 24 : 32,
+                  fontWeight: FontWeight.w800,
+                  color: const Color(0xFF0B131E),
                 ),
               ),
-              Positioned(
-                top: 10,
-                right: 10,
-                child: GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.95),
-                      borderRadius: BorderRadius.circular(50),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 8,
-                        ),
-                      ],
-                    ),
-                    child: const Icon(Icons.close, color: Color(0xFF0B131E), size: 24),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF5886BF),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '${videos.length} videos',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
                 ),
               ),
             ],
           ),
-        );
-      },
+          const SizedBox(height: 8),
+          Container(
+            width: 60,
+            height: 4,
+            decoration: BoxDecoration(
+              color: const Color(0xFF5886BF),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 40),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: isMobile ? 1 : 3,
+              crossAxisSpacing: 24,
+              mainAxisSpacing: 24,
+              childAspectRatio: 1.2,
+            ),
+            itemCount: videos.length,
+            itemBuilder: (context, index) {
+              return _buildVideoCard(videos[index]);
+            },
+          ),
+        ],
+      ),
     );
+  }
+
+  Widget _buildVideoCard(GalleryVideo video) {
+    final thumbnailUrl = video.thumbnail.startsWith('http')
+        ? video.thumbnail
+        : '${ApiConfig.baseUrl}${video.thumbnail}';
+
+    return GestureDetector(
+      onTap: () => _launchUrl(video.videoUrl),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Stack(
+            children: [
+              Image.network(
+                thumbnailUrl,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey[300],
+                    child: const Center(
+                      child: Icon(
+                        Icons.broken_image_outlined,
+                        size: 48,
+                        color: Color(0xFF9CA3AF),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
+                  ),
+                ),
+              ),
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF5886BF),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF5886BF).withOpacity(0.4),
+                        blurRadius: 16,
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.play_arrow,
+                    size: 32,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        video.title,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (video.description != null &&
+                          video.description!.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          video.description!,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white.withOpacity(0.85),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showPhotoViewer(GalleryPhoto photo, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Stack(
+          children: [
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(color: Colors.black.withOpacity(0.9)),
+            ),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: InteractiveViewer(
+                      minScale: 0.8,
+                      maxScale: 5.0,
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.contain,
+                        loadingBuilder: (context, child, progress) {
+                          if (progress == null) return child;
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xFF5886BF),
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.broken_image_outlined,
+                            size: 64,
+                            color: Colors.white,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  if (photo.caption != null && photo.caption!.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        photo.caption!,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Positioned(
+              top: 20,
+              right: 20,
+              child: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 28),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not open video'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }

@@ -1,50 +1,126 @@
 import 'package:flutter/foundation.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import '../models/gallery_models.dart';
+import '../services/api_service.dart';
 import '../config/api_config.dart';
 
-class GalleryProvider extends ChangeNotifier {
-  List<GalleryItem> _items = [];
+class GalleryProvider with ChangeNotifier {
+  final ApiService _apiService = ApiService();
+
+  List<GalleryCategory> _categories = [];
+  List<GalleryPhoto> _photos = [];
+  List<GalleryVideo> _videos = [];
+  GalleryCategory? _selectedCategory;
   bool _isLoading = false;
   String? _error;
 
-  List<GalleryItem> get items => _items;
+  List<GalleryCategory> get categories => _categories;
+  List<GalleryPhoto> get photos => _photos;
+  List<GalleryVideo> get videos => _videos;
+  GalleryCategory? get selectedCategory => _selectedCategory;
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  List<GalleryItem> get images => _items.where((item) => !item.isVideo).toList();
-  List<GalleryItem> get videos => _items.where((item) => item.isVideo).toList();
-  List<GalleryItem> get featuredItems => _items.where((item) => item.isFeatured).toList();
-
-  Future<void> loadGalleryItems() async {
+  Future<void> loadCategories() async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      final url = Uri.parse('${ApiConfig.apiUrl}/gallery/items/');
-      final response = await http.get(url);
-      
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final itemsList = data is List ? data : (data['results'] ?? []);
-        _items = (itemsList as List)
-            .map<GalleryItem>((json) => GalleryItem.fromJson(json))
-            .toList();
-        _items.sort((a, b) => a.order.compareTo(b.order));
-        _error = null;
-      } else {
-        _error = 'Failed to load gallery: ${response.statusCode}';
-        _items = [];
-      }
+      final data = await _apiService.get(
+        '${ApiConfig.apiUrl}/gallery/categories/',
+      );
+      final list = (data is Map && data.containsKey('results'))
+          ? data['results']
+          : (data is List ? data : []);
+
+      _categories = (list as List)
+          .map((json) => GalleryCategory.fromJson(json as Map<String, dynamic>))
+          .toList();
+
+      _error = null;
     } catch (e) {
-      _error = e.toString();
-      _items = [];
-      print('Error loading gallery items: $e');
+      _error = 'Failed to load categories: $e';
+      if (kDebugMode) print('Error loading categories: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> loadPhotos({String? categorySlug}) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final endpoint = categorySlug != null
+          ? '${ApiConfig.apiUrl}/gallery/photos/by_category/?category=$categorySlug'
+          : '${ApiConfig.apiUrl}/gallery/photos/';
+
+      final data = await _apiService.get(endpoint);
+      final list = (data is Map && data.containsKey('results'))
+          ? data['results']
+          : (data is List ? data : []);
+
+      _photos = (list as List)
+          .map((json) => GalleryPhoto.fromJson(json as Map<String, dynamic>))
+          .toList();
+
+      _error = null;
+    } catch (e) {
+      _error = 'Failed to load photos: $e';
+      if (kDebugMode) print('Error loading photos: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadVideos({String? categorySlug}) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final endpoint = categorySlug != null
+          ? '${ApiConfig.apiUrl}/gallery/videos/by_category/?category=$categorySlug'
+          : '${ApiConfig.apiUrl}/gallery/videos/';
+
+      final data = await _apiService.get(endpoint);
+      final list = (data is Map && data.containsKey('results'))
+          ? data['results']
+          : (data is List ? data : []);
+
+      _videos = (list as List)
+          .map((json) => GalleryVideo.fromJson(json as Map<String, dynamic>))
+          .toList();
+
+      _error = null;
+    } catch (e) {
+      _error = 'Failed to load videos: $e';
+      if (kDebugMode) print('Error loading videos: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void selectCategory(GalleryCategory? category) {
+    _selectedCategory = category;
+    if (category != null) {
+      if (category.type == 'photo') {
+        loadPhotos(categorySlug: category.slug);
+      } else {
+        loadVideos(categorySlug: category.slug);
+      }
+    }
+    notifyListeners();
+  }
+
+  void clearSelection() {
+    _selectedCategory = null;
+    _photos = [];
+    _videos = [];
+    notifyListeners();
   }
 }

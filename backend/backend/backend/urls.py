@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/gallery/', include('gallery.urls')),
     path('api/contact/', include('contact.urls')),
     path('api/core/', include('core.urls')),
+    path('api/tournaments/', include('tournaments.urls')),
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
