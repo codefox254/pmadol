@@ -11,7 +11,7 @@ import '../config/api_config.dart';
 import '../widgets/footer_widget.dart';
 
 class TournamentsScreen extends StatefulWidget {
-  const TournamentsScreen({Key? key}) : super(key: key);
+  const TournamentsScreen({super.key});
 
   @override
   State<TournamentsScreen> createState() => _TournamentsScreenState();
@@ -51,7 +51,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
   Widget _buildPageHeader(bool isMobile) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
-      duration: Duration(milliseconds: 700),
+      duration: const Duration(milliseconds: 700),
       curve: Curves.easeOut,
       builder: (context, value, child) {
         return Opacity(
@@ -60,7 +60,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
             offset: Offset(0, (1 - value) * 16),
             child: Container(
               height: isMobile ? 320 : 380,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -102,7 +102,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildLabel('TOURNAMENTS'),
-                          SizedBox(height: 14),
+                          const SizedBox(height: 14),
                           Text(
                             'Chess Tournaments',
                             style: TextStyle(
@@ -112,7 +112,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                               letterSpacing: -0.5,
                             ),
                           ),
-                          SizedBox(height: 14),
+                          const SizedBox(height: 14),
                           Text(
                             'Compete, challenge yourself, and connect with chess players from around the world',
                             style: TextStyle(
@@ -136,7 +136,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
 
   Widget _buildLabel(String text) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.12),
         borderRadius: BorderRadius.circular(999),
@@ -156,7 +156,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
 
   Widget _buildTournamentsContent(TournamentProvider provider, bool isMobile) {
     if (provider.isLoading) {
-      return Padding(
+      return const Padding(
         padding: EdgeInsets.all(80),
         child: Center(
           child: CircularProgressIndicator(color: Color(0xFF5886BF)),
@@ -180,7 +180,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
             isPast: true,
           ),
         if (provider.upcomingTournaments.isEmpty && provider.pastTournaments.isEmpty)
-          Padding(
+          const Padding(
             padding: EdgeInsets.all(80),
             child: Center(
               child: Text(
@@ -209,10 +209,10 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isPast
-              ? [Color(0xFFEAECEF), Color(0xFFD4D8DF)]
-              : [Color(0xFFF4F7FB), Color(0xFFEAF1F9)],
+              ? [const Color(0xFFEAECEF), const Color(0xFFD4D8DF)]
+              : [const Color(0xFFF4F7FB), const Color(0xFFEAF1F9)],
         ),
-        border: Border(
+        border: const Border(
           top: BorderSide(color: Color(0xFFE0E8F3)),
         ),
       ),
@@ -224,22 +224,22 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
             style: TextStyle(
               fontSize: isMobile ? 24 : 36,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF0B131E),
+              color: const Color(0xFF0B131E),
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Container(
             width: 60,
             height: 4,
             decoration: BoxDecoration(
-              color: Color(0xFF5886BF),
+              color: const Color(0xFF5886BF),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
           GridView.builder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: isMobile ? 1 : 2,
               crossAxisSpacing: 30,
@@ -280,7 +280,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
               blurRadius: 15,
-              offset: Offset(0, 5),
+              offset: const Offset(0, 5),
             ),
           ],
         ),
@@ -303,12 +303,12 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                       top: 12,
                       left: 12,
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: Color(0xFF5886BF),
+                          color: const Color(0xFF5886BF),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Upcoming',
                           style: TextStyle(
                             color: Colors.white,
@@ -325,9 +325,9 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
             Container(
               height: 180,
               decoration: BoxDecoration(
-                color: Color(0xFF5886BF).withOpacity(0.1),
+                color: const Color(0xFF5886BF).withOpacity(0.1),
               ),
-              child: Center(
+              child: const Center(
                 child: Icon(
                   Icons.sports_rounded,
                   size: 60,
@@ -337,13 +337,13 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
             ),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     tournament.title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF0B131E),
@@ -351,34 +351,34 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   _buildTournamentInfo('📍 ${tournament.location}', isMobile),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   _buildTournamentInfo(
                     '📅 ${DateFormat('MMM d, yyyy').format(tournament.startDate)}',
                     isMobile,
                   ),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   _buildTournamentInfo(
                     '⏱️ ${tournament.timeControl}',
                     isMobile,
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   if (tournament.entryFee != null)
                     _buildTournamentInfo(
                       'KES ${tournament.entryFee!.toStringAsFixed(0)} entry',
                       isMobile,
-                      color: Color(0xFF5886BF),
+                      color: const Color(0xFF5886BF),
                     ),
-                  SizedBox(height: 8),
-                  Expanded(child: SizedBox.shrink()),
+                  const SizedBox(height: 8),
+                  const Expanded(child: SizedBox.shrink()),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: Text(
                           '${tournament.registrationCount} registered',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 12,
                             color: Color(0xFF707781),
                             fontWeight: FontWeight.w500,
@@ -393,24 +393,24 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: Text('Tournament Results'),
+                                title: const Text('Tournament Results'),
                                 content: Text(
                                   'Results available at:\n${tournament.resultsLink}',
                                 ),
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.pop(context),
-                                    child: Text('Close'),
+                                    child: const Text('Close'),
                                   ),
                                 ],
                               ),
                             );
                           },
-                          icon: Icon(Icons.leaderboard, size: 16),
-                          label: Text('Results'),
+                          icon: const Icon(Icons.leaderboard, size: 16),
+                          label: const Text('Results'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF5886BF),
-                            padding: EdgeInsets.symmetric(
+                            backgroundColor: const Color(0xFF5886BF),
+                            padding: const EdgeInsets.symmetric(
                               horizontal: 12,
                               vertical: 8,
                             ),
@@ -422,13 +422,13 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                             _showRegistrationDialog(tournament);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF5886BF),
-                            padding: EdgeInsets.symmetric(
+                            backgroundColor: const Color(0xFF5886BF),
+                            padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 8,
                             ),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Register',
                             style: TextStyle(
                               color: Colors.white,
@@ -453,7 +453,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
       text,
       style: TextStyle(
         fontSize: 13,
-        color: color ?? Color(0xFF707781),
+        color: color ?? const Color(0xFF707781),
         fontWeight: FontWeight.w500,
       ),
       maxLines: 1,
@@ -544,7 +544,7 @@ class _TournamentRegistrationFormState
               'Successfully registered for tournament!',
         ),
         backgroundColor: Colors.green,
-        duration: Duration(seconds: 4),
+        duration: const Duration(seconds: 4),
       ),
     );
   }
@@ -555,7 +555,7 @@ class _TournamentRegistrationFormState
 
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: Form(
           key: _formKey,
           child: Column(
@@ -567,18 +567,18 @@ class _TournamentRegistrationFormState
                 style: TextStyle(
                   fontSize: isMobile ? 18 : 20,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF0B131E),
+                  color: const Color(0xFF0B131E),
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 DateFormat('MMMM d, yyyy').format(widget.tournament.startDate),
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 13,
                   color: Color(0xFF707781),
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               _buildFormField(
                 label: 'Full Name *',
                 controller: _nameController,
@@ -589,7 +589,7 @@ class _TournamentRegistrationFormState
                   return null;
                 },
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _buildFormField(
                 label: 'Email *',
                 controller: _emailController,
@@ -601,7 +601,7 @@ class _TournamentRegistrationFormState
                   return null;
                 },
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _buildFormField(
                 label: 'Phone Number *',
                 controller: _phoneController,
@@ -613,7 +613,7 @@ class _TournamentRegistrationFormState
                   return null;
                 },
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _buildFormField(
                 label: 'Chess Username *',
                 controller: _usernameController,
@@ -623,15 +623,15 @@ class _TournamentRegistrationFormState
                   return null;
                 },
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _buildFormField(
                 label: 'Rating (Optional)',
                 controller: _ratingController,
                 hint: 'Your chess rating',
                 keyboardType: TextInputType.number,
               ),
-              SizedBox(height: 16),
-              Text(
+              const SizedBox(height: 16),
+              const Text(
                 'Experience Level',
                 style: TextStyle(
                   fontSize: 14,
@@ -639,9 +639,9 @@ class _TournamentRegistrationFormState
                   color: Color(0xFF0B131E),
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _selectedExperience,
+                initialValue: _selectedExperience,
                 items: ['Beginner', 'Intermediate', 'Advanced', 'Expert']
                     .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                     .toList(),
@@ -650,18 +650,18 @@ class _TournamentRegistrationFormState
                 },
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Color(0xFFF8FAFC),
+                  fillColor: const Color(0xFFF8FAFC),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Color(0xFFE1E8F0)),
+                    borderSide: const BorderSide(color: Color(0xFFE1E8F0)),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Color(0xFFE1E8F0)),
+                    borderSide: const BorderSide(color: Color(0xFFE1E8F0)),
                   ),
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 child: Consumer<TournamentProvider>(
@@ -669,14 +669,14 @@ class _TournamentRegistrationFormState
                     return ElevatedButton(
                       onPressed: provider.isRegistering ? null : _submitForm,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF5886BF),
-                        padding: EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor: const Color(0xFF5886BF),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                       child: provider.isRegistering
-                          ? SizedBox(
+                          ? const SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
@@ -686,7 +686,7 @@ class _TournamentRegistrationFormState
                                 ),
                               ),
                             )
-                          : Text(
+                          : const Text(
                               'Register',
                               style: TextStyle(
                                 color: Colors.white,
@@ -716,35 +716,35 @@ class _TournamentRegistrationFormState
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: Color(0xFF0B131E),
           ),
         ),
-        SizedBox(height: 6),
+        const SizedBox(height: 6),
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
           validator: validator,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: Color(0xFFB0B8C1)),
+            hintStyle: const TextStyle(color: Color(0xFFB0B8C1)),
             filled: true,
-            fillColor: Color(0xFFF8FAFC),
+            fillColor: const Color(0xFFF8FAFC),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Color(0xFFE1E8F0)),
+              borderSide: const BorderSide(color: Color(0xFFE1E8F0)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Color(0xFFE1E8F0)),
+              borderSide: const BorderSide(color: Color(0xFFE1E8F0)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Color(0xFF5886BF), width: 2),
+              borderSide: const BorderSide(color: Color(0xFF5886BF), width: 2),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           ),
         ),
       ],

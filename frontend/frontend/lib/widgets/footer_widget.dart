@@ -16,7 +16,7 @@ class FooterWidget extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 768;
     
     return Container(
-      color: Color(0xFF1A2634),
+      color: const Color(0xFF1A2634),
       child: Column(
         children: [
           // Main footer content
@@ -37,9 +37,9 @@ class FooterWidget extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color(0xFF5886BF).withOpacity(0.0),
-                  Color(0xFF5886BF).withOpacity(0.5),
-                  Color(0xFF5886BF).withOpacity(0.0),
+                  const Color(0xFF5886BF).withOpacity(0.0),
+                  const Color(0xFF5886BF).withOpacity(0.5),
+                  const Color(0xFF5886BF).withOpacity(0.0),
                 ],
               ),
             ),
@@ -57,18 +57,18 @@ class FooterWidget extends StatelessWidget {
                     children: [
                       Text(
                         '© 2024 ${settings.siteName}. All rights reserved.',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFFB0B8C1),
                           fontSize: 13,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _buildFooterLink('Privacy Policy'),
-                          Text(' · ', style: TextStyle(color: Color(0xFF5886BF))),
+                          const Text(' · ', style: TextStyle(color: Color(0xFF5886BF))),
                           _buildFooterLink('Terms of Service'),
                         ],
                       ),
@@ -79,7 +79,7 @@ class FooterWidget extends StatelessWidget {
                     children: [
                       Text(
                         '© 2024 ${settings.siteName}. All rights reserved.',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFFB0B8C1),
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -88,7 +88,7 @@ class FooterWidget extends StatelessWidget {
                       Row(
                         children: [
                           _buildFooterLink('Privacy Policy'),
-                          Text(' · ', style: TextStyle(color: Color(0xFF5886BF))),
+                          const Text(' · ', style: TextStyle(color: Color(0xFF5886BF))),
                           _buildFooterLink('Terms of Service'),
                         ],
                       ),
@@ -110,10 +110,10 @@ class FooterWidget extends StatelessWidget {
           child: _buildFooterColumn(
             children: [
               Container(
-                margin: EdgeInsets.only(bottom: 8),
+                margin: const EdgeInsets.only(bottom: 8),
                 child: Text(
                   settings.siteName.toUpperCase(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
@@ -125,23 +125,23 @@ class FooterWidget extends StatelessWidget {
                 width: 50,
                 height: 3,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [Color(0xFF5886BF), Color(0xFF4A6FA8)],
                   ),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text(
                 settings.tagline,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color(0xFFE8EFF7),
                   fontSize: 15,
                   height: 1.8,
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Wrap(
                 spacing: 12,
                 runSpacing: 12,
@@ -156,7 +156,7 @@ class FooterWidget extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(width: 60),
+        const SizedBox(width: 60),
         
         // Column 2: Quick Links
         Expanded(
@@ -164,12 +164,12 @@ class FooterWidget extends StatelessWidget {
           child: _buildFooterColumn(
             children: [
               _buildColumnTitle('Quick Links'),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               ..._buildLinks(['Home', 'About', 'Services', 'Blog', 'Gallery', 'Shop']),
             ],
           ),
         ),
-        SizedBox(width: 60),
+        const SizedBox(width: 60),
         
         // Column 3: Contact Info
         Expanded(
@@ -177,11 +177,11 @@ class FooterWidget extends StatelessWidget {
           child: _buildFooterColumn(
             children: [
               _buildColumnTitle('Contact Info'),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               _buildContactItem(Icons.phone, settings.phone),
-              SizedBox(height: 18),
+              const SizedBox(height: 18),
               _buildContactItem(Icons.email, settings.email),
-              SizedBox(height: 18),
+              const SizedBox(height: 18),
               _buildLocationItem(
                 title: 'Kasarani Sportsview\nNairobi, Kenya',
                 url: settings.mapUrl ?? 'https://www.google.com/maps/search/?api=1&query=Kasarani%20Sportsview%2C%20Nairobi',
@@ -189,7 +189,7 @@ class FooterWidget extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(width: 60),
+        const SizedBox(width: 60),
         
         // Column 4: Open Hours
         Expanded(
@@ -197,11 +197,11 @@ class FooterWidget extends StatelessWidget {
           child: _buildFooterColumn(
             children: [
               _buildColumnTitle('Business Hours'),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               _buildHoursItem('Monday - Friday', '9:00 AM - 6:00 PM'),
-              SizedBox(height: 14),
+              const SizedBox(height: 14),
               _buildHoursItem('Saturday', '10:00 AM - 4:00 PM'),
-              SizedBox(height: 14),
+              const SizedBox(height: 14),
               _buildHoursItem('Sunday', 'Closed'),
             ],
           ),
@@ -220,28 +220,28 @@ class FooterWidget extends StatelessWidget {
           children: [
             Text(
               settings.siteName.toUpperCase(),
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Container(
               width: 40,
               height: 3,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [Color(0xFF5886BF), Color(0xFF4A6FA8)],
                 ),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               settings.tagline,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xFFE8EFF7),
                 fontSize: 14,
                 height: 1.6,
@@ -249,43 +249,43 @@ class FooterWidget extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 32),
+        const SizedBox(height: 32),
         
         // Quick Links
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildColumnTitle('Quick Links'),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ..._buildLinks(['Home', 'About', 'Services', 'Blog', 'Gallery', 'Shop']),
           ],
         ),
-        SizedBox(height: 32),
+        const SizedBox(height: 32),
         
         // Contact Info
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildColumnTitle('Contact Info'),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildContactItem(Icons.phone, settings.phone),
-            SizedBox(height: 14),
+            const SizedBox(height: 14),
             _buildContactItem(Icons.email, settings.email),
-            SizedBox(height: 14),
+            const SizedBox(height: 14),
             _buildLocationItem(
               title: 'Kasarani Sportsview, Nairobi',
               url: settings.mapUrl ?? 'https://www.google.com/maps/search/?api=1&query=Kasarani%20Sportsview%2C%20Nairobi',
             ),
           ],
         ),
-        SizedBox(height: 32),
+        const SizedBox(height: 32),
         
         // Social Media
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildColumnTitle('Follow Us'),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Wrap(
               spacing: 12,
               runSpacing: 12,
@@ -313,7 +313,7 @@ class FooterWidget extends StatelessWidget {
   Widget _buildColumnTitle(String title) {
     return Text(
       title,
-      style: TextStyle(
+      style: const TextStyle(
         color: Colors.white,
         fontSize: 16,
         fontWeight: FontWeight.w700,
@@ -325,7 +325,7 @@ class FooterWidget extends StatelessWidget {
   List<Widget> _buildLinks(List<String> links) {
     return links.map((link) {
       return Padding(
-        padding: EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.only(bottom: 12),
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           child: Semantics(
@@ -336,7 +336,7 @@ class FooterWidget extends StatelessWidget {
               },
               child: Text(
                 link,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color(0xFFB0B8C1),
                   fontSize: 15,
                   fontWeight: FontWeight.w400,
@@ -358,16 +358,16 @@ class FooterWidget extends StatelessWidget {
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-            color: Color(0xFF5886BF).withOpacity(0.15),
+            color: const Color(0xFF5886BF).withOpacity(0.15),
             borderRadius: BorderRadius.circular(6),
           ),
-          child: Icon(icon, color: Color(0xFF5886BF), size: 14),
+          child: Icon(icon, color: const Color(0xFF5886BF), size: 14),
         ),
-        SizedBox(width: 12),
+        const SizedBox(width: 12),
         Expanded(
           child: Text(
             text,
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFFE8EFF7),
               fontSize: 15,
               fontWeight: FontWeight.w400,
@@ -387,12 +387,12 @@ class FooterWidget extends StatelessWidget {
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-            color: Color(0xFF5886BF).withOpacity(0.15),
+            color: const Color(0xFF5886BF).withOpacity(0.15),
             borderRadius: BorderRadius.circular(6),
           ),
-          child: Icon(Icons.location_on, color: Color(0xFF5886BF), size: 14),
+          child: const Icon(Icons.location_on, color: Color(0xFF5886BF), size: 14),
         ),
-        SizedBox(width: 12),
+        const SizedBox(width: 12),
         Expanded(
           child: MouseRegion(
             cursor: SystemMouseCursors.click,
@@ -400,7 +400,7 @@ class FooterWidget extends StatelessWidget {
               onTap: () => _launchUrl(url),
               child: Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color(0xFF5886BF),
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -422,7 +422,7 @@ class FooterWidget extends StatelessWidget {
       children: [
         Text(
           day,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color(0xFFB0B8C1),
             fontSize: 15,
             fontWeight: FontWeight.w400,
@@ -430,7 +430,7 @@ class FooterWidget extends StatelessWidget {
         ),
         Text(
           hours,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color(0xFF5886BF),
             fontSize: 15,
             fontWeight: FontWeight.w600,
@@ -449,7 +449,7 @@ class FooterWidget extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
@@ -460,9 +460,9 @@ class FooterWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: Color(0xFF5886BF).withOpacity(0.2),
+                color: const Color(0xFF5886BF).withOpacity(0.2),
                 blurRadius: 12,
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -477,7 +477,7 @@ class FooterWidget extends StatelessWidget {
       cursor: SystemMouseCursors.click,
       child: Text(
         text,
-        style: TextStyle(
+        style: const TextStyle(
           color: Color(0xFFB0B8C1),
           fontSize: 14,
           fontWeight: FontWeight.w400,

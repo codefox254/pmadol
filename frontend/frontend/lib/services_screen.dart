@@ -8,7 +8,7 @@ import 'config/api_config.dart';
 import 'screens/enrollment_screen.dart';
 
 class ServicesScreen extends StatefulWidget {
-  const ServicesScreen({Key? key}) : super(key: key);
+  const ServicesScreen({super.key});
 
   @override
   State<ServicesScreen> createState() => _ServicesScreenState();
@@ -39,7 +39,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
     return Consumer2<ServiceProvider, HomeProvider>(
       builder: (context, serviceProvider, homeProvider, child) {
         if (serviceProvider.isLoading || homeProvider.isLoading) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF5886BF)),
             ),
@@ -50,7 +50,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
         final homeData = homeProvider.homeData;
         
         if (homeData == null) {
-          return Center(
+          return const Center(
             child: Text(
               'No data available',
               style: TextStyle(color: Color(0xFF707781), fontSize: 16),
@@ -85,7 +85,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
     return Container(
       height: isMobile ? 250 : 320,
       width: double.infinity,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -139,7 +139,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                   ),
                   SizedBox(height: isMobile ? 12 : 20),
                   Container(
-                    constraints: BoxConstraints(maxWidth: 600),
+                    constraints: const BoxConstraints(maxWidth: 600),
                     child: Text(
                       'Professional chess training for every skill level',
                       style: TextStyle(
@@ -169,7 +169,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
         horizontal: horizontalPadding,
         vertical: verticalPadding,
       ),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -182,12 +182,12 @@ class _ServicesScreenState extends State<ServicesScreen> {
       child: Column(
         children: [
           Container(
-            constraints: BoxConstraints(maxWidth: 900),
+            constraints: const BoxConstraints(maxWidth: 900),
             child: Text(
               'We offer a comprehensive range of chess services designed to cater to players of all skill levels. From beginner basics to advanced tournament preparation, our expert coaches provide personalized instruction that helps you achieve your chess goals.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Color(0xFF404957),
+                color: const Color(0xFF404957),
                 fontSize: fontSize,
                 height: 1.8,
                 fontWeight: FontWeight.w400,
@@ -206,9 +206,9 @@ class _ServicesScreenState extends State<ServicesScreen> {
       return Column(
         children: [
           _buildStatItem('500+', 'Students Trained'),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           _buildStatItem('15+', 'Expert Coaches'),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           _buildStatItem('95%', 'Success Rate'),
         ],
       );
@@ -218,9 +218,9 @@ class _ServicesScreenState extends State<ServicesScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _buildStatItem('500+', 'Students Trained'),
-        Container(width: 1, height: 60, color: Color(0xFFE8EFF7)),
+        Container(width: 1, height: 60, color: const Color(0xFFE8EFF7)),
         _buildStatItem('15+', 'Expert Coaches'),
-        Container(width: 1, height: 60, color: Color(0xFFE8EFF7)),
+        Container(width: 1, height: 60, color: const Color(0xFFE8EFF7)),
         _buildStatItem('95%', 'Success Rate'),
       ],
     );
@@ -231,16 +231,16 @@ class _ServicesScreenState extends State<ServicesScreen> {
       children: [
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color(0xFF5886BF),
             fontSize: 36,
             fontWeight: FontWeight.w700,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color(0xFF707781),
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -286,16 +286,16 @@ class _ServicesScreenState extends State<ServicesScreen> {
           });
         },
         backgroundColor: Colors.white,
-        selectedColor: Color(0xFF5886BF),
+        selectedColor: const Color(0xFF5886BF),
         labelStyle: TextStyle(
-          color: isSelected ? Colors.white : Color(0xFF707781),
+          color: isSelected ? Colors.white : const Color(0xFF707781),
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
           fontSize: 14,
         ),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         elevation: isSelected ? 4 : 0,
         side: BorderSide(
-          color: isSelected ? Color(0xFF5886BF) : Color(0xFFE8EFF7),
+          color: isSelected ? const Color(0xFF5886BF) : const Color(0xFFE8EFF7),
           width: 1,
         ),
       ),
@@ -310,7 +310,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
     if (services.isEmpty) {
       return Container(
         padding: EdgeInsets.symmetric(vertical: 80, horizontal: horizontalPadding),
-        child: Center(
+        child: const Center(
           child: Column(
             children: [
               Icon(Icons.school_outlined, size: 64, color: Color(0xFFB0B8C1)),
@@ -338,7 +338,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 40),
       child: GridView.builder(
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount,
           crossAxisSpacing: isMobile ? 0 : 30,
@@ -358,7 +358,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -366,7 +366,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
               blurRadius: 20,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
               spreadRadius: 0,
             ),
           ],
@@ -380,7 +380,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                   Container(
                     height: 200,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                       image: DecorationImage(
                         image: NetworkImage('${ApiConfig.baseUrl}${service.image}'),
                         fit: BoxFit.cover,
@@ -391,14 +391,14 @@ class _ServicesScreenState extends State<ServicesScreen> {
                     top: 12,
                     right: 12,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Color(0xFF5886BF),
+                        color: const Color(0xFF5886BF),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         service.duration ?? 'Flexible',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -416,25 +416,25 @@ class _ServicesScreenState extends State<ServicesScreen> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Color(0xFF5886BF).withOpacity(0.15),
-                      Color(0xFF5886BF).withOpacity(0.05),
+                      const Color(0xFF5886BF).withOpacity(0.15),
+                      const Color(0xFF5886BF).withOpacity(0.05),
                     ],
                   ),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                 ),
-                child: Center(
+                child: const Center(
                   child: Icon(Icons.school_outlined, size: 80, color: Color(0xFF5886BF)),
                 ),
               ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       service.name,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Color(0xFF0B131E),
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
@@ -443,11 +443,11 @@ class _ServicesScreenState extends State<ServicesScreen> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Expanded(
                       child: Text(
                         service.description,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFF707781),
                           fontSize: 14,
                           height: 1.6,
@@ -456,18 +456,18 @@ class _ServicesScreenState extends State<ServicesScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     if (service.price != null)
                       Container(
-                        padding: EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
-                          color: Color(0xFFF8FAFC),
+                          color: const Color(0xFFF8FAFC),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
+                            const Text(
                               'KES ',
                               style: TextStyle(
                                 color: Color(0xFF707781),
@@ -477,13 +477,13 @@ class _ServicesScreenState extends State<ServicesScreen> {
                             ),
                             Text(
                               service.price.toStringAsFixed(0),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Color(0xFF5886BF),
                                 fontSize: 24,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            Text(
+                            const Text(
                               '/month',
                               style: TextStyle(
                                 color: Color(0xFF707781),
@@ -494,7 +494,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                           ],
                         ),
                       ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -510,15 +510,15 @@ class _ServicesScreenState extends State<ServicesScreen> {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF5886BF),
+                          backgroundColor: const Color(0xFF5886BF),
                           foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 14),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
@@ -559,17 +559,17 @@ class _ServicesScreenState extends State<ServicesScreen> {
           Text(
             'WHY CHOOSE US',
             style: TextStyle(
-              color: Color(0xFF5886BF),
+              color: const Color(0xFF5886BF),
               fontSize: isMobile ? 12 : 14,
               letterSpacing: 3,
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             'Excellence in Chess Education',
             style: TextStyle(
-              color: Color(0xFF0B131E),
+              color: const Color(0xFF0B131E),
               fontSize: isMobile ? 28 : 42,
               fontWeight: FontWeight.w700,
             ),
@@ -585,21 +585,21 @@ class _ServicesScreenState extends State<ServicesScreen> {
                       'Learn from FIDE-rated masters and experienced educators',
                       isMobile,
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     _buildFeatureCard(
                       Icons.person_outline,
                       'Personalized Training',
                       'Customized curriculum tailored to your skill level and goals',
                       isMobile,
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     _buildFeatureCard(
                       Icons.groups_outlined,
                       'Flexible Learning',
                       'Choose between private lessons or group sessions',
                       isMobile,
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     _buildFeatureCard(
                       Icons.analytics_outlined,
                       'Progress Tracking',
@@ -618,7 +618,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                         isMobile,
                       ),
                     ),
-                    SizedBox(width: 24),
+                    const SizedBox(width: 24),
                     Expanded(
                       child: _buildFeatureCard(
                         Icons.person_outline,
@@ -627,7 +627,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                         isMobile,
                       ),
                     ),
-                    SizedBox(width: 24),
+                    const SizedBox(width: 24),
                     Expanded(
                       child: _buildFeatureCard(
                         Icons.groups_outlined,
@@ -636,7 +636,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                         isMobile,
                       ),
                     ),
-                    SizedBox(width: 24),
+                    const SizedBox(width: 24),
                     Expanded(
                       child: _buildFeatureCard(
                         Icons.analytics_outlined,
@@ -656,34 +656,34 @@ class _ServicesScreenState extends State<ServicesScreen> {
     return Container(
       padding: EdgeInsets.all(isMobile ? 20 : 24),
       decoration: BoxDecoration(
-        color: Color(0xFFF8FAFC),
+        color: const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Color(0xFFE8EFF7)),
+        border: Border.all(color: const Color(0xFFE8EFF7)),
       ),
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Color(0xFF5886BF).withOpacity(0.1),
+              color: const Color(0xFF5886BF).withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, size: 32, color: Color(0xFF5886BF)),
+            child: Icon(icon, size: 32, color: const Color(0xFF5886BF)),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF0B131E),
               fontSize: 18,
               fontWeight: FontWeight.w700,
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             description,
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF707781),
               fontSize: 14,
               height: 1.6,
@@ -704,7 +704,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
         horizontal: horizontalPadding,
         vertical: verticalPadding,
       ),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -716,17 +716,17 @@ class _ServicesScreenState extends State<ServicesScreen> {
           Text(
             'PRICING PLANS',
             style: TextStyle(
-              color: Color(0xFF5886BF),
+              color: const Color(0xFF5886BF),
               fontSize: isMobile ? 12 : 14,
               letterSpacing: 3,
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             'Choose Your Package',
             style: TextStyle(
-              color: Color(0xFF0B131E),
+              color: const Color(0xFF0B131E),
               fontSize: isMobile ? 32 : 48,
               fontWeight: FontWeight.w700,
             ),
@@ -736,7 +736,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
           Text(
             'Flexible options to match your learning journey',
             style: TextStyle(
-              color: Color(0xFF707781),
+              color: const Color(0xFF707781),
               fontSize: isMobile ? 14 : 18,
             ),
             textAlign: TextAlign.center,
@@ -752,7 +752,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                   ['4 group sessions', '1 hour each', 'Basic materials', 'Certificate'],
                   isMobile,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 _buildPricingCard(
                   'Intermediate',
                   '8,000',
@@ -761,7 +761,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                   isMobile,
                   isPopular: true,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 _buildPricingCard(
                   'Advanced',
                   '12,000',
@@ -784,7 +784,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                     isMobile,
                   ),
                 ),
-                SizedBox(width: 30),
+                const SizedBox(width: 30),
                 Expanded(
                   child: _buildPricingCard(
                     'Intermediate',
@@ -795,7 +795,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                     isPopular: true,
                   ),
                 ),
-                SizedBox(width: 30),
+                const SizedBox(width: 30),
                 Expanded(
                   child: _buildPricingCard(
                     'Advanced',
@@ -825,12 +825,12 @@ class _ServicesScreenState extends State<ServicesScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: isPopular
-            ? Border.all(color: Color(0xFF5886BF), width: 2)
-            : Border.all(color: Color(0xFFE8EFF7)),
+            ? Border.all(color: const Color(0xFF5886BF), width: 2)
+            : Border.all(color: const Color(0xFFE8EFF7)),
         boxShadow: [
           BoxShadow(
             color: isPopular
-                ? Color(0xFF5886BF).withOpacity(0.15)
+                ? const Color(0xFF5886BF).withOpacity(0.15)
                 : Colors.black.withOpacity(0.05),
             blurRadius: isPopular ? 20 : 10,
             offset: Offset(0, isPopular ? 8 : 4),
@@ -843,14 +843,14 @@ class _ServicesScreenState extends State<ServicesScreen> {
           children: [
             if (isPopular)
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [Color(0xFF5886BF), Color(0xFF4A6FA8)],
                   ),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(
+                child: const Text(
                   'MOST POPULAR',
                   style: TextStyle(
                     color: Colors.white,
@@ -864,17 +864,17 @@ class _ServicesScreenState extends State<ServicesScreen> {
             Text(
               name,
               style: TextStyle(
-                color: Color(0xFF0B131E),
+                color: const Color(0xFF0B131E),
                 fontSize: isMobile ? 24 : 28,
                 fontWeight: FontWeight.w700,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'KES ',
                   style: TextStyle(
                     color: Color(0xFF5886BF),
@@ -885,7 +885,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                 Text(
                   price,
                   style: TextStyle(
-                    color: Color(0xFF5886BF),
+                    color: const Color(0xFF5886BF),
                     fontSize: isMobile ? 40 : 48,
                     fontWeight: FontWeight.w700,
                     height: 1,
@@ -893,41 +893,41 @@ class _ServicesScreenState extends State<ServicesScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               period,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xFF707781),
                 fontSize: 14,
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Container(
               height: 1,
-              color: Color(0xFFE8EFF7),
+              color: const Color(0xFFE8EFF7),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             ...features.map((feature) => Padding(
-              padding: EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: 16),
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(4),
+                    padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: Color(0xFF5886BF).withOpacity(0.1),
+                      color: const Color(0xFF5886BF).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.check,
                       color: Color(0xFF5886BF),
                       size: 16,
                     ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       feature,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Color(0xFF404957),
                         fontSize: 15,
                         height: 1.4,
@@ -937,7 +937,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                 ],
               ),
             )),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -945,15 +945,15 @@ class _ServicesScreenState extends State<ServicesScreen> {
                   // TODO: Navigate to enrollment with selected plan
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isPopular ? Color(0xFF5886BF) : Color(0xFF5B728F),
+                  backgroundColor: isPopular ? const Color(0xFF5886BF) : const Color(0xFF5B728F),
                   foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'Get Started',
                   style: TextStyle(
                     fontSize: 16,
@@ -977,7 +977,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
         horizontal: horizontalPadding,
         vertical: verticalPadding,
       ),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -998,7 +998,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
           ),
           SizedBox(height: isMobile ? 16 : 20),
           Container(
-            constraints: BoxConstraints(maxWidth: 600),
+            constraints: const BoxConstraints(maxWidth: 600),
             child: Text(
               'Contact us today to book your first session or learn more about our services',
               style: TextStyle(
@@ -1021,14 +1021,14 @@ class _ServicesScreenState extends State<ServicesScreen> {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
-                          foregroundColor: Color(0xFF5886BF),
-                          padding: EdgeInsets.symmetric(vertical: 16),
+                          foregroundColor: const Color(0xFF5886BF),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           'BOOK A SESSION',
                           style: TextStyle(
                             fontSize: 16,
@@ -1038,7 +1038,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(
@@ -1047,13 +1047,13 @@ class _ServicesScreenState extends State<ServicesScreen> {
                         },
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          side: BorderSide(color: Colors.white, width: 2),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          side: const BorderSide(color: Colors.white, width: 2),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           'CONTACT US',
                           style: TextStyle(
                             fontSize: 16,
@@ -1074,14 +1074,14 @@ class _ServicesScreenState extends State<ServicesScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        foregroundColor: Color(0xFF5886BF),
-                        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                        foregroundColor: const Color(0xFF5886BF),
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'BOOK A SESSION NOW',
                         style: TextStyle(
                           fontSize: 16,
@@ -1090,20 +1090,20 @@ class _ServicesScreenState extends State<ServicesScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     OutlinedButton(
                       onPressed: () {
                         // TODO: Navigate to contact
                       },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                        side: BorderSide(color: Colors.white, width: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                        side: const BorderSide(color: Colors.white, width: 2),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'CONTACT US',
                         style: TextStyle(
                           fontSize: 16,

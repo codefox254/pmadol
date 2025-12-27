@@ -87,3 +87,18 @@ class HeroSlideAdmin(admin.ModelAdmin):
     list_editable = ['is_active', 'display_order']
 
 
+@admin.register(NewsUpdate)
+class NewsUpdateAdmin(admin.ModelAdmin):
+    list_display = ['title', 'update_type', 'is_featured', 'is_active', 'display_order', 'published_date']
+    list_filter = ['update_type', 'is_featured', 'is_active', 'published_date']
+    search_fields = ['title', 'content']
+    list_editable = ['is_featured', 'is_active', 'display_order']
+    ordering = ['-published_date', 'display_order']
+
+
+@admin.register(HomeGalleryImage)
+class HomeGalleryImageAdmin(admin.ModelAdmin):
+    list_display = ['title', 'is_active', 'display_order', 'created_at']
+    list_filter = ['is_active', 'created_at']
+    search_fields = ['title', 'caption']
+    list_editable = ['is_active', 'display_order']

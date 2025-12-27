@@ -34,7 +34,7 @@ class _AboutScreenState extends State<AboutScreen> {
     return Consumer<HomeProvider>(
       builder: (context, homeProvider, child) {
         if (homeProvider.isLoading) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(color: Color(0xFF5886BF)),
           );
         }
@@ -45,7 +45,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
         final homeData = homeProvider.homeData;
         if (homeData == null) {
-          return Center(child: Text('No data available'));
+          return const Center(child: Text('No data available'));
         }
 
         return SingleChildScrollView(
@@ -70,13 +70,13 @@ class _AboutScreenState extends State<AboutScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 80, color: Colors.red),
-            SizedBox(height: 20),
-            Text('Failed to load content', style: TextStyle(fontSize: 18)),
-            SizedBox(height: 20),
+            const Icon(Icons.error_outline, size: 80, color: Colors.red),
+            const SizedBox(height: 20),
+            const Text('Failed to load content', style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _loadData,
-              child: Text('Retry'),
+              child: const Text('Retry'),
             ),
           ],
         ),
@@ -87,7 +87,7 @@ class _AboutScreenState extends State<AboutScreen> {
   Widget _buildPageHeader(dynamic settings) {
     return Container(
       height: 350,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/about_header.jpg'),
           fit: BoxFit.cover,
@@ -100,7 +100,7 @@ class _AboutScreenState extends State<AboutScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'OUR STORY',
                   style: TextStyle(
                     color: Colors.white,
@@ -109,17 +109,17 @@ class _AboutScreenState extends State<AboutScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Text(
                   settings.siteName,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 52,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
                   settings.tagline,
                   style: TextStyle(
@@ -137,8 +137,8 @@ class _AboutScreenState extends State<AboutScreen> {
 
   Widget _buildAboutContent() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -150,7 +150,7 @@ class _AboutScreenState extends State<AboutScreen> {
       ),
       child: Column(
         children: [
-          Text(
+          const Text(
             'WHO WE ARE',
             style: TextStyle(
               color: Color(0xFF5886BF),
@@ -159,8 +159,8 @@ class _AboutScreenState extends State<AboutScreen> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 20),
+          const Text(
             'Dedicated to Chess Excellence',
             style: TextStyle(
               color: Color(0xFF0B131E),
@@ -168,10 +168,10 @@ class _AboutScreenState extends State<AboutScreen> {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
           Row(
             children: [
-              Expanded(
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -207,13 +207,13 @@ class _AboutScreenState extends State<AboutScreen> {
                   ],
                 ),
               ),
-              SizedBox(width: 60),
+              const SizedBox(width: 60),
               Expanded(
                 child: Container(
                   height: 400,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    image: DecorationImage(
+                    image: const DecorationImage(
                       image: AssetImage('assets/images/hero_bg.jpg'),
                       fit: BoxFit.cover,
                     ),
@@ -229,8 +229,8 @@ class _AboutScreenState extends State<AboutScreen> {
 
   Widget _buildMissionVision() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -251,7 +251,7 @@ class _AboutScreenState extends State<AboutScreen> {
               Icons.flag,
             ),
           ),
-          SizedBox(width: 40),
+          const SizedBox(width: 40),
           Expanded(
             child: _buildMissionVisionCard(
               'VISION',
@@ -267,7 +267,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
   Widget _buildMissionVisionCard(String title, String content, IconData icon) {
     return Container(
-      padding: EdgeInsets.all(40),
+      padding: const EdgeInsets.all(40),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
@@ -277,16 +277,16 @@ class _AboutScreenState extends State<AboutScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, color: Colors.white, size: 40),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 22,
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           Text(
             content,
             style: TextStyle(
@@ -302,8 +302,8 @@ class _AboutScreenState extends State<AboutScreen> {
 
   Widget _buildCoreValues() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -315,7 +315,7 @@ class _AboutScreenState extends State<AboutScreen> {
       ),
       child: Column(
         children: [
-          Text(
+          const Text(
             'OUR VALUES',
             style: TextStyle(
               color: Color(0xFF5886BF),
@@ -324,8 +324,8 @@ class _AboutScreenState extends State<AboutScreen> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 20),
+          const Text(
             'What Guides Us',
             style: TextStyle(
               color: Color(0xFF0B131E),
@@ -333,7 +333,7 @@ class _AboutScreenState extends State<AboutScreen> {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 60),
+          const SizedBox(height: 60),
           Wrap(
             spacing: 30,
             runSpacing: 30,
@@ -368,7 +368,7 @@ class _AboutScreenState extends State<AboutScreen> {
   Widget _buildValueCard(String title, String description, IconData icon) {
     return Container(
       width: 220,
-      padding: EdgeInsets.all(30),
+      padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -376,7 +376,7 @@ class _AboutScreenState extends State<AboutScreen> {
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -386,26 +386,26 @@ class _AboutScreenState extends State<AboutScreen> {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: Color(0xFF5886BF).withOpacity(0.1),
+              color: const Color(0xFF5886BF).withOpacity(0.1),
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Icon(icon, color: Color(0xFF5886BF), size: 30),
+            child: Icon(icon, color: const Color(0xFF5886BF), size: 30),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF0B131E),
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           Text(
             description,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF707781),
               fontSize: 14,
               height: 1.6,
@@ -420,8 +420,8 @@ class _AboutScreenState extends State<AboutScreen> {
     return Consumer<TeamProvider>(
       builder: (context, teamProvider, child) {
         return Container(
-          padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
-          decoration: BoxDecoration(
+          padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -433,7 +433,7 @@ class _AboutScreenState extends State<AboutScreen> {
           ),
           child: Column(
             children: [
-              Text(
+              const Text(
                 'OUR TEAM',
                 style: TextStyle(
                   color: Color(0xFF5886BF),
@@ -442,8 +442,8 @@ class _AboutScreenState extends State<AboutScreen> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 'Expert Coaches & Instructors',
                 style: TextStyle(
                   color: Color(0xFF0B131E),
@@ -451,13 +451,13 @@ class _AboutScreenState extends State<AboutScreen> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: 60),
+              const SizedBox(height: 60),
               if (teamProvider.isLoading) ...[
-                Center(
+                const Center(
                   child: CircularProgressIndicator(color: Color(0xFF5886BF)),
                 )
               ] else if (teamProvider.error != null) ...[
-                Text(
+                const Text(
                   'Failed to load team',
                   style: TextStyle(color: Colors.red, fontSize: 16),
                 ),
@@ -491,7 +491,7 @@ class _AboutScreenState extends State<AboutScreen> {
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -500,8 +500,8 @@ class _AboutScreenState extends State<AboutScreen> {
           Container(
             height: 200,
             decoration: BoxDecoration(
-              color: Color(0xFF5886BF).withOpacity(0.1),
-              borderRadius: BorderRadius.only(
+              color: const Color(0xFF5886BF).withOpacity(0.1),
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
               ),
@@ -513,35 +513,35 @@ class _AboutScreenState extends State<AboutScreen> {
                   : null,
             ),
             child: (photo == null || photo.isEmpty)
-                ? Icon(Icons.person, size: 80, color: Color(0xFF5886BF))
+                ? const Icon(Icons.person, size: 80, color: Color(0xFF5886BF))
                 : null,
           ),
           Padding(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   name,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xFF0B131E),
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Text(
                   role,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xFF5886BF),
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xFF707781),
                     fontSize: 13,
                     fontWeight: FontWeight.w400,

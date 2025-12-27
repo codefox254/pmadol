@@ -8,7 +8,7 @@ import 'widgets/checkout_form.dart';
 import 'config/api_config.dart';
 
 class ShopScreen extends StatefulWidget {
-  const ShopScreen({Key? key}) : super(key: key);
+  const ShopScreen({super.key});
 
   @override
   State<ShopScreen> createState() => _ShopScreenState();
@@ -74,7 +74,7 @@ class _ShopScreenState extends State<ShopScreen> {
     return Container(
       height: 300,
       width: double.infinity,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -88,7 +88,7 @@ class _ShopScreenState extends State<ShopScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'CHESS EQUIPMENT',
                   style: TextStyle(
                     color: Colors.white,
@@ -97,8 +97,8 @@ class _ShopScreenState extends State<ShopScreen> {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                SizedBox(height: 15),
-                Text(
+                const SizedBox(height: 15),
+                const Text(
                   'Shop',
                   style: TextStyle(
                     color: Colors.white,
@@ -106,7 +106,7 @@ class _ShopScreenState extends State<ShopScreen> {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
                   'Quality chess sets, books, and accessories',
                   style: TextStyle(
@@ -132,20 +132,20 @@ class _ShopScreenState extends State<ShopScreen> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Color(0xFFF8FAFC),
+                color: const Color(0xFFF8FAFC),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Color(0xFFE8EFF7)),
+                border: Border.all(color: const Color(0xFFE8EFF7)),
               ),
               child: Row(
                 children: [
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12),
                     child: Icon(Icons.search, color: Color(0xFF707781), size: 20),
                   ),
                   Expanded(
                     child: TextField(
                       controller: _searchController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Search products...',
                         hintStyle: TextStyle(color: Color(0xFFB0B8C1)),
                         border: InputBorder.none,
@@ -164,24 +164,24 @@ class _ShopScreenState extends State<ShopScreen> {
               ),
             ),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              color: Color(0xFFF8FAFC),
+              color: const Color(0xFFF8FAFC),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Color(0xFFE8EFF7)),
+              border: Border.all(color: const Color(0xFFE8EFF7)),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: sortOption,
-                icon: Icon(Icons.expand_more, color: Color(0xFF707781)),
+                icon: const Icon(Icons.expand_more, color: Color(0xFF707781)),
                 items: [
-                  DropdownMenuItem(value: 'newest', child: Text('Newest')),
-                  DropdownMenuItem(value: 'price_low', child: Text('Price: Low to High')),
-                  DropdownMenuItem(value: 'price_high', child: Text('Price: High to Low')),
-                  DropdownMenuItem(value: 'popular', child: Text('Popular')),
-                  DropdownMenuItem(value: 'rating', child: Text('Top Rated')),
+                  const DropdownMenuItem(value: 'newest', child: Text('Newest')),
+                  const DropdownMenuItem(value: 'price_low', child: Text('Price: Low to High')),
+                  const DropdownMenuItem(value: 'price_high', child: Text('Price: High to Low')),
+                  const DropdownMenuItem(value: 'popular', child: Text('Popular')),
+                  const DropdownMenuItem(value: 'rating', child: Text('Top Rated')),
                 ].toList(),
                 onChanged: (value) {
                   if (value != null) {
@@ -206,7 +206,7 @@ class _ShopScreenState extends State<ShopScreen> {
               vertical: isMobile ? 20 : 30,
               horizontal: isMobile ? 16 : 80,
             ),
-            child: Center(
+            child: const Center(
               child: Text(
                 'No categories available yet',
                 style: TextStyle(color: Color(0xFF707781)),
@@ -215,7 +215,7 @@ class _ShopScreenState extends State<ShopScreen> {
           );
         }
 
-        final categories = ['All', ...provider.categories.map((c) => c.name).toList()];
+        final categories = ['All', ...provider.categories.map((c) => c.name)];
         
         return Container(
           padding: EdgeInsets.symmetric(
@@ -243,16 +243,16 @@ class _ShopScreenState extends State<ShopScreen> {
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 24, vertical: isMobile ? 10 : 12),
                     decoration: BoxDecoration(
-                      color: isSelected ? Color(0xFF5886BF) : Colors.white,
+                      color: isSelected ? const Color(0xFF5886BF) : Colors.white,
                       borderRadius: BorderRadius.circular(25),
                       border: Border.all(
-                        color: isSelected ? Color(0xFF5886BF) : Color(0xFFE8EFF7),
+                        color: isSelected ? const Color(0xFF5886BF) : const Color(0xFFE8EFF7),
                       ),
                     ),
                     child: Text(
                       category,
                       style: TextStyle(
-                        color: isSelected ? Colors.white : Color(0xFF404957),
+                        color: isSelected ? Colors.white : const Color(0xFF404957),
                         fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                         fontSize: isMobile ? 12 : 14,
                       ),
@@ -279,7 +279,7 @@ class _ShopScreenState extends State<ShopScreen> {
         horizontal: isMobile ? 16 : 80,
         vertical: isMobile ? 10 : 16,
       ),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Color(0xFFF8FAFC),
         border: Border(
           top: BorderSide(color: Color(0xFFE8EFF7)),
@@ -289,36 +289,36 @@ class _ShopScreenState extends State<ShopScreen> {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Color(0xFFE8EFF7)),
+              border: Border.all(color: const Color(0xFFE8EFF7)),
             ),
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                Icon(Icons.shopping_cart_outlined, color: Color(0xFF5886BF)),
+                const Icon(Icons.shopping_cart_outlined, color: Color(0xFF5886BF)),
                 if (totalItems > 0)
                   Positioned(
                     right: -6,
                     top: -6,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Color(0xFFE74C3C),
+                        color: const Color(0xFFE74C3C),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
                         '$totalItems',
-                        style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700),
+                        style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700),
                       ),
                     ),
                   ),
               ],
             ),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,31 +326,31 @@ class _ShopScreenState extends State<ShopScreen> {
                 Text(
                   'Cart & Checkout',
                   style: TextStyle(
-                    color: Color(0xFF0B131E),
+                    color: const Color(0xFF0B131E),
                     fontSize: isMobile ? 14 : 16,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   totalItems > 0
                       ? '$totalItems items · KES ${totalAmount.toStringAsFixed(0)}'
                       : 'No items yet. Add products to checkout.',
                   style: TextStyle(
-                    color: Color(0xFF707781),
+                    color: const Color(0xFF707781),
                     fontSize: isMobile ? 12 : 13,
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           ElevatedButton.icon(
             onPressed: () => _openCartSheet(cartProvider),
             icon: Icon(Icons.shopping_bag_outlined, size: isMobile ? 16 : 18),
-            label: Text('View Cart'),
+            label: const Text('View Cart'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF5886BF),
+              backgroundColor: const Color(0xFF5886BF),
               foregroundColor: Colors.white,
               padding: EdgeInsets.symmetric(
                 horizontal: isMobile ? 12 : 16,
@@ -375,7 +375,7 @@ class _ShopScreenState extends State<ShopScreen> {
       child: Consumer<ShopProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(color: Color(0xFF5886BF)),
             );
           }
@@ -384,14 +384,14 @@ class _ShopScreenState extends State<ShopScreen> {
             return Center(
               child: Text(
                 'Error loading products: ${provider.error}',
-                style: TextStyle(color: Colors.red, fontSize: 16),
+                style: const TextStyle(color: Colors.red, fontSize: 16),
               ),
             );
           }
 
           final products = provider.products;
           if (products.isEmpty) {
-            return Center(
+            return const Center(
               child: Padding(
                 padding: EdgeInsets.all(40),
                 child: Text(
@@ -406,7 +406,7 @@ class _ShopScreenState extends State<ShopScreen> {
 
           return GridView.builder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: gridColumns,
               crossAxisSpacing: isMobile ? 12 : 25,
@@ -442,7 +442,7 @@ class _ShopScreenState extends State<ShopScreen> {
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
               blurRadius: 10,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -454,8 +454,8 @@ class _ShopScreenState extends State<ShopScreen> {
                 Container(
                   height: isMobile ? 120 : 180,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                    color: Color(0xFFF8FAFC),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    color: const Color(0xFFF8FAFC),
                     image: product.image != null
                         ? DecorationImage(
                             image: NetworkImage(_resolveImageUrl(product.image)!),
@@ -466,7 +466,7 @@ class _ShopScreenState extends State<ShopScreen> {
                   child: product.image == null
                       ? Center(
                           child: Icon(Icons.image_not_supported_outlined,
-                              size: 40, color: Color(0xFF707781).withOpacity(0.3)),
+                              size: 40, color: const Color(0xFF707781).withOpacity(0.3)),
                         )
                       : null,
                 ),
@@ -475,14 +475,14 @@ class _ShopScreenState extends State<ShopScreen> {
                     top: 8,
                     right: 8,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Color(0xFFE74C3C),
+                        color: const Color(0xFFE74C3C),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         '-${product.discountPercentage}%',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
@@ -494,7 +494,7 @@ class _ShopScreenState extends State<ShopScreen> {
                   Positioned.fill(
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                         color: Colors.black.withOpacity(0.4),
                       ),
                       child: Center(
@@ -521,17 +521,17 @@ class _ShopScreenState extends State<ShopScreen> {
                       Text(
                         product.categoryName,
                         style: TextStyle(
-                          color: Color(0xFF5886BF),
+                          color: const Color(0xFF5886BF),
                           fontSize: isMobile ? 10 : 12,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Expanded(
                       child: Text(
                         product.name,
                         style: TextStyle(
-                          color: Color(0xFF0B131E),
+                          color: const Color(0xFF0B131E),
                           fontSize: isMobile ? 13 : 15,
                           fontWeight: FontWeight.w600,
                           height: 1.2,
@@ -540,7 +540,7 @@ class _ShopScreenState extends State<ShopScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    SizedBox(height: 6),
+                    const SizedBox(height: 6),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -551,7 +551,7 @@ class _ShopScreenState extends State<ShopScreen> {
                               Text(
                                 'KES ${product.price.toStringAsFixed(0)}',
                                 style: TextStyle(
-                                  color: Color(0xFF707781),
+                                  color: const Color(0xFF707781),
                                   fontSize: isMobile ? 10 : 11,
                                   decoration: TextDecoration.lineThrough,
                                 ),
@@ -559,7 +559,7 @@ class _ShopScreenState extends State<ShopScreen> {
                             Text(
                               'KES ${product.discountedPrice.toStringAsFixed(0)}',
                               style: TextStyle(
-                                color: Color(0xFF0B131E),
+                                color: const Color(0xFF0B131E),
                                 fontSize: isMobile ? 13 : 15,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -573,7 +573,7 @@ class _ShopScreenState extends State<ShopScreen> {
                                     final added = await cartProvider.addToCart(product.id, quantity: 1);
                                     if (added) {
                                       ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
+                                        const SnackBar(
                                           content: Text('Added to cart'),
                                           duration: Duration(seconds: 2),
                                         ),
@@ -596,13 +596,13 @@ class _ShopScreenState extends State<ShopScreen> {
                           child: Container(
                             padding: EdgeInsets.all(isMobile ? 6 : 8),
                             decoration: BoxDecoration(
-                              color: inStock ? Color(0xFF5886BF) : Color(0xFFE0E0E0),
+                              color: inStock ? const Color(0xFF5886BF) : const Color(0xFFE0E0E0),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Icon(
                               Icons.shopping_cart_outlined,
                               size: isMobile ? 14 : 18,
-                              color: inStock ? Colors.white : Color(0xFF999999),
+                              color: inStock ? Colors.white : const Color(0xFF999999),
                             ),
                           ),
                         ),
@@ -627,12 +627,12 @@ class _ShopScreenState extends State<ShopScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
         if (cartProvider.isLoading) {
-          return Padding(
+          return const Padding(
             padding: EdgeInsets.all(24),
             child: Center(child: CircularProgressIndicator(color: Color(0xFF5886BF))),
           );
@@ -642,20 +642,20 @@ class _ShopScreenState extends State<ShopScreen> {
 
         if (cart == null || cart.items.isEmpty) {
           return Padding(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.shopping_cart_outlined, size: 48, color: Color(0xFF707781)),
-                SizedBox(height: 12),
-                Text('Your cart is empty', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                SizedBox(height: 8),
-                Text('Add some items to start checkout.', style: TextStyle(color: Color(0xFF707781))),
-                SizedBox(height: 16),
+                const Icon(Icons.shopping_cart_outlined, size: 48, color: Color(0xFF707781)),
+                const SizedBox(height: 12),
+                const Text('Your cart is empty', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
+                const Text('Add some items to start checkout.', style: TextStyle(color: Color(0xFF707781))),
+                const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF5886BF)),
-                  child: Text('Browse Products'),
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF5886BF)),
+                  child: const Text('Browse Products'),
                 ),
               ],
             ),
@@ -671,23 +671,23 @@ class _ShopScreenState extends State<ShopScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Container(
                   width: 50,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Color(0xFFE0E6EE),
+                    color: const Color(0xFFE0E6EE),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 TabBar(
-                  indicatorColor: Color(0xFF5886BF),
-                  labelColor: Color(0xFF0B131E),
-                  unselectedLabelColor: Color(0xFF707781),
+                  indicatorColor: const Color(0xFF5886BF),
+                  labelColor: const Color(0xFF0B131E),
+                  unselectedLabelColor: const Color(0xFF707781),
                   tabs: [
                     Tab(text: 'Cart (${cart.totalItems})'),
-                    Tab(text: 'Checkout'),
+                    const Tab(text: 'Checkout'),
                   ],
                 ),
                 SizedBox(
@@ -713,17 +713,17 @@ class _ShopScreenState extends State<ShopScreen> {
   Widget _buildCartList(CartProvider cartProvider) {
     final cart = cartProvider.cart;
     if (cart == null) {
-      return Center(child: Text('Cart unavailable'));
+      return const Center(child: Text('Cart unavailable'));
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
         children: [
           Expanded(
             child: ListView.separated(
               itemCount: cart.items.length,
-              separatorBuilder: (_, __) => Divider(color: Color(0xFFE8EFF7)),
+              separatorBuilder: (_, __) => const Divider(color: Color(0xFFE8EFF7)),
               itemBuilder: (context, index) {
                 final item = cart.items[index];
                 return Row(
@@ -733,7 +733,7 @@ class _ShopScreenState extends State<ShopScreen> {
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
-                        color: Color(0xFFF8FAFC),
+                        color: const Color(0xFFF8FAFC),
                         borderRadius: BorderRadius.circular(10),
                         image: item.product.image != null
                             ? DecorationImage(
@@ -743,44 +743,44 @@ class _ShopScreenState extends State<ShopScreen> {
                             : null,
                       ),
                       child: item.product.image == null
-                          ? Icon(Icons.image_not_supported_outlined, color: Color(0xFFB0B8C1))
+                          ? const Icon(Icons.image_not_supported_outlined, color: Color(0xFFB0B8C1))
                           : null,
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             item.product.name,
-                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
                           ),
-                          SizedBox(height: 4),
-                          Text('Qty: ${item.quantity}', style: TextStyle(color: Color(0xFF707781))),
+                          const SizedBox(height: 4),
+                          Text('Qty: ${item.quantity}', style: const TextStyle(color: Color(0xFF707781))),
                         ],
                       ),
                     ),
                     Text(
                       'KES ${item.discountedSubtotal.toStringAsFixed(0)}',
-                      style: TextStyle(fontWeight: FontWeight.w700),
+                      style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
                   ],
                 );
               },
             ),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           _cartSummaryRow('Subtotal', cart.totalAmount),
           if (cart.totalDiscount > 0) _cartSummaryRow('Discount', -cart.totalDiscount),
           _cartSummaryRow('Total', cart.discountedAmount > 0 ? cart.discountedAmount : cart.totalAmount,
               isEmphasis: true),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () => DefaultTabController.of(context)?.animateTo(1),
-              style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF5886BF)),
-              child: Text('Continue to Checkout'),
+              onPressed: () => DefaultTabController.of(context).animateTo(1),
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF5886BF)),
+              child: const Text('Continue to Checkout'),
             ),
           ),
         ],
@@ -790,21 +790,21 @@ class _ShopScreenState extends State<ShopScreen> {
 
   Widget _cartSummaryRow(String label, double amount, {bool isEmphasis = false}) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
             style: TextStyle(
-              color: Color(0xFF404957),
+              color: const Color(0xFF404957),
               fontWeight: isEmphasis ? FontWeight.w700 : FontWeight.w500,
             ),
           ),
           Text(
             'KES ${amount.toStringAsFixed(0)}',
             style: TextStyle(
-              color: Color(0xFF0B131E),
+              color: const Color(0xFF0B131E),
               fontWeight: isEmphasis ? FontWeight.w800 : FontWeight.w600,
             ),
           ),

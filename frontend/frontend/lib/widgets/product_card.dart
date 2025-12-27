@@ -14,11 +14,11 @@ class ProductCard extends StatefulWidget {
   final VoidCallback? onAddToCart;
 
   const ProductCard({
-    Key? key,
+    super.key,
     required this.product,
     this.onTap,
     this.onAddToCart,
-  }) : super(key: key);
+  });
 
   @override
   State<ProductCard> createState() => _ProductCardState();

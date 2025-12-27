@@ -223,3 +223,50 @@ class CoreValue(models.Model):
     
     def __str__(self):
         return self.title
+
+
+class NewsUpdate(models.Model):
+    """News, updates, and announcements for the home page"""
+    TYPE_CHOICES = [
+        ('tournament', 'Tournament Results'),
+        ('training', 'Training Tips'),
+        ('announcement', 'Announcements'),
+        ('event', 'Upcoming Events'),
+        ('achievement', 'Achievements'),
+    ]
+    
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    update_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='announcement')
+    image = models.ImageField(upload_to='news/', blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=False, help_text="Featured items appear in carousel")
+    display_order = models.PositiveIntegerField(default=0)
+    published_date = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-published_date', 'display_order']
+        verbose_name = "News & Update"
+        verbose_name_plural = "News & Updates"
+    
+    def __str__(self):
+        return f"{self.get_update_type_display()} - {self.title}"
+
+
+class HomeGalleryImage(models.Model):
+    """Gallery images for home page carousel"""
+    title = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='gallery/home/')
+    caption = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+    display_order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['display_order', '-created_at']
+        verbose_name = "Home Gallery Image"
+        verbose_name_plural = "Home Gallery Images"
+    
+    def __str__(self):
+        return self.title

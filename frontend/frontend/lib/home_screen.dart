@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'providers/home_provider.dart';
 import 'widgets/home_sections.dart';
 import 'widgets/footer_widget.dart';
+import 'widgets/carousel_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context, homeProvider, child) {
         // Loading State
         if (homeProvider.isLoading) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(
               color: Color(0xFF5886BF),
             ),
@@ -48,7 +49,7 @@ class _HomePageState extends State<HomePage> {
         // No Data State
         final homeData = homeProvider.homeData;
         if (homeData == null) {
-          return Center(
+          return const Center(
             child: Text(
               'No data available',
               style: TextStyle(fontSize: 16, color: Colors.grey),
@@ -105,13 +106,13 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline,
               size: 80,
               color: Colors.red,
             ),
-            SizedBox(height: 30),
-            Text(
+            const SizedBox(height: 30),
+            const Text(
               'Oops! Something went wrong',
               style: TextStyle(
                 fontSize: 22,
@@ -119,23 +120,23 @@ class _HomePageState extends State<HomePage> {
                 color: Color(0xFF0B131E),
               ),
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             Text(
               provider.error ?? 'Unknown error occurred',
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 16,
               ),
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             ElevatedButton.icon(
               onPressed: _loadData,
-              icon: Icon(Icons.refresh),
-              label: Text('Try Again'),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Try Again'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF5886BF),
-                padding: EdgeInsets.symmetric(
+                backgroundColor: const Color(0xFF5886BF),
+                padding: const EdgeInsets.symmetric(
                   horizontal: 40,
                   vertical: 16,
                 ),
@@ -151,8 +152,8 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildWelcomeSection() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -164,7 +165,7 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Column(
         children: [
-          Text(
+          const Text(
             'WELCOME TO OUR ACADEMY',
             style: TextStyle(
               color: Color(0xFF5886BF),
@@ -173,8 +174,8 @@ class _HomePageState extends State<HomePage> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 20),
+          const Text(
             'Professional Chess Training & Development',
             style: TextStyle(
               color: Color(0xFF0B131E),
@@ -182,8 +183,8 @@ class _HomePageState extends State<HomePage> {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 40),
-          Text(
+          const SizedBox(height: 40),
+          const Text(
             'Discover the art of chess through personalized coaching from certified instructors. '
             'We provide comprehensive training programs for all skill levels, from beginners to advanced players.',
             textAlign: TextAlign.center,
@@ -193,14 +194,16 @@ class _HomePageState extends State<HomePage> {
               height: 1.8,
             ),
           ),
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, '/about');
+            },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF5886BF),
-              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+              backgroundColor: const Color(0xFF5886BF),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
             ),
-            child: Text(
+            child: const Text(
               'Learn More',
               style: TextStyle(color: Colors.white, fontSize: 16),
             ),
@@ -212,8 +215,8 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildServicesSection() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -225,7 +228,7 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Column(
         children: [
-          Text(
+          const Text(
             'OUR SERVICES',
             style: TextStyle(
               color: Color(0xFF5886BF),
@@ -234,8 +237,8 @@ class _HomePageState extends State<HomePage> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 20),
+          const Text(
             'What We Offer',
             style: TextStyle(
               color: Color(0xFF0B131E),
@@ -243,7 +246,7 @@ class _HomePageState extends State<HomePage> {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 60),
+          const SizedBox(height: 60),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -261,30 +264,30 @@ class _HomePageState extends State<HomePage> {
   Widget _buildServiceCard(String title, String description) {
     return Container(
       width: 220,
-      padding: EdgeInsets.all(30),
+      padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
-        color: Color(0xFFF5F9FF),
+        color: const Color(0xFFF5F9FF),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Color(0xFF5886BF).withOpacity(0.2)),
+        border: Border.all(color: const Color(0xFF5886BF).withOpacity(0.2)),
       ),
       child: Column(
         children: [
-          Icon(Icons.sports_esports, size: 50, color: Color(0xFF5886BF)),
-          SizedBox(height: 20),
+          const Icon(Icons.sports_esports, size: 50, color: Color(0xFF5886BF)),
+          const SizedBox(height: 20),
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF0B131E),
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             description,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF707781),
               fontSize: 14,
             ),
@@ -295,9 +298,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildNewsSection() {
+    final homeData = context.read<HomeProvider>().homeData;
+    if (homeData == null || homeData.newsUpdates.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -309,7 +317,7 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Column(
         children: [
-          Text(
+          const Text(
             'LATEST NEWS & UPDATES',
             style: TextStyle(
               color: Color(0xFF5886BF),
@@ -318,74 +326,17 @@ class _HomePageState extends State<HomePage> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 60),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNewsCard(
-                'Tournament Results',
-                'Check out the latest tournament outcomes',
-              ),
-              _buildNewsCard(
-                'Training Tips',
-                'Expert advice for improving your game',
-              ),
-              _buildNewsCard(
-                'Announcements',
-                'Important updates about our programs',
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNewsCard(String title, String description) {
-    return Container(
-      width: 280,
-      padding: EdgeInsets.all(30),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: Color(0xFF5886BF).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(Icons.newspaper, color: Color(0xFF5886BF), size: 30),
-          ),
-          SizedBox(height: 20),
-          Text(
-            title,
+          const SizedBox(height: 20),
+          const Text(
+            'Stay Updated',
             style: TextStyle(
               color: Color(0xFF0B131E),
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+              fontSize: 48,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 10),
-          Text(
-            description,
-            style: TextStyle(
-              color: Color(0xFF707781),
-              fontSize: 14,
-              height: 1.6,
-            ),
-          ),
+          const SizedBox(height: 60),
+          NewsCarousel(newsUpdates: homeData.newsUpdates),
         ],
       ),
     );
@@ -393,11 +344,11 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildContactSection() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 60, horizontal: 80),
-      color: Color(0xFF5886BF),
+      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 80),
+      color: const Color(0xFF5886BF),
       child: Column(
         children: [
-          Text(
+          const Text(
             'Ready to Start Your Chess Journey?',
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -406,7 +357,7 @@ class _HomePageState extends State<HomePage> {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           Text(
             'Join thousands of students who have improved their chess skills with us',
             textAlign: TextAlign.center,
@@ -415,17 +366,19 @@ class _HomePageState extends State<HomePage> {
               fontSize: 18,
             ),
           ),
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/contact');
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                 ),
-                child: Text(
+                child: const Text(
                   'Contact Us',
                   style: TextStyle(
                     color: Color(0xFF5886BF),
@@ -434,14 +387,16 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
               OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/about');
+                },
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.white, width: 2),
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  side: const BorderSide(color: Colors.white, width: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                 ),
-                child: Text(
+                child: const Text(
                   'Learn More',
                   style: TextStyle(
                     color: Colors.white,
@@ -458,9 +413,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildGallerySection() {
+    final homeData = context.read<HomeProvider>().homeData;
+    if (homeData == null || homeData.galleryImages.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -472,7 +432,7 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Column(
         children: [
-          Text(
+          const Text(
             'GALLERY',
             style: TextStyle(
               color: Color(0xFF5886BF),
@@ -481,8 +441,8 @@ class _HomePageState extends State<HomePage> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 20),
+          const Text(
             'Our Moments',
             style: TextStyle(
               color: Color(0xFF0B131E),
@@ -490,16 +450,8 @@ class _HomePageState extends State<HomePage> {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 60),
-          Center(
-            child: Text(
-              'Gallery content will be loaded dynamically from API',
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 16,
-              ),
-            ),
-          ),
+          const SizedBox(height: 60),
+          GalleryCarousel(galleryImages: homeData.galleryImages),
         ],
       ),
     );

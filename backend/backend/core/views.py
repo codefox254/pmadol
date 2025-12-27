@@ -87,6 +87,34 @@ class CoreValueViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CoreValueSerializer
 
 
+class NewsUpdateViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = NewsUpdate.objects.filter(is_active=True)
+    serializer_class = NewsUpdateSerializer
+    
+    @action(detail=False, methods=['get'])
+    def featured(self, request):
+        """Get featured news updates for carousel"""
+        news = self.queryset.filter(is_featured=True)[:5]
+        serializer = self.get_serializer(news, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def by_type(self, request):
+        """Filter news by type"""
+        update_type = request.query_params.get('type', None)
+        if update_type:
+            news = self.queryset.filter(update_type=update_type)
+        else:
+            news = self.queryset.all()
+        serializer = self.get_serializer(news, many=True)
+        return Response(serializer.data)
+
+
+class HomeGalleryImageViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = HomeGalleryImage.objects.filter(is_active=True)
+    serializer_class = HomeGalleryImageSerializer
+
+
 class HomePageViewSet(viewsets.ViewSet):
     """Combined endpoint for homepage - aggregates data from multiple models"""
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -100,6 +128,8 @@ class HomePageViewSet(viewsets.ViewSet):
                 'testimonials': Testimonial.objects.filter(is_active=True, is_featured=True)[:3],
                 'partners': Partner.objects.filter(is_active=True),
                 'hero_slides': HeroSlide.objects.filter(is_active=True),
+                'news_updates': NewsUpdate.objects.filter(is_active=True)[:10],
+                'gallery_images': HomeGalleryImage.objects.filter(is_active=True)[:12],
             }
             serializer = HomePageDataSerializer(data)
             return Response(serializer.data, status=status.HTTP_200_OK)

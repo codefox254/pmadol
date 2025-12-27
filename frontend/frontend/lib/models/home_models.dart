@@ -7,6 +7,8 @@ class HomePageData {
   final List<Testimonial> testimonials;
   final List<Partner> partners;
   final List<HeroSlide> heroSlides;
+  final List<NewsUpdate> newsUpdates;
+  final List<HomeGalleryImage> galleryImages;
 
   HomePageData({
     required this.siteSettings,
@@ -14,6 +16,8 @@ class HomePageData {
     required this.testimonials,
     required this.partners,
     required this.heroSlides,
+    required this.newsUpdates,
+    required this.galleryImages,
   });
 
   factory HomePageData.fromJson(Map<String, dynamic> json) {
@@ -28,6 +32,12 @@ class HomePageData {
       ),
       heroSlides: List<HeroSlide>.from(
         (json['hero_slides'] as List?)?.map((x) => HeroSlide.fromJson(x)) ?? [],
+      ),
+      newsUpdates: List<NewsUpdate>.from(
+        (json['news_updates'] as List?)?.map((x) => NewsUpdate.fromJson(x)) ?? [],
+      ),
+      galleryImages: List<HomeGalleryImage>.from(
+        (json['gallery_images'] as List?)?.map((x) => HomeGalleryImage.fromJson(x)) ?? [],
       ),
     );
   }
@@ -207,6 +217,79 @@ class Partner {
       logo: json['logo'] ?? '',
       website: json['website'],
       description: json['description'],
+    );
+  }
+}
+
+class NewsUpdate {
+  final int? id;
+  final String title;
+  final String content;
+  final String updateType;
+  final String updateTypeDisplay;
+  final String? image;
+  final bool isActive;
+  final bool isFeatured;
+  final int displayOrder;
+  final String publishedDate;
+
+  NewsUpdate({
+    this.id,
+    required this.title,
+    required this.content,
+    required this.updateType,
+    required this.updateTypeDisplay,
+    this.image,
+    required this.isActive,
+    required this.isFeatured,
+    required this.displayOrder,
+    required this.publishedDate,
+  });
+
+  factory NewsUpdate.fromJson(Map<String, dynamic> json) {
+    return NewsUpdate(
+      id: json['id'],
+      title: json['title'] ?? '',
+      content: json['content'] ?? '',
+      updateType: json['update_type'] ?? 'announcement',
+      updateTypeDisplay: json['update_type_display'] ?? 'Announcements',
+      image: json['image'],
+      isActive: json['is_active'] ?? true,
+      isFeatured: json['is_featured'] ?? false,
+      displayOrder: json['display_order'] ?? 0,
+      publishedDate: json['published_date'] ?? '',
+    );
+  }
+}
+
+class HomeGalleryImage {
+  final int? id;
+  final String title;
+  final String image;
+  final String caption;
+  final bool isActive;
+  final int displayOrder;
+  final String createdAt;
+
+  HomeGalleryImage({
+    this.id,
+    required this.title,
+    required this.image,
+    required this.caption,
+    required this.isActive,
+    required this.displayOrder,
+    required this.createdAt,
+  });
+
+  factory HomeGalleryImage.fromJson(Map<String, dynamic> json) {
+    return HomeGalleryImage(
+      id: json['id'],
+      title: json['title'] ?? '',
+      image: json['image'] ?? '',
+      caption: json['caption'] ?? '',
+      isActive: json['is_active'] ?? true,
+      displayOrder: json['display_order'] ?? 0,
+      createdAt: json['created_at'] ?? '',
     );
   }
 }

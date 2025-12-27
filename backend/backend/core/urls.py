@@ -14,6 +14,8 @@ router.register(r'team-members', TeamMemberViewSet, basename='team-members')
 router.register(r'faqs', FAQViewSet, basename='faqs')
 router.register(r'about', AboutContentViewSet, basename='about')
 router.register(r'core-values', CoreValueViewSet, basename='core-values')
+router.register(r'news-updates', NewsUpdateViewSet, basename='news-updates')
+router.register(r'home-gallery', HomeGalleryImageViewSet, basename='home-gallery')
 router.register(r'homepage', HomePageViewSet, basename='homepage')
 
 urlpatterns = router.urls

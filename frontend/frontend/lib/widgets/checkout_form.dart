@@ -14,10 +14,10 @@ class CheckoutForm extends StatefulWidget {
   final VoidCallback? onOrderCreated;
 
   const CheckoutForm({
-    Key? key,
+    super.key,
     required this.cart,
     this.onOrderCreated,
-  }) : super(key: key);
+  });
 
   @override
   State<CheckoutForm> createState() => _CheckoutFormState();
@@ -98,8 +98,9 @@ class _CheckoutFormState extends State<CheckoutForm> {
                 icon: Icons.person_outline,
                 validator: (value) {
                   if (value?.isEmpty ?? true) return 'Name is required';
-                  if ((value?.length ?? 0) < 3)
+                  if ((value?.length ?? 0) < 3) {
                     return 'Name must be at least 3 characters';
+                  }
                   return null;
                 },
               ),
@@ -114,8 +115,9 @@ class _CheckoutFormState extends State<CheckoutForm> {
                 keyboardType: TextInputType.phone,
                 validator: (value) {
                   if (value?.isEmpty ?? true) return 'Phone is required';
-                  if (!RegExp(r'^\d{10,}$').hasMatch(value!))
+                  if (!RegExp(r'^\d{10,}$').hasMatch(value!)) {
                     return 'Enter a valid phone number';
+                  }
                   return null;
                 },
               ),
@@ -132,7 +134,9 @@ class _CheckoutFormState extends State<CheckoutForm> {
                   if (value?.isEmpty ?? true) return 'Email is required';
                   if (!RegExp(
                           r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-                      .hasMatch(value!)) return 'Enter a valid email';
+                      .hasMatch(value!)) {
+                    return 'Enter a valid email';
+                  }
                   return null;
                 },
               ),
@@ -147,8 +151,9 @@ class _CheckoutFormState extends State<CheckoutForm> {
                 maxLines: 2,
                 validator: (value) {
                   if (value?.isEmpty ?? true) return 'Address is required';
-                  if ((value?.length ?? 0) < 5)
+                  if ((value?.length ?? 0) < 5) {
                     return 'Address must be at least 5 characters';
+                  }
                   return null;
                 },
               ),
@@ -321,9 +326,9 @@ class _CheckoutFormState extends State<CheckoutForm> {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        prefixIcon: Icon(icon, color: Color(0xFF9CA3AF)),
+        prefixIcon: Icon(icon, color: const Color(0xFF9CA3AF)),
         filled: true,
-        fillColor: Color(0xFFF9FAFB),
+        fillColor: const Color(0xFFF9FAFB),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: Color(0xFFE5E7EB)),

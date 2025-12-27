@@ -4,7 +4,7 @@ import 'providers/home_provider.dart';
 import 'widgets/footer_widget.dart';
 
 class BlogDetailScreen extends StatefulWidget {
-  const BlogDetailScreen({Key? key}) : super(key: key);
+  const BlogDetailScreen({super.key});
 
   @override
   State<BlogDetailScreen> createState() => _BlogDetailScreenState();
@@ -21,9 +21,9 @@ class _BlogDetailScreenState extends State<BlogDetailScreen> {
   Widget build(BuildContext context) {
     return Consumer<HomeProvider>(
       builder: (context, homeProvider, child) {
-        if (homeProvider.isLoading) return Center(child: CircularProgressIndicator(color: Color(0xFF5886BF)));
+        if (homeProvider.isLoading) return const Center(child: CircularProgressIndicator(color: Color(0xFF5886BF)));
         final homeData = homeProvider.homeData;
-        if (homeData == null) return Center(child: Text('No data available'));
+        if (homeData == null) return const Center(child: Text('No data available'));
         return SingleChildScrollView(
           child: Column(
             children: [
@@ -39,21 +39,21 @@ class _BlogDetailScreenState extends State<BlogDetailScreen> {
 
   Widget _buildArticleHeader() => Container(
     height: 400,
-    decoration: BoxDecoration(gradient: LinearGradient(colors: [Color(0xFF5886BF), Color(0xFF283D57)])),
-    padding: EdgeInsets.all(80),
+    decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xFF5886BF), Color(0xFF283D57)])),
+    padding: const EdgeInsets.all(80),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(color: Color(0xFF5886BF), borderRadius: BorderRadius.circular(4)),
-          child: Text('BLOG POST', style: TextStyle(color: Colors.white, fontSize: 12)),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(color: const Color(0xFF5886BF), borderRadius: BorderRadius.circular(4)),
+          child: const Text('BLOG POST', style: TextStyle(color: Colors.white, fontSize: 12)),
         ),
-        SizedBox(height: 20),
-        Text('Sample Article Title', style: TextStyle(color: Colors.white, fontSize: 48, fontWeight: FontWeight.w700)),
-        SizedBox(height: 15),
-        Row(
+        const SizedBox(height: 20),
+        const Text('Sample Article Title', style: TextStyle(color: Colors.white, fontSize: 48, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 15),
+        const Row(
           children: [
             Icon(Icons.person, color: Colors.white70, size: 18),
             SizedBox(width: 8),
@@ -69,9 +69,9 @@ class _BlogDetailScreenState extends State<BlogDetailScreen> {
   );
 
   Widget _buildArticleContent() => Container(
-    padding: EdgeInsets.all(80),
-    constraints: BoxConstraints(maxWidth: 900),
-    child: Column(
+    padding: const EdgeInsets.all(80),
+    constraints: const BoxConstraints(maxWidth: 900),
+    child: const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(

@@ -7,7 +7,7 @@ import 'config/api_config.dart';
 import 'models/blog_models.dart';
 
 class BlogScreen extends StatefulWidget {
-  const BlogScreen({Key? key}) : super(key: key);
+  const BlogScreen({super.key});
 
   @override
   State<BlogScreen> createState() => _BlogScreenState();
@@ -71,7 +71,7 @@ class _BlogScreenState extends State<BlogScreen> {
     return Container(
       height: 300,
       width: double.infinity,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -85,7 +85,7 @@ class _BlogScreenState extends State<BlogScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'LATEST INSIGHTS',
                   style: TextStyle(
                     color: Colors.white,
@@ -94,8 +94,8 @@ class _BlogScreenState extends State<BlogScreen> {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                SizedBox(height: 15),
-                Text(
+                const SizedBox(height: 15),
+                const Text(
                   'Blog',
                   style: TextStyle(
                     color: Colors.white,
@@ -103,7 +103,7 @@ class _BlogScreenState extends State<BlogScreen> {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
                   'Chess tips, tutorials, and community stories',
                   style: TextStyle(
@@ -126,20 +126,20 @@ class _BlogScreenState extends State<BlogScreen> {
       padding: EdgeInsets.symmetric(vertical: 20, horizontal: horizontalPadding),
       child: Container(
         decoration: BoxDecoration(
-          color: Color(0xFFF8FAFC),
+          color: const Color(0xFFF8FAFC),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Color(0xFFE8EFF7)),
+          border: Border.all(color: const Color(0xFFE8EFF7)),
         ),
         child: Row(
           children: [
-            Padding(
+            const Padding(
               padding: EdgeInsets.symmetric(horizontal: 12),
               child: Icon(Icons.search, color: Color(0xFF707781), size: 20),
             ),
             Expanded(
               child: TextField(
                 controller: _searchController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Search blog posts...',
                   hintStyle: TextStyle(color: Color(0xFFB0B8C1)),
                   border: InputBorder.none,
@@ -181,16 +181,16 @@ class _BlogScreenState extends State<BlogScreen> {
                   vertical: isMobile ? 10 : 12,
                 ),
                 decoration: BoxDecoration(
-                  color: isSelected ? Color(0xFF5886BF) : Colors.white,
+                  color: isSelected ? const Color(0xFF5886BF) : Colors.white,
                   borderRadius: BorderRadius.circular(25),
                   border: Border.all(
-                    color: isSelected ? Color(0xFF5886BF) : Color(0xFFE8EFF7),
+                    color: isSelected ? const Color(0xFF5886BF) : const Color(0xFFE8EFF7),
                   ),
                 ),
                 child: Text(
                   category,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : Color(0xFF404957),
+                    color: isSelected ? Colors.white : const Color(0xFF404957),
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                     fontSize: isMobile ? 12 : 14,
                   ),
@@ -216,7 +216,7 @@ class _BlogScreenState extends State<BlogScreen> {
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             blurRadius: 15,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
           ),
         ],
       ),
@@ -231,7 +231,7 @@ class _BlogScreenState extends State<BlogScreen> {
                       fit: BoxFit.cover,
                     )
                   : null,
-              color: Color(0xFFF8FAFC),
+              color: const Color(0xFFF8FAFC),
             ),
           ),
           Container(
@@ -251,12 +251,12 @@ class _BlogScreenState extends State<BlogScreen> {
             top: isMobile ? 12 : 20,
             right: isMobile ? 12 : 20,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Color(0xFF5886BF),
+                color: const Color(0xFF5886BF),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Text(
+              child: const Text(
                 'Featured',
                 style: TextStyle(
                   color: Colors.white,
@@ -277,12 +277,12 @@ class _BlogScreenState extends State<BlogScreen> {
                 Text(
                   post.categoryName ?? 'News',
                   style: TextStyle(
-                    color: Color(0xFFFFD700),
+                    color: const Color(0xFFFFD700),
                     fontSize: isMobile ? 11 : 12,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   post.title.isNotEmpty ? post.title : 'Untitled',
                   style: TextStyle(
@@ -294,7 +294,7 @@ class _BlogScreenState extends State<BlogScreen> {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   post.excerpt.isNotEmpty ? post.excerpt : 'Read more... ',
                   style: TextStyle(
@@ -321,7 +321,7 @@ class _BlogScreenState extends State<BlogScreen> {
       child: Consumer<BlogProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(color: Color(0xFF5886BF)),
             );
           }
@@ -329,10 +329,10 @@ class _BlogScreenState extends State<BlogScreen> {
           if (provider.error != null && provider.error!.isNotEmpty) {
             return Center(
               child: Padding(
-                padding: EdgeInsets.all(40),
+                padding: const EdgeInsets.all(40),
                 child: Text(
                   'Error loading posts: ${provider.error}',
-                  style: TextStyle(color: Colors.red),
+                  style: const TextStyle(color: Colors.red),
                 ),
               ),
             );
@@ -354,7 +354,7 @@ class _BlogScreenState extends State<BlogScreen> {
           }
 
           if (filteredPosts.isEmpty) {
-            return Center(
+            return const Center(
               child: Padding(
                 padding: EdgeInsets.all(40),
                 child: Text(
@@ -370,7 +370,7 @@ class _BlogScreenState extends State<BlogScreen> {
 
           return GridView.builder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: gridColumns,
               crossAxisSpacing: isMobile ? 12 : 25,
@@ -402,7 +402,7 @@ class _BlogScreenState extends State<BlogScreen> {
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
               blurRadius: 10,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -412,8 +412,8 @@ class _BlogScreenState extends State<BlogScreen> {
             Container(
               height: isMobile ? 180 : 220,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                color: Color(0xFFF8FAFC),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                color: const Color(0xFFF8FAFC),
                 image: post.featuredImage.isNotEmpty
                     ? DecorationImage(
                         image: NetworkImage(_resolveImageUrl(post.featuredImage)!),
@@ -426,14 +426,14 @@ class _BlogScreenState extends State<BlogScreen> {
                       child: Icon(
                         Icons.article_outlined,
                         size: 50,
-                        color: Color(0xFF707781).withOpacity(0.3),
+                        color: const Color(0xFF707781).withOpacity(0.3),
                       ),
                     )
                   : null,
             ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -441,36 +441,36 @@ class _BlogScreenState extends State<BlogScreen> {
                       children: [
                         if (post.categoryName != null)
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: Color(0xFF5886BF).withOpacity(0.1),
+                              color: const Color(0xFF5886BF).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
                               post.categoryName!,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Color(0xFF5886BF),
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         Text(
                           _formatDate(post.publishedAt),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Color(0xFF707781),
                             fontSize: 12,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Expanded(
                       child: Text(
                         post.title.isNotEmpty ? post.title : 'Untitled',
                         style: TextStyle(
-                          color: Color(0xFF0B131E),
+                          color: const Color(0xFF0B131E),
                           fontSize: isMobile ? 15 : 17,
                           fontWeight: FontWeight.w700,
                           height: 1.3,
@@ -479,10 +479,10 @@ class _BlogScreenState extends State<BlogScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       post.excerpt,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Color(0xFF707781),
                         fontSize: 13,
                         height: 1.4,
@@ -490,24 +490,24 @@ class _BlogScreenState extends State<BlogScreen> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           'By ${post.authorName.isNotEmpty ? post.authorName : 'Author'}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Color(0xFF94A3B8),
                             fontSize: 12,
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
-                            color: Color(0xFF5886BF).withOpacity(0.1),
+                            color: const Color(0xFF5886BF).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(6),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Read More →',
                             style: TextStyle(
                               color: Color(0xFF5886BF),

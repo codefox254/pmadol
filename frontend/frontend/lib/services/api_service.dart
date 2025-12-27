@@ -12,7 +12,6 @@ import '../models/shop_models.dart';
 import '../models/gallery_models.dart';
 import '../models/team_models.dart';
 import '../models/about_models.dart';
-import '../models/enrollment_models.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();

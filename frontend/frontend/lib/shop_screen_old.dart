@@ -8,7 +8,7 @@ import 'widgets/product_card.dart';
 import 'config/api_config.dart';
 
 class ShopScreen extends StatefulWidget {
-  const ShopScreen({Key? key}) : super(key: key);
+  const ShopScreen({super.key});
 
   @override
   State<ShopScreen> createState() => _ShopScreenState();
@@ -33,26 +33,26 @@ class _ShopScreenState extends State<ShopScreen> {
 
   Widget _buildSearchAndSort(int total) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 80),
-      color: Color(0xFFFFFFFF),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 80),
+      color: const Color(0xFFFFFFFF),
       child: Row(
         children: [
           // Search
           Expanded(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: Color(0xFFF8FAFC),
+                color: const Color(0xFFF8FAFC),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Color(0xFFE8EFF7)),
+                border: Border.all(color: const Color(0xFFE8EFF7)),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.search, color: Color(0xFF707781)),
-                  SizedBox(width: 10),
+                  const Icon(Icons.search, color: Color(0xFF707781)),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: TextField(
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Search chess goods (sets, boards, clocks, books...)',
                         border: InputBorder.none,
                       ),
@@ -63,14 +63,14 @@ class _ShopScreenState extends State<ShopScreen> {
               ),
             ),
           ),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
           // Sort dropdown
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Color(0xFFE8EFF7)),
+              border: Border.all(color: const Color(0xFFE8EFF7)),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
@@ -84,8 +84,8 @@ class _ShopScreenState extends State<ShopScreen> {
               ),
             ),
           ),
-          SizedBox(width: 20),
-          Text('$total items', style: TextStyle(color: Color(0xFF707781))),
+          const SizedBox(width: 20),
+          Text('$total items', style: const TextStyle(color: Color(0xFF707781))),
         ],
       ),
     );
@@ -102,7 +102,7 @@ class _ShopScreenState extends State<ShopScreen> {
     return Consumer2<ShopProvider, HomeProvider>(
       builder: (context, shopProvider, homeProvider, child) {
         if (shopProvider.isLoading || homeProvider.isLoading) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(color: Color(0xFF5886BF)),
           );
         }
@@ -111,7 +111,7 @@ class _ShopScreenState extends State<ShopScreen> {
         final homeData = homeProvider.homeData;
         
         if (homeData == null) {
-          return Center(child: Text('No data available'));
+          return const Center(child: Text('No data available'));
         }
 
         // Filter products by category, search, and sort
@@ -147,7 +147,7 @@ class _ShopScreenState extends State<ShopScreen> {
   Widget _buildPageHeader() {
     return Container(
       height: 300,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -160,7 +160,7 @@ class _ShopScreenState extends State<ShopScreen> {
       child: Stack(
         children: [
           Container(color: Colors.black.withOpacity(0.3)),
-          Center(
+          const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -200,8 +200,8 @@ class _ShopScreenState extends State<ShopScreen> {
     final categories = ['All', ...products.map((p) => p.categoryName ?? 'Other').toSet()];
     
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 40, horizontal: 80),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 80),
+      decoration: const BoxDecoration(
         color: Color(0xFFF8FAFC),
       ),
       child: Wrap(
@@ -217,18 +217,18 @@ class _ShopScreenState extends State<ShopScreen> {
               });
             },
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
-                color: isSelected ? Color(0xFF5886BF) : Colors.white,
+                color: isSelected ? const Color(0xFF5886BF) : Colors.white,
                 borderRadius: BorderRadius.circular(25),
                 border: Border.all(
-                  color: isSelected ? Color(0xFF5886BF) : Color(0xFFE8EFF7),
+                  color: isSelected ? const Color(0xFF5886BF) : const Color(0xFFE8EFF7),
                 ),
               ),
               child: Text(
                 category,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Color(0xFF404957),
+                  color: isSelected ? Colors.white : const Color(0xFF404957),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
@@ -242,8 +242,8 @@ class _ShopScreenState extends State<ShopScreen> {
   Widget _buildProductsGrid(List products) {
     if (products.isEmpty) {
       return Container(
-        padding: EdgeInsets.all(80),
-        child: Center(
+        padding: const EdgeInsets.all(80),
+        child: const Center(
           child: Text(
             'No products available in this category',
             style: TextStyle(fontSize: 18, color: Color(0xFF707781)),
@@ -253,11 +253,11 @@ class _ShopScreenState extends State<ShopScreen> {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 80, vertical: 40),
+      padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 40),
       child: GridView.builder(
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
           crossAxisSpacing: 25,
           mainAxisSpacing: 25,
@@ -282,7 +282,7 @@ class _ShopScreenState extends State<ShopScreen> {
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -292,11 +292,11 @@ class _ShopScreenState extends State<ShopScreen> {
           Stack(
             children: [
               AnimatedContainer(
-                duration: Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 200),
                 height: 220,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                  color: Color(0xFFF8FAFC),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  color: const Color(0xFFF8FAFC),
                   image: product.image != null
                       ? DecorationImage(
                           image: NetworkImage('${ApiConfig.baseUrl}${product.image}'),
@@ -306,7 +306,7 @@ class _ShopScreenState extends State<ShopScreen> {
                 ),
                 child: product.image == null
                     ? Center(
-                        child: Icon(Icons.shopping_bag, size: 60, color: Color(0xFF5886BF).withOpacity(0.3)),
+                        child: Icon(Icons.shopping_bag, size: 60, color: const Color(0xFF5886BF).withOpacity(0.3)),
                       )
                     : null,
               ),
@@ -315,12 +315,12 @@ class _ShopScreenState extends State<ShopScreen> {
                   top: 10,
                   right: 10,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Color(0xFF5886BF),
+                      color: const Color(0xFF5886BF),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Featured',
                       style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
                     ),
@@ -330,10 +330,10 @@ class _ShopScreenState extends State<ShopScreen> {
                 Container(
                   height: 220,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                     color: Colors.black.withOpacity(0.5),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       'Out of Stock',
                       style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
@@ -344,23 +344,23 @@ class _ShopScreenState extends State<ShopScreen> {
           ),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.all(15),
+              padding: const EdgeInsets.all(15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (product.categoryName != null)
                     Text(
                       product.categoryName,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Color(0xFF5886BF),
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   Text(
                     product.name,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Color(0xFF0B131E),
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -368,11 +368,11 @@ class _ShopScreenState extends State<ShopScreen> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Expanded(
                     child: Text(
                       product.description,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Color(0xFF707781),
                         fontSize: 13,
                         height: 1.4,
@@ -381,13 +381,13 @@ class _ShopScreenState extends State<ShopScreen> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         'KES ${product.price.toStringAsFixed(0)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFF0B131E),
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -396,9 +396,9 @@ class _ShopScreenState extends State<ShopScreen> {
                       Row(
                         children: [
                           if (isAvailable)
-                            Icon(Icons.shopping_cart_outlined, size: 20, color: Color(0xFF5886BF)),
-                          SizedBox(width: 12),
-                          Icon(Icons.favorite_border, size: 20, color: Color(0xFF707781)),
+                            const Icon(Icons.shopping_cart_outlined, size: 20, color: Color(0xFF5886BF)),
+                          const SizedBox(width: 12),
+                          const Icon(Icons.favorite_border, size: 20, color: Color(0xFF707781)),
                         ],
                       ),
                     ],

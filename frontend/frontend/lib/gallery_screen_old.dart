@@ -7,7 +7,7 @@ import 'widgets/footer_widget.dart';
 import 'config/api_config.dart';
 
 class GalleryScreen extends StatefulWidget {
-  const GalleryScreen({Key? key}) : super(key: key);
+  const GalleryScreen({super.key});
 
   @override
   State<GalleryScreen> createState() => _GalleryScreenState();
@@ -59,7 +59,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   Widget _buildPageHeader() {
     return Container(
       height: 350,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -90,12 +90,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Text(
+                  child: const Text(
                     'OUR MOMENTS',
                     style: TextStyle(
                       color: Colors.white,
@@ -105,8 +105,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
-                Text(
+                const SizedBox(height: 20),
+                const Text(
                   'Gallery',
                   style: TextStyle(
                     color: Colors.white,
@@ -115,9 +115,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     letterSpacing: -1,
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Container(
-                  constraints: BoxConstraints(maxWidth: 600),
+                  constraints: const BoxConstraints(maxWidth: 600),
                   child: Text(
                     'Capturing the spirit of chess excellence',
                     style: TextStyle(
@@ -143,7 +143,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     }];
 
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 50, horizontal: 80),
+      padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 80),
       color: Colors.white,
       child: Wrap(
         alignment: WrapAlignment.center,
@@ -158,26 +158,26 @@ class _GalleryScreenState extends State<GalleryScreen> {
               });
             },
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
-                color: isSelected ? Color(0xFF5886BF) : Colors.white,
+                color: isSelected ? const Color(0xFF5886BF) : Colors.white,
                 borderRadius: BorderRadius.circular(25),
                 border: Border.all(
-                  color: Color(0xFF5886BF),
+                  color: const Color(0xFF5886BF),
                   width: 2,
                 ),
                 boxShadow: isSelected ? [
                   BoxShadow(
-                    color: Color(0xFF5886BF).withOpacity(0.3),
+                    color: const Color(0xFF5886BF).withOpacity(0.3),
                     blurRadius: 8,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   ),
                 ] : [],
               ),
               child: Text(
                 category,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Color(0xFF283D57),
+                  color: isSelected ? Colors.white : const Color(0xFF283D57),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   fontSize: 14,
                 ),
@@ -197,8 +197,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
     if (images.isEmpty) {
       return Container(
-        padding: EdgeInsets.all(80),
-        child: Center(
+        padding: const EdgeInsets.all(80),
+        child: const Center(
           child: Column(
             children: [
               Icon(Icons.photo_library_outlined, size: 64, color: Colors.grey),
@@ -214,8 +214,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 80, vertical: 60),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 60),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -227,8 +227,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
       ),
       child: GridView.builder(
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
           crossAxisSpacing: 20,
           mainAxisSpacing: 20,
@@ -254,7 +254,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
               blurRadius: 15,
-              offset: Offset(0, 5),
+              offset: const Offset(0, 5),
             ),
           ],
         ),
@@ -268,13 +268,13 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     '${ApiConfig.baseUrl}${item.image}',
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => Container(
-                      color: Color(0xFFF0F4F9),
-                      child: Icon(Icons.photo, size: 48, color: Color(0xFF5886BF)),
+                      color: const Color(0xFFF0F4F9),
+                      child: const Icon(Icons.photo, size: 48, color: Color(0xFF5886BF)),
                     ),
                   )
                 : Container(
-                    color: Color(0xFFF0F4F9),
-                    child: Icon(Icons.photo, size: 48, color: Color(0xFF5886BF)),
+                    color: const Color(0xFFF0F4F9),
+                    child: const Icon(Icons.photo, size: 48, color: Color(0xFF5886BF)),
                   ),
             ),
             Container(
@@ -299,7 +299,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                 children: [
                   Text(
                     item.title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -307,7 +307,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     item.categoryName,
                     style: TextStyle(
@@ -322,7 +322,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               top: 10,
               right: 10,
               child: Container(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
@@ -330,11 +330,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
                       blurRadius: 8,
-                      offset: Offset(0, 2),
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                child: Icon(Icons.zoom_in, color: Color(0xFF5886BF), size: 18),
+                child: const Icon(Icons.zoom_in, color: Color(0xFF5886BF), size: 18),
               ),
             ),
             if (item.isFeatured)
@@ -342,12 +342,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
                 top: 10,
                 left: 10,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Color(0xFF5886BF),
+                    color: const Color(0xFF5886BF),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text(
+                  child: const Text(
                     'FEATURED',
                     style: TextStyle(
                       color: Colors.white,
@@ -380,36 +380,36 @@ class _GalleryScreenState extends State<GalleryScreen> {
               children: [
                 Expanded(
                   child: ClipRRect(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                     child: item.image.isNotEmpty
                       ? Image.network(
                           '${ApiConfig.baseUrl}${item.image}',
                           fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) => Container(
-                            color: Color(0xFFF0F4F9),
-                            child: Center(
+                            color: const Color(0xFFF0F4F9),
+                            child: const Center(
                               child: Icon(Icons.broken_image, size: 64, color: Colors.grey),
                             ),
                           ),
                         )
                       : Container(
-                          color: Color(0xFFF0F4F9),
-                          child: Center(
+                          color: const Color(0xFFF0F4F9),
+                          child: const Center(
                             child: Icon(Icons.photo, size: 64, color: Color(0xFF5886BF)),
                           ),
                         ),
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
+                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.05),
                         blurRadius: 10,
-                        offset: Offset(0, -2),
+                        offset: const Offset(0, -2),
                       ),
                     ],
                   ),
@@ -422,24 +422,24 @@ class _GalleryScreenState extends State<GalleryScreen> {
                           children: [
                             Text(
                               item.title,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFF0B131E),
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Row(
                               children: [
                                 Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: Color(0xFF5886BF).withOpacity(0.1),
+                                    color: const Color(0xFF5886BF).withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
                                     item.categoryName,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Color(0xFF5886BF),
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
@@ -449,10 +449,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
                               ],
                             ),
                             if (item.description != null && item.description!.isNotEmpty) ...[
-                              SizedBox(height: 12),
+                              const SizedBox(height: 12),
                               Text(
                                 item.description!,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Color(0xFF404957),
                                   fontSize: 15,
                                 ),
@@ -462,8 +462,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.close, size: 28),
-                        color: Color(0xFF404957),
+                        icon: const Icon(Icons.close, size: 28),
+                        color: const Color(0xFF404957),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],
@@ -484,12 +484,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
     ).toList();
 
     if (videos.isEmpty) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
     return Container(
-      padding: EdgeInsets.all(80),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.all(80),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -502,12 +502,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: Color(0xFF5886BF).withOpacity(0.1),
+              color: const Color(0xFF5886BF).withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text(
+            child: const Text(
               'VIDEO HIGHLIGHTS',
               style: TextStyle(
                 color: Color(0xFF283D57),
@@ -517,8 +517,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
               ),
             ),
           ),
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 20),
+          const Text(
             'Watch Our Journey',
             style: TextStyle(
               color: Color(0xFF0B131E),
@@ -526,11 +526,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 60),
+          const SizedBox(height: 60),
           GridView.builder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               crossAxisSpacing: 30,
               mainAxisSpacing: 30,
@@ -562,13 +562,13 @@ class _GalleryScreenState extends State<GalleryScreen> {
                   '${ApiConfig.baseUrl}${item.image}',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
-                    color: Color(0xFFF0F4F9),
-                    child: Icon(Icons.videocam, size: 48, color: Color(0xFF5886BF)),
+                    color: const Color(0xFFF0F4F9),
+                    child: const Icon(Icons.videocam, size: 48, color: Color(0xFF5886BF)),
                   ),
                 )
               : Container(
-                  color: Color(0xFFF0F4F9),
-                  child: Icon(Icons.videocam, size: 48, color: Color(0xFF5886BF)),
+                  color: const Color(0xFFF0F4F9),
+                  child: const Icon(Icons.videocam, size: 48, color: Color(0xFF5886BF)),
                 ),
           ),
           Container(
@@ -579,19 +579,19 @@ class _GalleryScreenState extends State<GalleryScreen> {
           ),
           Center(
             child: Container(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Color(0xFF5886BF),
+                color: const Color(0xFF5886BF),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Color(0xFF5886BF).withOpacity(0.5),
+                    color: const Color(0xFF5886BF).withOpacity(0.5),
                     blurRadius: 20,
                     spreadRadius: 5,
                   ),
                 ],
               ),
-              child: Icon(Icons.play_arrow, color: Colors.white, size: 40),
+              child: const Icon(Icons.play_arrow, color: Colors.white, size: 40),
             ),
           ),
           Positioned(
@@ -603,7 +603,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               children: [
                 Text(
                   item.title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
@@ -612,7 +612,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 if (item.description != null && item.description!.isNotEmpty) ...[
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     item.description!,
                     style: TextStyle(
@@ -631,12 +631,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
               top: 15,
               right: 15,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Color(0xFF5886BF),
+                  color: const Color(0xFF5886BF),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text(
+                child: const Text(
                   'FEATURED',
                   style: TextStyle(
                     color: Colors.white,

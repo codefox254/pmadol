@@ -61,6 +61,20 @@ class CoreValueSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class NewsUpdateSerializer(serializers.ModelSerializer):
+    update_type_display = serializers.CharField(source='get_update_type_display', read_only=True)
+    
+    class Meta:
+        model = NewsUpdate
+        fields = '__all__'
+
+
+class HomeGalleryImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HomeGalleryImage
+        fields = '__all__'
+
+
 class AboutContentSerializer(serializers.ModelSerializer):
     core_values = CoreValueSerializer(many=True, read_only=True, source='corevalue_set')
     
@@ -76,6 +90,8 @@ class HomePageDataSerializer(serializers.Serializer):
     testimonials = TestimonialSerializer(many=True, read_only=True)
     partners = PartnerSerializer(many=True, read_only=True)
     hero_slides = HeroSlideSerializer(many=True, read_only=True)
+    news_updates = NewsUpdateSerializer(many=True, read_only=True)
+    gallery_images = HomeGalleryImageSerializer(many=True, read_only=True)
     
     def to_representation(self, instance):
         """Override to_representation to properly handle mixed data types"""
@@ -85,5 +101,7 @@ class HomePageDataSerializer(serializers.Serializer):
             'testimonials': TestimonialSerializer(instance['testimonials'], many=True).data,
             'partners': PartnerSerializer(instance['partners'], many=True).data,
             'hero_slides': HeroSlideSerializer(instance['hero_slides'], many=True).data,
+            'news_updates': NewsUpdateSerializer(instance['news_updates'], many=True).data,
+            'gallery_images': HomeGalleryImageSerializer(instance['gallery_images'], many=True).data,
         }
 

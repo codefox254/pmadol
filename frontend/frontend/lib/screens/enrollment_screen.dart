@@ -13,8 +13,8 @@ class EnrollmentScreen extends StatefulWidget {
 
   const EnrollmentScreen({
     required this.service,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<EnrollmentScreen> createState() => _EnrollmentScreenState();
@@ -77,7 +77,7 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
-          padding: EdgeInsets.all(32),
+          padding: const EdgeInsets.all(32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -86,16 +86,16 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
                 height: 80,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0xFF5886BF).withOpacity(0.15),
+                  color: const Color(0xFF5886BF).withOpacity(0.15),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.check_circle,
                   size: 48,
                   color: Color(0xFF5886BF),
                 ),
               ),
-              SizedBox(height: 24),
-              Text(
+              const SizedBox(height: 24),
+              const Text(
                 'Enrollment Submitted!',
                 style: TextStyle(
                   fontSize: 24,
@@ -103,34 +103,34 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
                   color: Color(0xFF0B131E),
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Text(
                 context.read<EnrollmentProvider>().successMessage ?? 'Your enrollment has been submitted successfully.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   color: Color(0xFF707781),
                   height: 1.6,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Container(
-                padding: EdgeInsets.all(14),
+                padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Color(0xFF5886BF).withOpacity(0.1),
+                  color: const Color(0xFF5886BF).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'What happens next:',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF0B131E),
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     _buildNextStepText('1. We review your submission'),
                     _buildNextStepText('2. You\'ll receive an approval email'),
                     _buildNextStepText('3. Get access to your enrollment'),
@@ -138,20 +138,20 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF5886BF),
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+                  backgroundColor: const Color(0xFF5886BF),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'Back to Services',
                   style: TextStyle(
                     color: Colors.white,
@@ -168,10 +168,10 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
 
   Widget _buildNextStepText(String text) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.only(bottom: 6),
       child: Text(
         text,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 13,
           color: Color(0xFF404957),
           height: 1.5,
@@ -186,7 +186,7 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF5886BF),
+        backgroundColor: const Color(0xFF5886BF),
         elevation: 0,
         title: Text(
           'Enroll in ${widget.service.name}',
@@ -197,7 +197,7 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -213,13 +213,13 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildServiceCard(isMobile),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
                   if (enrollProvider.error != null) ...[
                     _buildErrorBanner(enrollProvider.error!, isMobile),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                   ],
                   _buildPaymentInfoCard(enrollProvider, isMobile),
-                  SizedBox(height: 32),
+                  const SizedBox(height: 32),
                   _buildEnrollmentForm(enrollProvider, isMobile),
                 ],
               ),
@@ -235,16 +235,16 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Color(0xFFE1E8F0)),
+        border: Border.all(color: const Color(0xFFE1E8F0)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 12,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      padding: EdgeInsets.all(24),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -253,30 +253,30 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
             style: TextStyle(
               fontSize: isMobile ? 14 : 16,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF0B131E),
+              color: const Color(0xFF0B131E),
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           _buildServiceRow('Service', widget.service.name),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           _buildServiceRow('Duration', widget.service.duration),
           if (widget.service.price != null) ...[
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             _buildServiceRow(
               'Price',
               'KES ${widget.service.price!.toStringAsFixed(2)}',
             ),
           ],
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Container(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Color(0xFF5886BF).withOpacity(0.08),
+              color: const Color(0xFF5886BF).withOpacity(0.08),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               widget.service.description,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 color: Color(0xFF404957),
                 height: 1.6,
@@ -294,7 +294,7 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14,
             color: Color(0xFF707781),
             fontWeight: FontWeight.w500,
@@ -302,7 +302,7 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
         ),
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14,
             color: Color(0xFF0B131E),
             fontWeight: FontWeight.w600,
@@ -314,7 +314,7 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
 
   Widget _buildErrorBanner(String error, bool isMobile) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.red.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
@@ -322,8 +322,8 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
       ),
       child: Row(
         children: [
-          Icon(Icons.error_outline, color: Colors.red, size: 20),
-          SizedBox(width: 12),
+          const Icon(Icons.error_outline, color: Colors.red, size: 20),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               error,
@@ -340,7 +340,7 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
 
   Widget _buildPaymentInfoCard(EnrollmentProvider enrollProvider, bool isMobile) {
     if (enrollProvider.isLoading) {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(color: Color(0xFF5886BF)),
       );
     }
@@ -348,7 +348,7 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
     final paymentInfo = enrollProvider.paymentInfo;
     if (paymentInfo == null) {
       return Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.amber.withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
@@ -365,16 +365,16 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Color(0xFFE1E8F0)),
+        border: Border.all(color: const Color(0xFFE1E8F0)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 12,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      padding: EdgeInsets.all(24),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -383,23 +383,23 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
             style: TextStyle(
               fontSize: isMobile ? 14 : 16,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF0B131E),
+              color: const Color(0xFF0B131E),
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           _buildPaymentRow('Amount Due', 'KES ${paymentInfo.amount.toStringAsFixed(2)}'),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Color(0xFF5886BF).withOpacity(0.08),
+              color: const Color(0xFF5886BF).withOpacity(0.08),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Color(0xFF5886BF).withOpacity(0.2)),
+              border: Border.all(color: const Color(0xFF5886BF).withOpacity(0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Send payment to:',
                   style: TextStyle(
                     fontSize: 13,
@@ -407,20 +407,20 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 SelectableText(
                   paymentInfo.mpesaNumber,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF5886BF),
                     letterSpacing: 1,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   paymentInfo.mpesaName,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 13,
                     color: Color(0xFF707781),
                   ),
@@ -428,9 +428,9 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
               ],
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Container(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Colors.amber.withOpacity(0.08),
               borderRadius: BorderRadius.circular(8),
@@ -438,7 +438,7 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
             child: Row(
               children: [
                 Icon(Icons.info, size: 18, color: Colors.amber.shade700),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     'After payment, enter the M-Pesa message in the form below to complete your enrollment.',
@@ -462,14 +462,14 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14,
             color: Color(0xFF707781),
           ),
         ),
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: Color(0xFF5886BF),
@@ -486,16 +486,16 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Color(0xFFE1E8F0)),
+          border: Border.all(color: const Color(0xFFE1E8F0)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
               blurRadius: 12,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -504,10 +504,10 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
               style: TextStyle(
                 fontSize: isMobile ? 14 : 16,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF0B131E),
+                color: const Color(0xFF0B131E),
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             _buildFormField(
               label: 'Full Name *',
               controller: _nameController,
@@ -518,7 +518,7 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
                 return null;
               },
             ),
-            SizedBox(height: 18),
+            const SizedBox(height: 18),
             _buildFormField(
               label: 'Email Address *',
               controller: _emailController,
@@ -530,7 +530,7 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
                 return null;
               },
             ),
-            SizedBox(height: 18),
+            const SizedBox(height: 18),
             _buildFormField(
               label: 'Phone Number *',
               controller: _phoneController,
@@ -542,7 +542,7 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
                 return null;
               },
             ),
-            SizedBox(height: 18),
+            const SizedBox(height: 18),
             _buildFormField(
               label: 'M-Pesa Message *',
               controller: _mpesaController,
@@ -553,12 +553,12 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
                 return null;
               },
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
-                color: Color(0xFF5886BF).withOpacity(0.08),
+                color: const Color(0xFF5886BF).withOpacity(0.08),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Color(0xFF5886BF).withOpacity(0.2)),
+                border: Border.all(color: const Color(0xFF5886BF).withOpacity(0.2)),
               ),
               child: CheckboxListTile(
                 value: _subscribedToNewsletter,
@@ -567,7 +567,7 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
                     _subscribedToNewsletter = val ?? true;
                   });
                 },
-                title: Text(
+                title: const Text(
                   'Subscribe to our newsletters',
                   style: TextStyle(
                     fontSize: 14,
@@ -575,30 +575,30 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
                     color: Color(0xFF0B131E),
                   ),
                 ),
-                subtitle: Text(
+                subtitle: const Text(
                   'Stay updated with our latest news and updates',
                   style: TextStyle(fontSize: 12, color: Color(0xFF707781)),
                 ),
                 controlAffinity: ListTileControlAffinity.leading,
-                activeColor: Color(0xFF5886BF),
+                activeColor: const Color(0xFF5886BF),
                 checkColor: Colors.white,
               ),
             ),
-            SizedBox(height: 28),
+            const SizedBox(height: 28),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: enrollProvider.isSubmitting ? null : _submitForm,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF5886BF),
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: const Color(0xFF5886BF),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  disabledBackgroundColor: Color(0xFF5886BF).withOpacity(0.5),
+                  disabledBackgroundColor: const Color(0xFF5886BF).withOpacity(0.5),
                 ),
                 child: enrollProvider.isSubmitting
-                    ? SizedBox(
+                    ? const SizedBox(
                         height: 20,
                         width: 20,
                         child: CircularProgressIndicator(
@@ -606,7 +606,7 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
                           valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
-                    : Text(
+                    : const Text(
                         'Submit Enrollment',
                         style: TextStyle(
                           color: Colors.white,
@@ -616,14 +616,14 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
                       ),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Color(0xFFE8EFF7),
+                color: const Color(0xFFE8EFF7),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Text(
+              child: const Text(
                 'By enrolling, you agree to our terms and conditions. We take your privacy seriously.',
                 style: TextStyle(
                   fontSize: 12,
@@ -651,13 +651,13 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: Color(0xFF0B131E),
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
@@ -665,28 +665,28 @@ class _EnrollmentScreenState extends State<EnrollmentScreen> {
           validator: validator,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: Color(0xFFB0B8C1)),
+            hintStyle: const TextStyle(color: Color(0xFFB0B8C1)),
             filled: true,
-            fillColor: Color(0xFFF8FAFC),
+            fillColor: const Color(0xFFF8FAFC),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Color(0xFFE1E8F0)),
+              borderSide: const BorderSide(color: Color(0xFFE1E8F0)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Color(0xFFE1E8F0)),
+              borderSide: const BorderSide(color: Color(0xFFE1E8F0)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Color(0xFF5886BF), width: 2),
+              borderSide: const BorderSide(color: Color(0xFF5886BF), width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.red, width: 1),
+              borderSide: const BorderSide(color: Colors.red, width: 1),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           ),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14,
             color: Color(0xFF0B131E),
           ),

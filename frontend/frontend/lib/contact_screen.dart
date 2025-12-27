@@ -48,14 +48,14 @@ class _ContactScreenState extends State<ContactScreen> {
     return Consumer<HomeProvider>(
       builder: (context, homeProvider, child) {
         if (homeProvider.isLoading) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(color: Color(0xFF5886BF)),
           );
         }
 
         final homeData = homeProvider.homeData;
         if (homeData == null) {
-          return Center(child: Text('No data available'));
+          return const Center(child: Text('No data available'));
         }
 
         return SingleChildScrollView(
@@ -76,7 +76,7 @@ class _ContactScreenState extends State<ContactScreen> {
   Widget _buildPageHeader() {
     return Container(
       height: 300,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -90,7 +90,7 @@ class _ContactScreenState extends State<ContactScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               'GET IN TOUCH',
               style: TextStyle(
                 color: Colors.white,
@@ -99,8 +99,8 @@ class _ContactScreenState extends State<ContactScreen> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 15),
-            Text(
+            const SizedBox(height: 15),
+            const Text(
               'Contact Us Today',
               style: TextStyle(
                 color: Colors.white,
@@ -108,7 +108,7 @@ class _ContactScreenState extends State<ContactScreen> {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             Text(
               'We\'re here to help and answer any question you might have',
               style: TextStyle(
@@ -124,8 +124,8 @@ class _ContactScreenState extends State<ContactScreen> {
 
   Widget _buildContactForm() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -137,7 +137,7 @@ class _ContactScreenState extends State<ContactScreen> {
       ),
       child: Row(
         children: [
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -161,31 +161,31 @@ class _ContactScreenState extends State<ContactScreen> {
               ],
             ),
           ),
-          SizedBox(width: 80),
+          const SizedBox(width: 80),
           Expanded(
             child: Form(
               key: _formKey,
               child: Column(
                 children: [
                   _buildFormField('Full Name', _nameController, false),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildFormField('Email Address', _emailController, false),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildFormField('Phone Number', _phoneController, false),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildFormField('Message', _messageController, true),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
                       onPressed: _isSubmitting ? null : _submitForm,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF5886BF),
+                        backgroundColor: const Color(0xFF5886BF),
                         disabledBackgroundColor: Colors.grey,
                       ),
                       child: _isSubmitting
-                          ? SizedBox(
+                          ? const SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
@@ -195,7 +195,7 @@ class _ContactScreenState extends State<ContactScreen> {
                                 ),
                               ),
                             )
-                          : Text(
+                          : const Text(
                               'Send Message',
                               style: TextStyle(
                                 color: Colors.white,
@@ -224,17 +224,17 @@ class _ContactScreenState extends State<ContactScreen> {
         fillColor: Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+          borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+          borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Color(0xFF5886BF), width: 2),
+          borderSide: const BorderSide(color: Color(0xFF5886BF), width: 2),
         ),
-        labelStyle: TextStyle(color: Color(0xFF707781)),
+        labelStyle: const TextStyle(color: Color(0xFF707781)),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -253,12 +253,12 @@ class _ContactScreenState extends State<ContactScreen> {
       setState(() => _isSubmitting = true);
 
       // Simulate API call
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 1));
 
       setState(() => _isSubmitting = false);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Message sent successfully!'),
           backgroundColor: Colors.green,
           duration: Duration(seconds: 3),
@@ -274,8 +274,8 @@ class _ContactScreenState extends State<ContactScreen> {
 
   Widget _buildContactInfo(dynamic settings) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -287,7 +287,7 @@ class _ContactScreenState extends State<ContactScreen> {
       ),
       child: Column(
         children: [
-          Text(
+          const Text(
             'OUR CONTACT INFORMATION',
             style: TextStyle(
               color: Color(0xFF5886BF),
@@ -296,7 +296,7 @@ class _ContactScreenState extends State<ContactScreen> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 60),
+          const SizedBox(height: 60),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -341,7 +341,7 @@ class _ContactScreenState extends State<ContactScreen> {
       onTap: onTap,
       child: Container(
         width: 220,
-        padding: EdgeInsets.all(30),
+        padding: const EdgeInsets.all(30),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -349,7 +349,7 @@ class _ContactScreenState extends State<ContactScreen> {
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
               blurRadius: 10,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -359,25 +359,25 @@ class _ContactScreenState extends State<ContactScreen> {
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: Color(0xFF5886BF).withOpacity(0.1),
+                color: const Color(0xFF5886BF).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(30),
               ),
-              child: Icon(icon, color: Color(0xFF5886BF), size: 30),
+              child: Icon(icon, color: const Color(0xFF5886BF), size: 30),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xFF0B131E),
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             Text(
               value,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xFF707781),
                 fontSize: 14,
                 height: 1.6,
@@ -392,7 +392,7 @@ class _ContactScreenState extends State<ContactScreen> {
   Widget _buildMapSection() {
     return Container(
       height: 400,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -406,9 +406,9 @@ class _ContactScreenState extends State<ContactScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.map, size: 80, color: Colors.white),
-            SizedBox(height: 20),
-            Text(
+            const Icon(Icons.map, size: 80, color: Colors.white),
+            const SizedBox(height: 20),
+            const Text(
               'Map View Coming Soon',
               style: TextStyle(
                 color: Colors.white,
@@ -416,7 +416,7 @@ class _ContactScreenState extends State<ContactScreen> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'Visit us at our location in Nairobi',
               style: TextStyle(

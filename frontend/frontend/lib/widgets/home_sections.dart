@@ -15,8 +15,8 @@ class StatisticsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xFF5886BF),
-      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      color: const Color(0xFF5886BF),
+      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 80),
       child: Column(
         children: [
           Row(
@@ -61,19 +61,19 @@ class StatisticsSection extends StatelessWidget {
           ),
           child: Icon(icon, color: Colors.white, size: 40),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 48,
             fontWeight: FontWeight.w700,
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Text(
           title,
-          style: TextStyle(color: Colors.white, fontSize: 16),
+          style: const TextStyle(color: Colors.white, fontSize: 16),
         ),
       ],
     );
@@ -89,8 +89,8 @@ class TestimonialsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -102,7 +102,7 @@ class TestimonialsSection extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(
+          const Text(
             'TESTIMONIALS',
             style: TextStyle(
               color: Color(0xFF5886BF),
@@ -111,8 +111,8 @@ class TestimonialsSection extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 15),
-          Text(
+          const SizedBox(height: 15),
+          const Text(
             'What Our Community Says',
             style: TextStyle(
               color: Color(0xFF0B131E),
@@ -120,9 +120,9 @@ class TestimonialsSection extends StatelessWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 60),
+          const SizedBox(height: 60),
           if (testimonials.isEmpty)
-            Center(
+            const Center(
               child: Text(
                 'No testimonials available',
                 style: TextStyle(color: Colors.grey, fontSize: 16),
@@ -132,7 +132,7 @@ class TestimonialsSection extends StatelessWidget {
             Column(
               children: testimonials.map((testimonial) {
                 return Padding(
-                  padding: EdgeInsets.only(bottom: 30),
+                  padding: const EdgeInsets.only(bottom: 30),
                   child: _buildTestimonialCard(testimonial),
                 );
               }).toList(),
@@ -147,7 +147,7 @@ class TestimonialsSection extends StatelessWidget {
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: EdgeInsets.all(40),
+        padding: const EdgeInsets.all(40),
         child: Column(
           children: [
             Row(
@@ -155,37 +155,37 @@ class TestimonialsSection extends StatelessWidget {
                 5,
                 (index) => Icon(
                   index < testimonial.rating ? Icons.star : Icons.star_border,
-                  color: Color(0xFF5886BF),
+                  color: const Color(0xFF5886BF),
                   size: 16,
                 ),
               ),
             ),
-            SizedBox(height: 20),
-            Icon(Icons.format_quote, size: 40, color: Color(0xFF5886BF)),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
+            const Icon(Icons.format_quote, size: 40, color: Color(0xFF5886BF)),
+            const SizedBox(height: 20),
             Text(
               testimonial.content,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xFF0B131E),
                 fontSize: 18,
                 fontStyle: FontStyle.italic,
                 height: 1.6,
               ),
             ),
-            SizedBox(height: 25),
+            const SizedBox(height: 25),
             Text(
               testimonial.author,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xFF283D57),
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             Text(
               testimonial.roleDisplay,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xFF707781),
                 fontSize: 14,
               ),
@@ -206,8 +206,8 @@ class PartnersSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 80, horizontal: 80),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 80),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -219,7 +219,7 @@ class PartnersSection extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(
+          const Text(
             'OUR PARTNERS & REGULATORS',
             style: TextStyle(
               color: Color(0xFF283D57),
@@ -228,9 +228,9 @@ class PartnersSection extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 60),
+          const SizedBox(height: 60),
           if (partners.isEmpty)
-            Center(
+            const Center(
               child: Text(
                 'No partners available',
                 style: TextStyle(color: Colors.grey, fontSize: 16),
@@ -261,12 +261,12 @@ class PartnersSection extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(15),
+        padding: const EdgeInsets.all(15),
         child: partner.logo.isNotEmpty
             ? Image.network(
                 partner.logo.startsWith('http')
@@ -278,12 +278,12 @@ class PartnersSection extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.business, size: 40, color: Colors.grey),
-                        SizedBox(height: 8),
+                        const Icon(Icons.business, size: 40, color: Colors.grey),
+                        const SizedBox(height: 8),
                         Text(
                           partner.name,
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                       ],
                     ),
@@ -294,12 +294,12 @@ class PartnersSection extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.business, size: 40, color: Colors.grey),
-                    SizedBox(height: 8),
+                    const Icon(Icons.business, size: 40, color: Colors.grey),
+                    const SizedBox(height: 8),
                     Text(
                       partner.name,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -354,12 +354,12 @@ class _HeroSectionState extends State<HeroSection> {
   void _startAutoPlay() {
     _timer?.cancel();
     if (_slides.length <= 1) return;
-    _timer = Timer.periodic(Duration(seconds: 5), (_) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (_) {
       final nextIndex = (_currentIndex + 1) % _slides.length;
       if (mounted) {
         _pageController.animateToPage(
           nextIndex,
-          duration: Duration(milliseconds: 700),
+          duration: const Duration(milliseconds: 700),
           curve: Curves.easeInOut,
         );
       }
@@ -392,7 +392,7 @@ class _HeroSectionState extends State<HeroSection> {
                   : const AssetImage('assets/images/hero_bg.jpg') as ImageProvider;
 
               return AnimatedSwitcher(
-                duration: Duration(milliseconds: 800),
+                duration: const Duration(milliseconds: 800),
                 child: Container(
                   key: ValueKey(slide.image + slide.title),
                   decoration: BoxDecoration(
@@ -415,23 +415,23 @@ class _HeroSectionState extends State<HeroSection> {
                 children: [
                   Text(
                     widget.settings.siteName.toUpperCase(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 14,
                       letterSpacing: 3.5,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  SizedBox(height: 25),
+                  const SizedBox(height: 25),
                   AnimatedSwitcher(
-                    duration: Duration(milliseconds: 500),
+                    duration: const Duration(milliseconds: 500),
                     child: Text(
                       _slides[_currentIndex].title.isNotEmpty
                           ? _slides[_currentIndex].title
                           : widget.settings.tagline,
-                      key: ValueKey('${_slides[_currentIndex].title}-${_currentIndex}'),
+                      key: ValueKey('${_slides[_currentIndex].title}-$_currentIndex'),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 64,
                         fontWeight: FontWeight.w700,
@@ -439,12 +439,12 @@ class _HeroSectionState extends State<HeroSection> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   AnimatedSwitcher(
-                    duration: Duration(milliseconds: 500),
+                    duration: const Duration(milliseconds: 500),
                     child: Container(
-                      key: ValueKey('${_slides[_currentIndex].subtitle}-${_currentIndex}'),
-                      constraints: BoxConstraints(maxWidth: 700),
+                      key: ValueKey('${_slides[_currentIndex].subtitle}-$_currentIndex'),
+                      constraints: const BoxConstraints(maxWidth: 700),
                       child: Text(
                         _slides[_currentIndex].subtitle.isNotEmpty
                             ? _slides[_currentIndex].subtitle
@@ -458,12 +458,14 @@ class _HeroSectionState extends State<HeroSection> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/contact');
+                    },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF5886BF),
-                      padding: EdgeInsets.symmetric(
+                      backgroundColor: const Color(0xFF5886BF),
+                      padding: const EdgeInsets.symmetric(
                         horizontal: 40,
                         vertical: 16,
                       ),
@@ -471,7 +473,7 @@ class _HeroSectionState extends State<HeroSection> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'BOOK A SESSION NOW',
                       style: TextStyle(
                         color: Colors.white,
@@ -480,7 +482,7 @@ class _HeroSectionState extends State<HeroSection> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   _buildIndicators(),
                 ],
               ),
@@ -497,12 +499,12 @@ class _HeroSectionState extends State<HeroSection> {
       children: List.generate(_slides.length, (index) {
         final isActive = _currentIndex == index;
         return AnimatedContainer(
-          duration: Duration(milliseconds: 300),
-          margin: EdgeInsets.symmetric(horizontal: 6),
+          duration: const Duration(milliseconds: 300),
+          margin: const EdgeInsets.symmetric(horizontal: 6),
           height: 8,
           width: isActive ? 28 : 10,
           decoration: BoxDecoration(
-            color: isActive ? Color(0xFF5886BF) : Colors.white.withOpacity(0.6),
+            color: isActive ? const Color(0xFF5886BF) : Colors.white.withOpacity(0.6),
             borderRadius: BorderRadius.circular(12),
           ),
         );

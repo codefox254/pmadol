@@ -45,7 +45,7 @@ class _AboutScreenState extends State<AboutScreen> {
       builder: (context, homeProvider, aboutProvider, teamProvider, child) {
         // Combined loading state
         if (homeProvider.isLoading || aboutProvider.isLoading) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(color: Color(0xFF5886BF)),
           );
         }
@@ -59,7 +59,7 @@ class _AboutScreenState extends State<AboutScreen> {
         final aboutContent = aboutProvider.content;
 
         if (homeData == null) {
-          return Center(child: Text('No site data available'));
+          return const Center(child: Text('No site data available'));
         }
 
         return SingleChildScrollView(
@@ -90,22 +90,22 @@ class _AboutScreenState extends State<AboutScreen> {
     return Center(
       child: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(40),
+          padding: const EdgeInsets.all(40),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.error_outline, size: 80, color: Colors.red.shade400),
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 'Failed to load content',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton.icon(
                 onPressed: _loadData,
-                icon: Icon(Icons.refresh),
-                label: Text('Retry'),
-                style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF5886BF)),
+                icon: const Icon(Icons.refresh),
+                label: const Text('Retry'),
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF5886BF)),
               ),
             ],
           ),
@@ -130,21 +130,21 @@ class _AboutScreenState extends State<AboutScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildLabel(label),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             title,
             style: TextStyle(
-              color: Color(0xFF0B131E),
+              color: const Color(0xFF0B131E),
               fontSize: isMobile ? 26 : 40,
               fontWeight: FontWeight.w700,
             ),
           ),
           if (subtitle != null && subtitle.isNotEmpty) ...[
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               subtitle,
               style: TextStyle(
-                color: Color(0xFF707781),
+                color: const Color(0xFF707781),
                 fontSize: isMobile ? 14 : 15,
               ),
             ),
@@ -158,15 +158,15 @@ class _AboutScreenState extends State<AboutScreen> {
 
   Widget _buildLabel(String text) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: Color(0xFF5886BF).withOpacity(0.12),
+        color: const Color(0xFF5886BF).withOpacity(0.12),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: Color(0xFF5886BF).withOpacity(0.3)),
+        border: Border.all(color: const Color(0xFF5886BF).withOpacity(0.3)),
       ),
       child: Text(
         text,
-        style: TextStyle(
+        style: const TextStyle(
           color: Color(0xFF2E4E79),
           fontSize: 12,
           letterSpacing: 1.2,
@@ -187,7 +187,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
-      duration: Duration(milliseconds: 700),
+      duration: const Duration(milliseconds: 700),
       curve: Curves.easeOut,
       builder: (context, value, child) {
         return Opacity(
@@ -197,7 +197,7 @@ class _AboutScreenState extends State<AboutScreen> {
             child: Container(
               height: isMobile ? 380 : 440,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [Color(0xFF1F3A5F), Color(0xFF0D1C2F)],
@@ -248,7 +248,7 @@ class _AboutScreenState extends State<AboutScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildLabel('ABOUT'),
-                          SizedBox(height: 14),
+                          const SizedBox(height: 14),
                           Text(
                             settings.siteName,
                             style: TextStyle(
@@ -258,7 +258,7 @@ class _AboutScreenState extends State<AboutScreen> {
                               letterSpacing: -0.5,
                             ),
                           ),
-                          SizedBox(height: 14),
+                          const SizedBox(height: 14),
                           Text(
                             settings.tagline,
                             style: TextStyle(
@@ -267,7 +267,7 @@ class _AboutScreenState extends State<AboutScreen> {
                               height: 1.6,
                             ),
                           ),
-                          SizedBox(height: 18),
+                          const SizedBox(height: 18),
                           if (aboutContent != null)
                             ConstrainedBox(
                               constraints: BoxConstraints(maxWidth: isMobile ? double.infinity : 780),
@@ -282,7 +282,7 @@ class _AboutScreenState extends State<AboutScreen> {
                                 ),
                               ),
                             ),
-                          SizedBox(height: 22),
+                          const SizedBox(height: 22),
                           _buildHighlightChips(aboutContent, coreValues, teamMembers, isMobile),
                         ],
                       ),
@@ -321,7 +321,7 @@ class _AboutScreenState extends State<AboutScreen> {
       children: chips
           .map(
             (c) => Container(
-              padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.08),
                 borderRadius: BorderRadius.circular(12),
@@ -349,7 +349,7 @@ class _AboutScreenState extends State<AboutScreen> {
         : null;
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -363,7 +363,7 @@ class _AboutScreenState extends State<AboutScreen> {
       child: _buildSectionShell(
         label: 'ABOUT',
         title: aboutContent.storyTitle,
-        subtitle: 'Framed overview with live content from your admin API.',
+        subtitle: 'Discover our journey and commitment to excellence in chess education.',
         isMobile: isMobile,
         child: Column(
           children: [
@@ -371,7 +371,7 @@ class _AboutScreenState extends State<AboutScreen> {
               _buildFramedCard(
                 child: _buildStoryText(aboutContent.storyContent, isMobile),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               if (imageUrl != null)
                 _buildFramedCard(
                   child: _buildStoryImage(imageUrl, isMobile),
@@ -386,7 +386,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     ),
                   ),
                   if (imageUrl != null) ...[
-                    SizedBox(width: 30),
+                    const SizedBox(width: 30),
                     Expanded(
                       child: _buildFramedCard(
                         child: _buildStoryImage(imageUrl, isMobile),
@@ -396,7 +396,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 ],
               ),
             ],
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             _buildFactsRow(aboutContent, teamProvider, isMobile),
           ],
         ),
@@ -411,7 +411,7 @@ class _AboutScreenState extends State<AboutScreen> {
         Text(
           content,
           style: TextStyle(
-            color: Color(0xFF707781),
+            color: const Color(0xFF707781),
             fontSize: isMobile ? 15 : 16,
             height: 1.8,
           ),
@@ -429,7 +429,7 @@ class _AboutScreenState extends State<AboutScreen> {
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             blurRadius: 20,
-            offset: Offset(0, 10),
+            offset: const Offset(0, 10),
           ),
         ],
         image: DecorationImage(
@@ -445,16 +445,16 @@ class _AboutScreenState extends State<AboutScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Color(0xFFE1E8F0)),
+        border: Border.all(color: const Color(0xFFE1E8F0)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 18,
-            offset: Offset(0, 8),
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-      padding: EdgeInsets.all(22),
+      padding: const EdgeInsets.all(22),
       child: child,
     );
   }
@@ -463,7 +463,7 @@ class _AboutScreenState extends State<AboutScreen> {
     final facts = [
       _Fact(label: 'Founded', value: aboutContent.foundedYear > 0 ? '${aboutContent.foundedYear}' : '—'),
       _Fact(label: 'Team', value: teamProvider.members.isNotEmpty ? '${teamProvider.members.length}+ people' : 'Growing'),
-      _Fact(label: 'Mission', value: 'Mission & Vision framed below'),
+      const _Fact(label: 'Mission', value: 'Mission & Vision framed below'),
     ];
 
     return Wrap(
@@ -476,29 +476,29 @@ class _AboutScreenState extends State<AboutScreen> {
   Widget _buildFactCard(_Fact fact, bool isMobile) {
     return Container(
       width: isMobile ? double.infinity : 200,
-      padding: EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Color(0xFFE1E8F0)),
+        border: Border.all(color: const Color(0xFFE1E8F0)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             fact.label,
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF2E4E79),
               fontSize: 12,
               letterSpacing: 1.1,
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Text(
             fact.value,
             style: TextStyle(
-              color: Color(0xFF0B131E),
+              color: const Color(0xFF0B131E),
               fontSize: isMobile ? 16 : 18,
               fontWeight: FontWeight.w600,
             ),
@@ -510,7 +510,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
   Widget _buildMissionVision(aboutContent, bool isMobile) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -531,7 +531,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     Icons.flag,
                     isMobile,
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildMissionVisionCard(
                     'VISION',
                     aboutContent.visionStatement,
@@ -550,7 +550,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       isMobile,
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Expanded(
                     child: _buildMissionVisionCard(
                       'VISION',
@@ -577,7 +577,7 @@ class _AboutScreenState extends State<AboutScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, color: Colors.white, size: isMobile ? 32 : 40),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Text(
             title,
             style: TextStyle(
@@ -586,7 +586,7 @@ class _AboutScreenState extends State<AboutScreen> {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           Text(
             content,
             style: TextStyle(
@@ -602,11 +602,11 @@ class _AboutScreenState extends State<AboutScreen> {
 
   Widget _buildCoreValues(List<dynamic> values, bool isMobile) {
     if (values.isEmpty) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -659,7 +659,7 @@ class _AboutScreenState extends State<AboutScreen> {
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -669,27 +669,27 @@ class _AboutScreenState extends State<AboutScreen> {
             width: isMobile ? 50 : 60,
             height: isMobile ? 50 : 60,
             decoration: BoxDecoration(
-              color: Color(0xFF5886BF).withOpacity(0.1),
+              color: const Color(0xFF5886BF).withOpacity(0.1),
               borderRadius: BorderRadius.circular(isMobile ? 25 : 30),
             ),
-            child: Icon(icon, color: Color(0xFF5886BF), size: isMobile ? 25 : 30),
+            child: Icon(icon, color: const Color(0xFF5886BF), size: isMobile ? 25 : 30),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Text(
             title,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFF0B131E),
+              color: const Color(0xFF0B131E),
               fontSize: isMobile ? 16 : 18,
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           Text(
             description,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFF707781),
+              color: const Color(0xFF707781),
               fontSize: isMobile ? 13 : 14,
               height: 1.6,
             ),
@@ -705,7 +705,7 @@ class _AboutScreenState extends State<AboutScreen> {
         vertical: isMobile ? 50 : 80,
         horizontal: isMobile ? 20 : 80,
       ),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -717,27 +717,27 @@ class _AboutScreenState extends State<AboutScreen> {
           Text(
             'OUR TEAM',
             style: TextStyle(
-              color: Color(0xFF5886BF),
+              color: const Color(0xFF5886BF),
               fontSize: isMobile ? 12 : 14,
               letterSpacing: 3.5,
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Text(
             'Expert Coaches & Instructors',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFF0B131E),
+              color: const Color(0xFF0B131E),
               fontSize: isMobile ? 28 : 48,
               fontWeight: FontWeight.w700,
             ),
           ),
           SizedBox(height: isMobile ? 40 : 60),
           if (teamProvider.isLoading) ...[
-            Center(child: CircularProgressIndicator(color: Color(0xFF5886BF)))
+            const Center(child: CircularProgressIndicator(color: Color(0xFF5886BF)))
           ] else if (teamProvider.error != null) ...[
-            Text(
+            const Text(
               'Failed to load team',
               style: TextStyle(color: Colors.red, fontSize: 16),
             ),
@@ -776,7 +776,7 @@ class _AboutScreenState extends State<AboutScreen> {
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -785,8 +785,8 @@ class _AboutScreenState extends State<AboutScreen> {
           Container(
             height: isMobile ? 180 : 200,
             decoration: BoxDecoration(
-              color: Color(0xFF5886BF).withOpacity(0.1),
-              borderRadius: BorderRadius.only(
+              color: const Color(0xFF5886BF).withOpacity(0.1),
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
               ),
@@ -798,7 +798,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   : null,
             ),
             child: photoUrl == null
-                ? Icon(Icons.person, size: isMobile ? 60 : 80, color: Color(0xFF5886BF))
+                ? Icon(Icons.person, size: isMobile ? 60 : 80, color: const Color(0xFF5886BF))
                 : null,
           ),
           Padding(
@@ -810,28 +810,28 @@ class _AboutScreenState extends State<AboutScreen> {
                   name,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Color(0xFF0B131E),
+                    color: const Color(0xFF0B131E),
                     fontSize: isMobile ? 16 : 18,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Text(
                   role,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Color(0xFF5886BF),
+                    color: const Color(0xFF5886BF),
                     fontSize: isMobile ? 13 : 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 if (title.isNotEmpty) ...[
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     title,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Color(0xFF707781),
+                      color: const Color(0xFF707781),
                       fontSize: isMobile ? 12 : 13,
                       fontWeight: FontWeight.w400,
                     ),
