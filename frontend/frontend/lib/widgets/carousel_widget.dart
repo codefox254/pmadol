@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../models/home_models.dart';
+import '../config/api_config.dart';
 
 class NewsCarousel extends StatefulWidget {
   final List<NewsUpdate> newsUpdates;
@@ -159,25 +160,20 @@ class _NewsCarouselState extends State<NewsCarousel> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFF5886BF),
-            const Color(0xFF283D57),
-          ],
+          colors: [const Color(0xFF5886BF), const Color(0xFF283D57)],
         ),
       ),
       child: Stack(
         children: [
-          if (news.image != null)
+          if (news.image != null && news.image!.isNotEmpty)
             Positioned.fill(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: Image.network(
-                  news.image!,
+                  '${ApiConfig.baseUrl}${news.image!}',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: const Color(0xFF5886BF),
-                    );
+                    return Container(color: const Color(0xFF5886BF));
                   },
                 ),
               ),
@@ -189,10 +185,7 @@ class _NewsCarouselState extends State<NewsCarousel> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.8),
-                  ],
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
                 ),
               ),
             ),
@@ -205,7 +198,10 @@ class _NewsCarouselState extends State<NewsCarousel> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF5886BF),
                     borderRadius: BorderRadius.circular(20),
@@ -382,17 +378,20 @@ class _GalleryCarouselState extends State<GalleryCarousel> {
         child: Stack(
           children: [
             Positioned.fill(
-              child: Image.network(
-                image.image,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[300],
-                    child: const Center(
-                      child: Icon(Icons.image, size: 80, color: Colors.grey),
-                    ),
-                  );
-                },
+              child: Container(
+                color: Colors.grey[100],
+                child: Image.network(
+                  '${ApiConfig.baseUrl}${image.image}',
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey[300],
+                      child: const Center(
+                        child: Icon(Icons.image, size: 80, color: Colors.grey),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
             if (image.caption.isNotEmpty)

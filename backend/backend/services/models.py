@@ -35,74 +35,6 @@ class Service(models.Model):
         return self.name
 
 
-class PricingPlan(models.Model):
-    """Pricing plans"""
-    name = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    duration = models.CharField(max_length=50)
-    features = models.JSONField(default=list)
-    is_popular = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    display_order = models.PositiveIntegerField(default=0)
-    
-    class Meta:
-        ordering = ['display_order', 'price']
-    
-    def __str__(self):
-        return f"{self.name} - {self.price}"
-
-
-class ServiceBooking(models.Model):
-    """Service bookings"""
-    STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('confirmed', 'Confirmed'),
-        ('completed', 'Completed'),
-        ('cancelled', 'Cancelled'),
-    ]
-    
-    PAYMENT_STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('paid', 'Paid'),
-        ('refunded', 'Refunded'),
-    ]
-    
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
-    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='bookings')
-    date = models.DateField()
-    time = models.TimeField()
-    notes = models.TextField(blank=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        ordering = ['-created_at']
-    
-    def __str__(self):
-        return f"{self.user.username} - {self.service.name} on {self.date}"
-
-
-class ServiceInquiry(models.Model):
-    """Service inquiry form"""
-    name = models.CharField(max_length=100)
-    email = models.EmailField()
-    phone = models.CharField(max_length=20)
-    service = models.ForeignKey(Service, on_delete=models.SET_NULL, null=True, blank=True)
-    message = models.TextField()
-    status = models.CharField(max_length=20, default='new')
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        ordering = ['-created_at']
-        verbose_name_plural = 'Service Inquiries'
-    
-    def __str__(self):
-        return f"{self.name} - {self.email}"
-
-
 class MembershipPlan(models.Model):
     """Membership subscription plans"""
     PLAN_TYPE_CHOICES = [
@@ -129,6 +61,78 @@ class MembershipPlan(models.Model):
     
     def __str__(self):
         return f"{self.name} - KES {self.price}/{self.plan_type}"
+
+
+class ServiceEnrollment(models.Model):
+    """Service enrollment requests"""
+    APPROVAL_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='enrollments')
+    full_name = models.CharField(max_length=200)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=20)
+    message = models.TextField(blank=True, help_text="Additional message or questions")
+    subscribed_to_newsletter = models.BooleanField(default=False)
+    approval_status = models.CharField(max_length=20, choices=APPROVAL_STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Service Enrollment"
+        verbose_name_plural = "Service Enrollments"
+    
+    def __str__(self):
+        return f"{self.full_name} - {self.service.name}"
+    
+    def save(self, *args, **kwargs):
+        # If this is "Become Team Member" enrollment and it's being approved, create a team member
+        old_status = None
+        if self.pk:
+            try:
+                old_status = ServiceEnrollment.objects.get(pk=self.pk).approval_status
+            except ServiceEnrollment.DoesNotExist:
+                pass
+        
+        super().save(*args, **kwargs)
+        
+        # Create team member when enrollment is approved for the first time
+        if (old_status != 'approved' and self.approval_status == 'approved' and 
+            self.service.name == 'Become Team Member'):
+            TeamMember.objects.get_or_create(
+                email=self.email,
+                defaults={
+                    'full_name': self.full_name,
+                    'phone_number': self.phone_number,
+                    'bio': self.message or '',
+                    'is_active': True,
+                }
+            )
+
+
+class TeamMember(models.Model):
+    """Team members approved from service enrollments"""
+    full_name = models.CharField(max_length=200)
+    email = models.EmailField(unique=True)
+    phone_number = models.CharField(max_length=20)
+    bio = models.TextField(blank=True, help_text="Member bio or background")
+    role = models.CharField(max_length=100, blank=True, help_text="Role or position")
+    image = models.ImageField(upload_to='team/', blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    joined_date = models.DateTimeField(auto_now_add=True)
+    display_order = models.PositiveIntegerField(default=0)
+    
+    class Meta:
+        ordering = ['display_order', 'full_name']
+        verbose_name = "Team Member"
+        verbose_name_plural = "Team Members"
+    
+    def __str__(self):
+        return self.full_name
 
 
 class ClubMembership(models.Model):

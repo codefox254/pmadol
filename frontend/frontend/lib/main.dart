@@ -72,7 +72,9 @@ class PMadolChessApp extends StatelessWidget {
             page = const about.AboutScreen();
             break;
           case '/services':
-            page = const services.ServicesScreen();
+            final args = settings.arguments as Map<String, dynamic>?;
+            final initialTab = args?['initialTab'] as int? ?? 0;
+            page = services.ServicesScreen(initialTab: initialTab);
             break;
           case '/tournaments':
             page = const tournaments.TournamentsScreen();
@@ -106,7 +108,7 @@ class PMadolChessApp extends StatelessWidget {
 
 class MainLayout extends StatelessWidget {
   final Widget child;
-  
+
   const MainLayout({super.key, required this.child});
 
   @override
@@ -135,8 +137,10 @@ class MainLayout extends StatelessWidget {
                 children: [
                   Icon(Icons.phone, color: Color(0xFFA6C1E0), size: 17),
                   SizedBox(width: 8),
-                  Text('+254 714 272 082', 
-                    style: TextStyle(color: Color(0xFFD3DBE5), fontSize: 14)),
+                  Text(
+                    '+254 714 272 082',
+                    style: TextStyle(color: Color(0xFFD3DBE5), fontSize: 14),
+                  ),
                 ],
               ),
               SizedBox(width: 20),
@@ -144,8 +148,10 @@ class MainLayout extends StatelessWidget {
                 children: [
                   Icon(Icons.email, color: Color(0xFFA6C1E0), size: 14),
                   SizedBox(width: 8),
-                  Text('info@pmadol.com', 
-                    style: TextStyle(color: Color(0xFFD3DBE5), fontSize: 14)),
+                  Text(
+                    'info@pmadol.com',
+                    style: TextStyle(color: Color(0xFFD3DBE5), fontSize: 14),
+                  ),
                 ],
               ),
               SizedBox(width: 20),
@@ -157,15 +163,21 @@ class MainLayout extends StatelessWidget {
                   SizedBox(width: 10),
                   Icon(Icons.chat, color: Color(0xFFD3DBE5), size: 14),
                   SizedBox(width: 10),
-                  Icon(Icons.play_circle_fill, color: Color(0xFFD3DBE5), size: 14),
+                  Icon(
+                    Icons.play_circle_fill,
+                    color: Color(0xFFD3DBE5),
+                    size: 14,
+                  ),
                   SizedBox(width: 10),
                   Icon(Icons.link, color: Color(0xFFD3DBE5), size: 14),
                 ],
               ),
             ],
           ),
-          Text('Nairobi - Kenya.',
-            style: TextStyle(color: Color(0xFFD3DBE5), fontSize: 14)),
+          Text(
+            'Nairobi - Kenya.',
+            style: TextStyle(color: Color(0xFFD3DBE5), fontSize: 14),
+          ),
         ],
       ),
     );
@@ -183,7 +195,9 @@ class MainLayout extends StatelessWidget {
             width: 150,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/Panchol-Madol-Chess-Club-Logo.png'),
+                image: AssetImage(
+                  'assets/images/Panchol-Madol-Chess-Club-Logo.png',
+                ),
                 fit: BoxFit.contain,
               ),
             ),
@@ -224,4 +238,3 @@ class MainLayout extends StatelessWidget {
     );
   }
 }
-

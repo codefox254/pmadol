@@ -4,7 +4,7 @@
 # ============================================
 from django.contrib import admin
 from django.utils import timezone
-from .models import Service, PricingPlan, ServiceBooking, ServiceInquiry, MembershipPlan, ClubMembership
+from .models import Service, MembershipPlan, ClubMembership, ServiceEnrollment, TeamMember
 
 
 @admin.register(Service)
@@ -13,28 +13,6 @@ class ServiceAdmin(admin.ModelAdmin):
     list_filter = ['category', 'is_featured', 'is_active']
     search_fields = ['name', 'description']
     list_editable = ['is_featured', 'is_active', 'display_order']
-
-
-@admin.register(PricingPlan)
-class PricingPlanAdmin(admin.ModelAdmin):
-    list_display = ['name', 'price', 'duration', 'is_popular', 'is_active', 'display_order']
-    list_filter = ['is_popular', 'is_active']
-    list_editable = ['is_popular', 'is_active', 'display_order']
-
-
-@admin.register(ServiceBooking)
-class ServiceBookingAdmin(admin.ModelAdmin):
-    list_display = ['user', 'service', 'date', 'time', 'status', 'payment_status', 'created_at']
-    list_filter = ['status', 'payment_status', 'date']
-    search_fields = ['user__username', 'service__name']
-    date_hierarchy = 'date'
-
-
-@admin.register(ServiceInquiry)
-class ServiceInquiryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'email', 'service', 'status', 'created_at']
-    list_filter = ['status', 'created_at']
-    search_fields = ['name', 'email', 'message']
 
 
 @admin.register(MembershipPlan)
@@ -115,3 +93,58 @@ class ClubMembershipAdmin(admin.ModelAdmin):
         updated = queryset.update(payment_status='completed', payment_date=timezone.now())
         self.message_user(request, f'{updated} payment(s) marked as completed.')
     mark_payment_completed.short_description = 'Mark payment as completed'
+
+
+@admin.register(ServiceEnrollment)
+class ServiceEnrollmentAdmin(admin.ModelAdmin):
+    list_display = ['full_name', 'email', 'phone_number', 'service', 'approval_status', 'created_at']
+    list_filter = ['approval_status', 'subscribed_to_newsletter', 'created_at']
+    search_fields = ['full_name', 'email', 'phone_number', 'service__name', 'message']
+    readonly_fields = ['created_at', 'updated_at']
+    date_hierarchy = 'created_at'
+    
+    fieldsets = (
+        ('Contact Information', {
+            'fields': ('full_name', 'email', 'phone_number')
+        }),
+        ('Enrollment Details', {
+            'fields': ('service', 'message', 'subscribed_to_newsletter')
+        }),
+        ('Status', {
+            'fields': ('approval_status', 'created_at', 'updated_at')
+        }),
+    )
+    
+    actions = ['approve_enrollments', 'reject_enrollments']
+    
+    def approve_enrollments(self, request, queryset):
+        updated = queryset.update(approval_status='approved')
+        self.message_user(request, f'{updated} enrollment(s) approved successfully.')
+    approve_enrollments.short_description = 'Approve selected enrollments'
+    
+    def reject_enrollments(self, request, queryset):
+        updated = queryset.update(approval_status='rejected')
+        self.message_user(request, f'{updated} enrollment(s) rejected.')
+    reject_enrollments.short_description = 'Reject selected enrollments'
+
+
+@admin.register(TeamMember)
+class TeamMemberAdmin(admin.ModelAdmin):
+    list_display = ['full_name', 'email', 'phone_number', 'role', 'is_active', 'joined_date', 'display_order']
+    list_filter = ['is_active', 'joined_date']
+    search_fields = ['full_name', 'email', 'phone_number', 'bio', 'role']
+    list_editable = ['is_active', 'display_order']
+    readonly_fields = ['joined_date']
+    ordering = ['display_order', 'full_name']
+    
+    fieldsets = (
+        ('Personal Information', {
+            'fields': ('full_name', 'email', 'phone_number', 'image')
+        }),
+        ('Team Details', {
+            'fields': ('role', 'bio', 'display_order')
+        }),
+        ('Status', {
+            'fields': ('is_active', 'joined_date')
+        }),
+    )

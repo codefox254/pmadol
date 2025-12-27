@@ -6,7 +6,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from django.utils import timezone
-from .models import Service, PricingPlan, ServiceBooking, ServiceInquiry, MembershipPlan, ClubMembership
+from django.core.mail import send_mail
+from django.conf import settings
+from .models import Service, MembershipPlan, ClubMembership, ServiceEnrollment, TeamMember
 from .serializers import *
 
 
@@ -29,62 +31,6 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
         services = self.queryset.filter(category=category)
         serializer = self.get_serializer(services, many=True)
         return Response(serializer.data)
-
-
-class PricingPlanViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = PricingPlan.objects.filter(is_active=True)
-    serializer_class = PricingPlanSerializer
-    
-    @action(detail=False, methods=['get'])
-    def popular(self, request):
-        plans = self.queryset.filter(is_popular=True)
-        serializer = self.get_serializer(plans, many=True)
-        return Response(serializer.data)
-
-
-class ServiceBookingViewSet(viewsets.ModelViewSet):
-    queryset = ServiceBooking.objects.all()
-    serializer_class = ServiceBookingSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_queryset(self):
-        if self.request.user.is_staff:
-            return self.queryset
-        return self.queryset.filter(user=self.request.user)
-    
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-    
-    @action(detail=True, methods=['post'])
-    def cancel(self, request, pk=None):
-        booking = self.get_object()
-        if booking.status == 'completed':
-            return Response({'error': 'Cannot cancel completed booking'}, 
-                          status=status.HTTP_400_BAD_REQUEST)
-        booking.status = 'cancelled'
-        booking.save()
-        return Response({'message': 'Booking cancelled successfully'})
-    
-    @action(detail=False, methods=['get'])
-    def upcoming(self, request):
-        from django.utils import timezone
-        bookings = self.get_queryset().filter(
-            date__gte=timezone.now().date(),
-            status__in=['pending', 'confirmed']
-        )
-        serializer = self.get_serializer(bookings, many=True)
-        return Response(serializer.data)
-
-
-class ServiceInquiryViewSet(viewsets.ModelViewSet):
-    queryset = ServiceInquiry.objects.all()
-    serializer_class = ServiceInquirySerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    
-    def get_permissions(self):
-        if self.action == 'create':
-            return [IsAuthenticatedOrReadOnly()]
-        return [IsAuthenticated()]
 
 
 class MembershipPlanViewSet(viewsets.ReadOnlyModelViewSet):
@@ -167,3 +113,73 @@ class ClubMembershipViewSet(viewsets.ModelViewSet):
         except ClubMembership.DoesNotExist:
             return Response({'error': 'Membership not found'}, 
                           status=status.HTTP_404_NOT_FOUND)
+
+
+class ServiceEnrollmentViewSet(viewsets.ModelViewSet):
+    queryset = ServiceEnrollment.objects.all()
+    serializer_class = ServiceEnrollmentSerializer
+    permission_classes = [AllowAny]
+    
+    def get_permissions(self):
+        if self.action == 'create':
+            return [AllowAny()]
+        return [IsAuthenticated()]
+    
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return self.queryset
+        elif self.request.user.is_authenticated:
+            return self.queryset.filter(email=self.request.user.email)
+        return self.queryset.none()
+    
+    def create(self, request, *args, **kwargs):
+        """Create a new enrollment and send notification email"""
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            enrollment = serializer.save()
+            
+            # Send notification email to admin
+            try:
+                service_name = enrollment.service.name
+                subject = f'New Enrollment: {service_name}'
+                message = f"""
+New service enrollment received:
+
+Service: {service_name}
+Name: {enrollment.full_name}
+Email: {enrollment.email}
+Phone: {enrollment.phone_number}
+Message: {enrollment.message}
+Newsletter Subscription: {'Yes' if enrollment.subscribed_to_newsletter else 'No'}
+
+Please review and contact the applicant within 24 hours.
+                """
+                
+                send_mail(
+                    subject,
+                    message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [settings.DEFAULT_FROM_EMAIL],  # Send to admin email
+                    fail_silently=True,
+                )
+            except Exception as e:
+                print(f"Failed to send email notification: {e}")
+            
+            return Response({
+                'success': True,
+                'message': f'Thank you for enrolling in {enrollment.service.name}! We will contact you within 24 hours.',
+                'enrollment': serializer.data
+            }, status=status.HTTP_201_CREATED)
+        
+        return Response({
+            'success': False,
+            'message': 'Failed to submit enrollment. Please check your information and try again.',
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TeamMemberViewSet(viewsets.ReadOnlyModelViewSet):
+    """Read-only viewset for team members (created from approved enrollments)"""
+    queryset = TeamMember.objects.filter(is_active=True)
+    serializer_class = TeamMemberSerializer
+    permission_classes = [AllowAny]

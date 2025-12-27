@@ -35,9 +35,7 @@ class _HomePageState extends State<HomePage> {
         // Loading State
         if (homeProvider.isLoading) {
           return const Center(
-            child: CircularProgressIndicator(
-              color: Color(0xFF5886BF),
-            ),
+            child: CircularProgressIndicator(color: Color(0xFF5886BF)),
           );
         }
 
@@ -106,11 +104,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 80,
-              color: Colors.red,
-            ),
+            const Icon(Icons.error_outline, size: 80, color: Colors.red),
             const SizedBox(height: 30),
             const Text(
               'Oops! Something went wrong',
@@ -124,10 +118,7 @@ class _HomePageState extends State<HomePage> {
             Text(
               provider.error ?? 'Unknown error occurred',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 16,
-              ),
+              style: const TextStyle(color: Colors.grey, fontSize: 16),
             ),
             const SizedBox(height: 40),
             ElevatedButton.icon(
@@ -157,10 +148,7 @@ class _HomePageState extends State<HomePage> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFF0F4F9),
-            Color(0xFFE8EFF7),
-          ],
+          colors: [Color(0xFFF0F4F9), Color(0xFFE8EFF7)],
         ),
       ),
       child: Column(
@@ -220,10 +208,7 @@ class _HomePageState extends State<HomePage> {
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          colors: [
-            Color(0xFFFFFFFF),
-            Color(0xFFF8FAFC),
-          ],
+          colors: [Color(0xFFFFFFFF), Color(0xFFF8FAFC)],
         ),
       ),
       child: Column(
@@ -250,10 +235,22 @@ class _HomePageState extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildServiceCard('One-on-One Coaching', 'Personalized training sessions'),
-              _buildServiceCard('Group Classes', 'Learn with peers in structured classes'),
-              _buildServiceCard('Online Lessons', 'Train from anywhere in the world'),
-              _buildServiceCard('Tournaments', 'Compete in organized chess events'),
+              _buildServiceCard(
+                'One-on-One Coaching',
+                'Personalized training sessions',
+              ),
+              _buildServiceCard(
+                'Group Classes',
+                'Learn with peers in structured classes',
+              ),
+              _buildServiceCard(
+                'Online Lessons',
+                'Train from anywhere in the world',
+              ),
+              _buildServiceCard(
+                'Tournaments',
+                'Compete in organized chess events',
+              ),
             ],
           ),
         ],
@@ -287,10 +284,7 @@ class _HomePageState extends State<HomePage> {
           Text(
             description,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Color(0xFF707781),
-              fontSize: 14,
-            ),
+            style: const TextStyle(color: Color(0xFF707781), fontSize: 14),
           ),
         ],
       ),
@@ -309,10 +303,7 @@ class _HomePageState extends State<HomePage> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFF0F4F9),
-            Color(0xFFE8EFF7),
-          ],
+          colors: [Color(0xFFFFFFFF), Color(0xFFF8FBFF)],
         ),
       ),
       child: Column(
@@ -372,14 +363,21 @@ class _HomePageState extends State<HomePage> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/contact');
+                  Navigator.pushNamed(
+                    context,
+                    '/services',
+                    arguments: {'initialTab': 1},
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 16,
+                  ),
                 ),
                 child: const Text(
-                  'Contact Us',
+                  'Book a Session Now',
                   style: TextStyle(
                     color: Color(0xFF5886BF),
                     fontSize: 16,
@@ -390,14 +388,17 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(width: 20),
               OutlinedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/about');
+                  Navigator.pushNamed(context, '/contact');
                 },
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Colors.white, width: 2),
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 16,
+                  ),
                 ),
                 child: const Text(
-                  'Learn More',
+                  'Contact Us',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -424,10 +425,7 @@ class _HomePageState extends State<HomePage> {
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          colors: [
-            Color(0xFFFFFFFF),
-            Color(0xFFF8FAFC),
-          ],
+          colors: [Color(0xFFFFFFFF), Color(0xFFF8FAFC)],
         ),
       ),
       child: Column(

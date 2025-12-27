@@ -8,10 +8,9 @@ from .views import *
 
 router = DefaultRouter()
 router.register(r'services', ServiceViewSet, basename='services')
-router.register(r'pricing-plans', PricingPlanViewSet, basename='pricing-plans')
-router.register(r'bookings', ServiceBookingViewSet, basename='bookings')
-router.register(r'inquiries', ServiceInquiryViewSet, basename='inquiries')
 router.register(r'membership-plans', MembershipPlanViewSet, basename='membership-plans')
 router.register(r'memberships', ClubMembershipViewSet, basename='memberships')
+router.register(r'enrollments', ServiceEnrollmentViewSet, basename='enrollments')
+router.register(r'team-members', TeamMemberViewSet, basename='team-members')
 
 urlpatterns = router.urls

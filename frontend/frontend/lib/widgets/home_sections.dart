@@ -71,10 +71,7 @@ class StatisticsSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        Text(
-          title,
-          style: const TextStyle(color: Colors.white, fontSize: 16),
-        ),
+        Text(title, style: const TextStyle(color: Colors.white, fontSize: 16)),
       ],
     );
   }
@@ -94,10 +91,7 @@ class TestimonialsSection extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFF0F4F9),
-            Color(0xFFE8EFF7),
-          ],
+          colors: [Color(0xFFF0F4F9), Color(0xFFE8EFF7)],
         ),
       ),
       child: Column(
@@ -185,10 +179,7 @@ class TestimonialsSection extends StatelessWidget {
             const SizedBox(height: 5),
             Text(
               testimonial.roleDisplay,
-              style: const TextStyle(
-                color: Color(0xFF707781),
-                fontSize: 14,
-              ),
+              style: const TextStyle(color: Color(0xFF707781), fontSize: 14),
             ),
           ],
         ),
@@ -211,10 +202,7 @@ class PartnersSection extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          colors: [
-            Color(0xFFFFFFFF),
-            Color(0xFFF8FAFC),
-          ],
+          colors: [Color(0xFFFFFFFF), Color(0xFFF8FAFC)],
         ),
       ),
       child: Column(
@@ -278,12 +266,19 @@ class PartnersSection extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.business, size: 40, color: Colors.grey),
+                        const Icon(
+                          Icons.business,
+                          size: 40,
+                          color: Colors.grey,
+                        ),
                         const SizedBox(height: 8),
                         Text(
                           partner.name,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
                         ),
                       ],
                     ),
@@ -314,7 +309,11 @@ class HeroSection extends StatefulWidget {
   final SiteSettings settings;
   final List<HeroSlide> heroSlides;
 
-  const HeroSection({super.key, required this.settings, required this.heroSlides});
+  const HeroSection({
+    super.key,
+    required this.settings,
+    required this.heroSlides,
+  });
 
   @override
   State<HeroSection> createState() => _HeroSectionState();
@@ -386,10 +385,13 @@ class _HeroSectionState extends State<HeroSection> {
               final slide = _slides[index];
               final hasImage = slide.image.isNotEmpty;
               final background = hasImage
-                  ? NetworkImage(slide.image.startsWith('http')
-                      ? slide.image
-                      : '${ApiConfig.baseUrl}${slide.image}')
-                  : const AssetImage('assets/images/hero_bg.jpg') as ImageProvider;
+                  ? NetworkImage(
+                      slide.image.startsWith('http')
+                          ? slide.image
+                          : '${ApiConfig.baseUrl}${slide.image}',
+                    )
+                  : const AssetImage('assets/images/hero_bg.jpg')
+                        as ImageProvider;
 
               return AnimatedSwitcher(
                 duration: const Duration(milliseconds: 800),
@@ -429,7 +431,9 @@ class _HeroSectionState extends State<HeroSection> {
                       _slides[_currentIndex].title.isNotEmpty
                           ? _slides[_currentIndex].title
                           : widget.settings.tagline,
-                      key: ValueKey('${_slides[_currentIndex].title}-$_currentIndex'),
+                      key: ValueKey(
+                        '${_slides[_currentIndex].title}-$_currentIndex',
+                      ),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: Colors.white,
@@ -443,7 +447,9 @@ class _HeroSectionState extends State<HeroSection> {
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 500),
                     child: Container(
-                      key: ValueKey('${_slides[_currentIndex].subtitle}-$_currentIndex'),
+                      key: ValueKey(
+                        '${_slides[_currentIndex].subtitle}-$_currentIndex',
+                      ),
                       constraints: const BoxConstraints(maxWidth: 700),
                       child: Text(
                         _slides[_currentIndex].subtitle.isNotEmpty
@@ -461,7 +467,11 @@ class _HeroSectionState extends State<HeroSection> {
                   const SizedBox(height: 40),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/contact');
+                      Navigator.pushNamed(
+                        context,
+                        '/services',
+                        arguments: {'initialTab': 1},
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF5886BF),
@@ -504,7 +514,9 @@ class _HeroSectionState extends State<HeroSection> {
           height: 8,
           width: isActive ? 28 : 10,
           decoration: BoxDecoration(
-            color: isActive ? const Color(0xFF5886BF) : Colors.white.withOpacity(0.6),
+            color: isActive
+                ? const Color(0xFF5886BF)
+                : Colors.white.withOpacity(0.6),
             borderRadius: BorderRadius.circular(12),
           ),
         );

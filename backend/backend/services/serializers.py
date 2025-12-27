@@ -2,7 +2,7 @@
 # services/serializers.py
 # ============================================
 from rest_framework import serializers
-from .models import Service, PricingPlan, ServiceBooking, ServiceInquiry, MembershipPlan, ClubMembership
+from .models import Service, MembershipPlan, ClubMembership, ServiceEnrollment, TeamMember
 
 
 class ServiceSerializer(serializers.ModelSerializer):
@@ -11,37 +11,6 @@ class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = '__all__'
-
-
-class PricingPlanSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PricingPlan
-        fields = '__all__'
-
-
-class ServiceBookingSerializer(serializers.ModelSerializer):
-    service_name = serializers.CharField(source='service.name', read_only=True)
-    user_name = serializers.CharField(source='user.username', read_only=True)
-    status_display = serializers.CharField(source='get_status_display', read_only=True)
-    payment_status_display = serializers.CharField(source='get_payment_status_display', read_only=True)
-    
-    class Meta:
-        model = ServiceBooking
-        fields = '__all__'
-        read_only_fields = ['user', 'total_amount', 'created_at', 'updated_at']
-    
-    def create(self, validated_data):
-        validated_data['total_amount'] = validated_data['service'].price
-        return super().create(validated_data)
-
-
-class ServiceInquirySerializer(serializers.ModelSerializer):
-    service_name = serializers.CharField(source='service.name', read_only=True)
-    
-    class Meta:
-        model = ServiceInquiry
-        fields = '__all__'
-        read_only_fields = ['status', 'created_at']
 
 
 class MembershipPlanSerializer(serializers.ModelSerializer):
@@ -83,4 +52,21 @@ class ClubMembershipSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("You must accept the privacy policy")
         
         return data
+
+
+class ServiceEnrollmentSerializer(serializers.ModelSerializer):
+    service_name = serializers.CharField(source='service.name', read_only=True)
+    approval_status_display = serializers.CharField(source='get_approval_status_display', read_only=True)
+    
+    class Meta:
+        model = ServiceEnrollment
+        fields = '__all__'
+        read_only_fields = ['approval_status', 'created_at', 'updated_at']
+
+
+class TeamMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TeamMember
+        fields = '__all__'
+        read_only_fields = ['joined_date']
 

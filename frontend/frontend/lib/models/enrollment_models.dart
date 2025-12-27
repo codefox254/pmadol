@@ -34,7 +34,7 @@ class Enrollment {
   final String fullName;
   final String email;
   final String phoneNumber;
-  final String mpesaMessage;
+  final String message;
   final bool subscribedToNewsletter;
   final DateTime? createdAt;
   final String? approvalStatus; // pending, approved, rejected
@@ -45,7 +45,7 @@ class Enrollment {
     required this.fullName,
     required this.email,
     required this.phoneNumber,
-    required this.mpesaMessage,
+    required this.message,
     required this.subscribedToNewsletter,
     this.createdAt,
     this.approvalStatus,
@@ -57,7 +57,7 @@ class Enrollment {
       'full_name': fullName,
       'email': email,
       'phone_number': phoneNumber,
-      'mpesa_message': mpesaMessage,
+      'message': message,
       'subscribed_to_newsletter': subscribedToNewsletter,
     };
   }
@@ -69,7 +69,7 @@ class Enrollment {
       fullName: json['full_name'] ?? '',
       email: json['email'] ?? '',
       phoneNumber: json['phone_number'] ?? '',
-      mpesaMessage: json['mpesa_message'] ?? '',
+      message: json['message'] ?? '',
       subscribedToNewsletter: json['subscribed_to_newsletter'] ?? true,
       createdAt: json['created_at'] != null
           ? DateTime.tryParse(json['created_at'])
