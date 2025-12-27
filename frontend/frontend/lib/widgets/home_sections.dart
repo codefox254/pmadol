@@ -395,15 +395,35 @@ class _HeroSectionState extends State<HeroSection> {
 
               return AnimatedSwitcher(
                 duration: const Duration(milliseconds: 800),
-                child: Container(
+                child: Stack(
                   key: ValueKey(slide.image + slide.title),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: background,
-                      fit: BoxFit.cover,
+                  fit: StackFit.expand,
+                  children: [
+                    // Brand gradient background to fill sides
+                    Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Color(0xFF5886BF), Color(0xFF283D57)],
+                        ),
+                      ),
                     ),
-                  ),
-                  child: Container(color: Colors.black.withOpacity(0.5)),
+                    // Centered image using contain to show full image
+                    Center(
+                      child: Image(
+                        image: background,
+                        fit: BoxFit.contain,
+                        width: double.infinity,
+                        height: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ),
+                    // Subtle dark overlay for text contrast
+                    Container(color: Colors.black.withOpacity(0.3)),
+                  ],
                 ),
               );
             },

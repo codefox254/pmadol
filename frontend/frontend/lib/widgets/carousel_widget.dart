@@ -169,12 +169,15 @@ class _NewsCarouselState extends State<NewsCarousel> {
             Positioned.fill(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: Image.network(
-                  '${ApiConfig.baseUrl}${news.image!}',
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(color: const Color(0xFF5886BF));
-                  },
+                child: Container(
+                  color: Colors.grey[100],
+                  child: Image.network(
+                    '${ApiConfig.baseUrl}${news.image!}',
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(color: const Color(0xFF5886BF));
+                    },
+                  ),
                 ),
               ),
             ),
